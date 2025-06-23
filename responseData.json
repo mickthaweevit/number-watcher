@@ -1,0 +1,1001 @@
+{
+  "set": {
+    "lists": [
+      {
+        "GAME_CODE": "L08-02-20250622",
+        "GAME_NAME": "หวยมาเลย์ชุด",
+        "RESULT_4UP": "8443",
+        "COUNTRY_CODE": "MY"
+      },
+      {
+        "GAME_CODE": "L08-03-20250622",
+        "GAME_NAME": "หวยฮานอยชุด",
+        "RESULT_4UP": "7301",
+        "COUNTRY_CODE": "VN"
+      }
+    ],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settrade": {
+    "lists": [
+      {
+        "GAME_CODE": "L03-01-000500-20250622",
+        "GAME_NAME": "ดาวโจนส์ VIP",
+        "RESULT_3UP": "282",
+        "RESULT_2DOWN": "05"
+      },
+      {
+        "GAME_CODE": "L03-01-054000-20250622",
+        "GAME_NAME": "หวยลาวประตูชัย",
+        "RESULT_3UP": "651",
+        "RESULT_2DOWN": "43"
+      },
+      {
+        "GAME_CODE": "L03-01-064000-20250622",
+        "GAME_NAME": "หวยลาวสันติภาพ",
+        "RESULT_3UP": "282",
+        "RESULT_2DOWN": "40"
+      },
+      {
+        "GAME_CODE": "L03-01-074000-20250622",
+        "GAME_NAME": "หวยประชาชนลาว",
+        "RESULT_3UP": "865",
+        "RESULT_2DOWN": "74"
+      },
+      {
+        "GAME_CODE": "L03-01-090000-20250622",
+        "GAME_NAME": "นิเคอิ VIP (เช้า)",
+        "RESULT_3UP": "202",
+        "RESULT_2DOWN": "25"
+      },
+      {
+        "GAME_CODE": "L03-01-100000-20250622",
+        "GAME_NAME": "จีน VIP (เช้า)",
+        "RESULT_3UP": "460",
+        "RESULT_2DOWN": "91"
+      },
+      {
+        "GAME_CODE": "L03-01-103000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง VIP (เช้า)",
+        "RESULT_3UP": "767",
+        "RESULT_2DOWN": "26"
+      },
+      {
+        "GAME_CODE": "L03-01-113000-20250622",
+        "GAME_NAME": "ไต้หวัน VIP",
+        "RESULT_3UP": "598",
+        "RESULT_2DOWN": "68"
+      },
+      {
+        "GAME_CODE": "L03-01-123000-20250622",
+        "GAME_NAME": "เกาหลี VIP",
+        "RESULT_3UP": "667",
+        "RESULT_2DOWN": "72"
+      },
+      {
+        "GAME_CODE": "L03-01-132000-20250622",
+        "GAME_NAME": "นิเคอิ VIP (บ่าย)",
+        "RESULT_3UP": "355",
+        "RESULT_2DOWN": "81"
+      },
+      {
+        "GAME_CODE": "L03-01-142000-20250622",
+        "GAME_NAME": "จีน VIP (บ่าย)",
+        "RESULT_3UP": "917",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-01-152000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง VIP (บ่าย)",
+        "RESULT_3UP": "708",
+        "RESULT_2DOWN": "04"
+      },
+      {
+        "GAME_CODE": "L03-01-170000-20250622",
+        "GAME_NAME": "สิงคโปร์ VIP",
+        "RESULT_3UP": "215",
+        "RESULT_2DOWN": "34"
+      }
+    ],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settradeInt": {
+    "lists": [
+      {
+        "GAME_CODE": "L03-03-000000-20250622",
+        "GAME_NAME": "ดาวโจนส์ META",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "066",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-003000-20250622",
+        "GAME_NAME": "ลาวดึก พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "199",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-004000-20250622",
+        "GAME_NAME": "ฮานอยดึก พิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "657",
+        "RESULT_2DOWN": "41"
+      },
+      {
+        "GAME_CODE": "L03-03-023500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์ พิเศษ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "978",
+        "RESULT_2DOWN": "33"
+      },
+      {
+        "GAME_CODE": "L03-03-033500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์ EXTRA พิเศษ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "293",
+        "RESULT_2DOWN": "43"
+      },
+      {
+        "GAME_CODE": "L03-03-043500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์  Star พิเศษ ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "371",
+        "RESULT_2DOWN": "42"
+      },
+      {
+        "GAME_CODE": "L03-03-052000-20250622",
+        "GAME_NAME": "หวยลาวไชยบุรี",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "606",
+        "RESULT_2DOWN": "10"
+      },
+      {
+        "GAME_CODE": "L03-03-054000-20250622",
+        "GAME_NAME": "หวยลาวประตูชัย พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "870",
+        "RESULT_2DOWN": "15"
+      },
+      {
+        "GAME_CODE": "L03-03-062000-20250622",
+        "GAME_NAME": "หวยลาวอุดมชัย",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "893",
+        "RESULT_2DOWN": "40"
+      },
+      {
+        "GAME_CODE": "L03-03-064000-20250622",
+        "GAME_NAME": "หวยลาวสันติภาพ พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "549",
+        "RESULT_2DOWN": "32"
+      },
+      {
+        "GAME_CODE": "L03-03-072000-20250622",
+        "GAME_NAME": "หวยลาวหลวงน้ำท่า",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "786",
+        "RESULT_2DOWN": "94"
+      },
+      {
+        "GAME_CODE": "L03-03-074000-20250622",
+        "GAME_NAME": "หวยประชาชนลาว พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "133",
+        "RESULT_2DOWN": "39"
+      },
+      {
+        "GAME_CODE": "L03-03-080000-20250622",
+        "GAME_NAME": "หวยลาวไชยสมบูรณ์",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "449",
+        "RESULT_2DOWN": "97"
+      },
+      {
+        "GAME_CODE": "L03-03-082000-20250622",
+        "GAME_NAME": "ลาว (EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "323",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-082001-20250622",
+        "GAME_NAME": "ลาวเช้า พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "217",
+        "RESULT_2DOWN": "47"
+      },
+      {
+        "GAME_CODE": "L03-03-084000-20250622",
+        "GAME_NAME": "ฮานอย(5G)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "509",
+        "RESULT_2DOWN": "10"
+      },
+      {
+        "GAME_CODE": "L03-03-090000-20250622",
+        "GAME_NAME": "นิเคอิ META (เช้า)",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "555",
+        "RESULT_2DOWN": "42"
+      },
+      {
+        "GAME_CODE": "L03-03-091000-20250622",
+        "GAME_NAME": "ฮานอยอาเซียน (VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "794",
+        "RESULT_2DOWN": "20"
+      },
+      {
+        "GAME_CODE": "L03-03-100600-20250622",
+        "GAME_NAME": "จีน META (เช้า)",
+        "COUNTRY_CODE": "CN",
+        "RESULT_3UP": "936",
+        "RESULT_2DOWN": "81"
+      },
+      {
+        "GAME_CODE": "L03-03-101000-20250622",
+        "GAME_NAME": "หวยลาวTV",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "814",
+        "RESULT_2DOWN": "55"
+      },
+      {
+        "GAME_CODE": "L03-03-104000-20250622",
+        "GAME_NAME": "โตเกียวรอบเช้า",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "273",
+        "RESULT_2DOWN": "61"
+      },
+      {
+        "GAME_CODE": "L03-03-110000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง META (เช้า)",
+        "COUNTRY_CODE": "HK",
+        "RESULT_3UP": "584",
+        "RESULT_2DOWN": "21"
+      },
+      {
+        "GAME_CODE": "L03-03-111000-20250622",
+        "GAME_NAME": "ฮานอย(HD)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "958",
+        "RESULT_2DOWN": "77"
+      },
+      {
+        "GAME_CODE": "L03-03-115500-20250622",
+        "GAME_NAME": "ลาวพิเศษ(EXTRA) ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "035",
+        "RESULT_2DOWN": "60"
+      },
+      {
+        "GAME_CODE": "L03-03-115900-20250622",
+        "GAME_NAME": "ฮานอยสตาร์(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "415",
+        "RESULT_2DOWN": "74"
+      },
+      {
+        "GAME_CODE": "L03-03-120000-20250622",
+        "GAME_NAME": "เกาหลี MTA",
+        "COUNTRY_CODE": "SK",
+        "RESULT_3UP": "538",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-120500-20250622",
+        "GAME_NAME": "ฮานอยสตาร์",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "055",
+        "RESULT_2DOWN": "14"
+      },
+      {
+        "GAME_CODE": "L03-03-130000-20250622",
+        "GAME_NAME": "นิเคอิ META (บ่าย)",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "942",
+        "RESULT_2DOWN": "85"
+      },
+      {
+        "GAME_CODE": "L03-03-133000-20250622",
+        "GAME_NAME": "หวยลาวHDพิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "932",
+        "RESULT_2DOWN": "84"
+      },
+      {
+        "GAME_CODE": "L03-03-140100-20250622",
+        "GAME_NAME": "จีน META (บ่าย)",
+        "COUNTRY_CODE": "จีน META",
+        "RESULT_3UP": "833",
+        "RESULT_2DOWN": "70"
+      },
+      {
+        "GAME_CODE": "L03-03-144000-20250622",
+        "GAME_NAME": "โตเกียวปิดบ่าย",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "701",
+        "RESULT_2DOWN": "82"
+      },
+      {
+        "GAME_CODE": "L03-03-150000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง META (บ่าย)",
+        "COUNTRY_CODE": "HK",
+        "RESULT_3UP": "257",
+        "RESULT_2DOWN": "83"
+      },
+      {
+        "GAME_CODE": "L03-03-151500-20250622",
+        "GAME_NAME": "หวยลาวสตาร์",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "839",
+        "RESULT_2DOWN": "74"
+      },
+      {
+        "GAME_CODE": "L03-03-154500-20250622",
+        "GAME_NAME": "หวยลาวสตาร์(EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "540",
+        "RESULT_2DOWN": "82"
+      },
+      {
+        "GAME_CODE": "L03-03-161000-20250622",
+        "GAME_NAME": "ฮานอยกาชาด",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "989",
+        "RESULT_2DOWN": "02"
+      },
+      {
+        "GAME_CODE": "L03-03-163000-20250622",
+        "GAME_NAME": "ฮานอยเฉพาะกิจ(VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "925",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-163200-20250622",
+        "GAME_NAME": "ฮานอย(4K)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "120",
+        "RESULT_2DOWN": "43"
+      },
+      {
+        "GAME_CODE": "L03-03-170000-20250622",
+        "GAME_NAME": "ฮานอยพิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "525",
+        "RESULT_2DOWN": "75"
+      },
+      {
+        "GAME_CODE": "L03-03-175000-20250622",
+        "GAME_NAME": "มาเลย์ Dragon(VIP)",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "425",
+        "RESULT_2DOWN": "73"
+      },
+      {
+        "GAME_CODE": "L03-03-180000-20250622",
+        "GAME_NAME": "หวยมาเลย์",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "443",
+        "RESULT_2DOWN": "66"
+      },
+      {
+        "GAME_CODE": "L03-03-180100-20250622",
+        "GAME_NAME": "หวยฮานอย",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "301",
+        "RESULT_2DOWN": "14"
+      },
+      {
+        "GAME_CODE": "L03-03-183000-20250622",
+        "GAME_NAME": "มาเลย์ พิเศษ",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "392",
+        "RESULT_2DOWN": "67"
+      },
+      {
+        "GAME_CODE": "L03-03-185000-20250622",
+        "GAME_NAME": "ฮานอย(VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "939",
+        "RESULT_2DOWN": "27"
+      },
+      {
+        "GAME_CODE": "L03-03-191000-20250622",
+        "GAME_NAME": "ฮานอยพัฒนา พิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "204",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-195000-20250622",
+        "GAME_NAME": "ลาวพัฒนา (EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "781",
+        "RESULT_2DOWN": "35"
+      },
+      {
+        "GAME_CODE": "L03-03-201000-20250622",
+        "GAME_NAME": "หวยลาวสามัคคี",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "115",
+        "RESULT_2DOWN": "71"
+      },
+      {
+        "GAME_CODE": "L03-03-203000-20250622",
+        "GAME_NAME": "ฮานอยพิเศษ(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "834",
+        "RESULT_2DOWN": "20"
+      },
+      {
+        "GAME_CODE": "L03-03-205500-20250622",
+        "GAME_NAME": "ลาวอาเซียนพิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "778",
+        "RESULT_2DOWN": "54"
+      },
+      {
+        "GAME_CODE": "L03-03-210000-20250622",
+        "GAME_NAME": "หุ้นน้ำมันปาล์ม",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "984",
+        "RESULT_2DOWN": "21"
+      },
+      {
+        "GAME_CODE": "L03-03-211000-20250622",
+        "GAME_NAME": "หวยลาว(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "068",
+        "RESULT_2DOWN": "90"
+      },
+      {
+        "GAME_CODE": "L03-03-212004-20250622",
+        "GAME_NAME": "ลาวกาชาด(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "378",
+        "RESULT_2DOWN": "26"
+      },
+      {
+        "GAME_CODE": "L03-03-212500-20250622",
+        "GAME_NAME": "ลาวสามัคคี(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "498",
+        "RESULT_2DOWN": "54"
+      },
+      {
+        "GAME_CODE": "L03-03-213000-20250622",
+        "GAME_NAME": "ฮานอยสามัคคี(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "743",
+        "RESULT_2DOWN": "15"
+      },
+      {
+        "GAME_CODE": "L03-03-214459-20250622",
+        "GAME_NAME": "อังกฤษ VIPV2",
+        "COUNTRY_CODE": "EN",
+        "RESULT_3UP": "846",
+        "RESULT_2DOWN": "77"
+      },
+      {
+        "GAME_CODE": "L03-03-214500-20250622",
+        "GAME_NAME": "ลาวสตาร์(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "694",
+        "RESULT_2DOWN": "62"
+      },
+      {
+        "GAME_CODE": "L03-03-220100-20250622",
+        "GAME_NAME": "ลาว12ราศี(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "597",
+        "RESULT_2DOWN": "80"
+      },
+      {
+        "GAME_CODE": "L03-03-221001-20250622",
+        "GAME_NAME": "ฮานอยสัญจร",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "490",
+        "RESULT_2DOWN": "51"
+      },
+      {
+        "GAME_CODE": "L03-03-224500-20250622",
+        "GAME_NAME": "เยอรมัน VIPV2",
+        "COUNTRY_CODE": "GM",
+        "RESULT_3UP": "667",
+        "RESULT_2DOWN": "89"
+      },
+      {
+        "GAME_CODE": "L03-03-230000-20250622",
+        "GAME_NAME": "หุ้นบิตคอยน์",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "981",
+        "RESULT_2DOWN": "24"
+      },
+      {
+        "GAME_CODE": "L03-03-232000-20250622",
+        "GAME_NAME": "ลาวกาชาด",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "807",
+        "RESULT_2DOWN": "56"
+      },
+      {
+        "GAME_CODE": "L03-03-234500-20250622",
+        "GAME_NAME": "รัสเซีย VIPV2",
+        "COUNTRY_CODE": "RS",
+        "RESULT_3UP": "914",
+        "RESULT_2DOWN": "53"
+      }
+    ],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settrandNoInt": {
+    "lists": [
+      {
+        "GAME_CODE": "L03-03-184000-20250622",
+        "GAME_NAME": "หุ้นอิยิปต์",
+        "COUNTRY_CODE": "EG",
+        "RESULT_3UP": "598",
+        "RESULT_2DOWN": "54"
+      }
+    ],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settradeVIP": {
+    "lists": [],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settradeVISA": {
+    "lists": [],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settradeVI": {
+    "lists": [],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "settradeHIT": {
+    "lists": [],
+    "DATE_GAME": "22-Jun-2025"
+  },
+  "newSettrade": {
+    "lists": [
+      {
+        "GAME_CODE": "L03-03-000000-20250622",
+        "GAME_NAME": "ดาวโจนส์ META",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "066",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-003000-20250622",
+        "GAME_NAME": "ลาวดึก พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "199",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-004000-20250622",
+        "GAME_NAME": "ฮานอยดึก พิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "657",
+        "RESULT_2DOWN": "41"
+      },
+      {
+        "GAME_CODE": "L03-03-023500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์ พิเศษ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "978",
+        "RESULT_2DOWN": "33"
+      },
+      {
+        "GAME_CODE": "L03-03-033500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์ EXTRA พิเศษ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "293",
+        "RESULT_2DOWN": "43"
+      },
+      {
+        "GAME_CODE": "L03-03-043500-20250622",
+        "GAME_NAME": "ดาวน์โจนส์  Star พิเศษ ",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "371",
+        "RESULT_2DOWN": "42"
+      },
+      {
+        "GAME_CODE": "L03-03-052000-20250622",
+        "GAME_NAME": "หวยลาวไชยบุรี",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "606",
+        "RESULT_2DOWN": "10"
+      },
+      {
+        "GAME_CODE": "L03-03-054000-20250622",
+        "GAME_NAME": "หวยลาวประตูชัย พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "870",
+        "RESULT_2DOWN": "15"
+      },
+      {
+        "GAME_CODE": "L03-03-062000-20250622",
+        "GAME_NAME": "หวยลาวอุดมชัย",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "893",
+        "RESULT_2DOWN": "40"
+      },
+      {
+        "GAME_CODE": "L03-03-064000-20250622",
+        "GAME_NAME": "หวยลาวสันติภาพ พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "549",
+        "RESULT_2DOWN": "32"
+      },
+      {
+        "GAME_CODE": "L03-03-072000-20250622",
+        "GAME_NAME": "หวยลาวหลวงน้ำท่า",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "786",
+        "RESULT_2DOWN": "94"
+      },
+      {
+        "GAME_CODE": "L03-03-074000-20250622",
+        "GAME_NAME": "หวยประชาชนลาว พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "133",
+        "RESULT_2DOWN": "39"
+      },
+      {
+        "GAME_CODE": "L03-03-080000-20250622",
+        "GAME_NAME": "หวยลาวไชยสมบูรณ์",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "449",
+        "RESULT_2DOWN": "97"
+      },
+      {
+        "GAME_CODE": "L03-03-082000-20250622",
+        "GAME_NAME": "ลาว (EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "323",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-082001-20250622",
+        "GAME_NAME": "ลาวเช้า พิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "217",
+        "RESULT_2DOWN": "47"
+      },
+      {
+        "GAME_CODE": "L03-03-084000-20250622",
+        "GAME_NAME": "ฮานอย(5G)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "509",
+        "RESULT_2DOWN": "10"
+      },
+      {
+        "GAME_CODE": "L03-03-090000-20250622",
+        "GAME_NAME": "นิเคอิ META (เช้า)",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "555",
+        "RESULT_2DOWN": "42"
+      },
+      {
+        "GAME_CODE": "L03-03-091000-20250622",
+        "GAME_NAME": "ฮานอยอาเซียน (VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "794",
+        "RESULT_2DOWN": "20"
+      },
+      {
+        "GAME_CODE": "L03-03-100600-20250622",
+        "GAME_NAME": "จีน META (เช้า)",
+        "COUNTRY_CODE": "CN",
+        "RESULT_3UP": "936",
+        "RESULT_2DOWN": "81"
+      },
+      {
+        "GAME_CODE": "L03-03-101000-20250622",
+        "GAME_NAME": "หวยลาวTV",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "814",
+        "RESULT_2DOWN": "55"
+      },
+      {
+        "GAME_CODE": "L03-03-104000-20250622",
+        "GAME_NAME": "โตเกียวรอบเช้า",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "273",
+        "RESULT_2DOWN": "61"
+      },
+      {
+        "GAME_CODE": "L03-03-110000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง META (เช้า)",
+        "COUNTRY_CODE": "HK",
+        "RESULT_3UP": "584",
+        "RESULT_2DOWN": "21"
+      },
+      {
+        "GAME_CODE": "L03-03-111000-20250622",
+        "GAME_NAME": "ฮานอย(HD)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "958",
+        "RESULT_2DOWN": "77"
+      },
+      {
+        "GAME_CODE": "L03-03-115500-20250622",
+        "GAME_NAME": "ลาวพิเศษ(EXTRA) ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "035",
+        "RESULT_2DOWN": "60"
+      },
+      {
+        "GAME_CODE": "L03-03-115900-20250622",
+        "GAME_NAME": "ฮานอยสตาร์(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "415",
+        "RESULT_2DOWN": "74"
+      },
+      {
+        "GAME_CODE": "L03-03-120000-20250622",
+        "GAME_NAME": "เกาหลี MTA",
+        "COUNTRY_CODE": "SK",
+        "RESULT_3UP": "538",
+        "RESULT_2DOWN": "12"
+      },
+      {
+        "GAME_CODE": "L03-03-120500-20250622",
+        "GAME_NAME": "ฮานอยสตาร์",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "055",
+        "RESULT_2DOWN": "14"
+      },
+      {
+        "GAME_CODE": "L03-03-130000-20250622",
+        "GAME_NAME": "นิเคอิ META (บ่าย)",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "942",
+        "RESULT_2DOWN": "85"
+      },
+      {
+        "GAME_CODE": "L03-03-133000-20250622",
+        "GAME_NAME": "หวยลาวHDพิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "932",
+        "RESULT_2DOWN": "84"
+      },
+      {
+        "GAME_CODE": "L03-03-140100-20250622",
+        "GAME_NAME": "จีน META (บ่าย)",
+        "COUNTRY_CODE": "จีน META",
+        "RESULT_3UP": "833",
+        "RESULT_2DOWN": "70"
+      },
+      {
+        "GAME_CODE": "L03-03-144000-20250622",
+        "GAME_NAME": "โตเกียวปิดบ่าย",
+        "COUNTRY_CODE": "JP",
+        "RESULT_3UP": "701",
+        "RESULT_2DOWN": "82"
+      },
+      {
+        "GAME_CODE": "L03-03-150000-20250622",
+        "GAME_NAME": "ฮั่งเส็ง META (บ่าย)",
+        "COUNTRY_CODE": "HK",
+        "RESULT_3UP": "257",
+        "RESULT_2DOWN": "83"
+      },
+      {
+        "GAME_CODE": "L03-03-151500-20250622",
+        "GAME_NAME": "หวยลาวสตาร์",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "839",
+        "RESULT_2DOWN": "74"
+      },
+      {
+        "GAME_CODE": "L03-03-154500-20250622",
+        "GAME_NAME": "หวยลาวสตาร์(EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "540",
+        "RESULT_2DOWN": "82"
+      },
+      {
+        "GAME_CODE": "L03-03-161000-20250622",
+        "GAME_NAME": "ฮานอยกาชาด",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "989",
+        "RESULT_2DOWN": "02"
+      },
+      {
+        "GAME_CODE": "L03-03-163000-20250622",
+        "GAME_NAME": "ฮานอยเฉพาะกิจ(VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "925",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-163200-20250622",
+        "GAME_NAME": "ฮานอย(4K)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "120",
+        "RESULT_2DOWN": "43"
+      },
+      {
+        "GAME_CODE": "L03-03-170000-20250622",
+        "GAME_NAME": "ฮานอยพิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "525",
+        "RESULT_2DOWN": "75"
+      },
+      {
+        "GAME_CODE": "L03-03-175000-20250622",
+        "GAME_NAME": "มาเลย์ Dragon(VIP)",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "425",
+        "RESULT_2DOWN": "73"
+      },
+      {
+        "GAME_CODE": "L03-03-180000-20250622",
+        "GAME_NAME": "หวยมาเลย์",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "443",
+        "RESULT_2DOWN": "66"
+      },
+      {
+        "GAME_CODE": "L03-03-180100-20250622",
+        "GAME_NAME": "หวยฮานอย",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "301",
+        "RESULT_2DOWN": "14"
+      },
+      {
+        "GAME_CODE": "L03-03-183000-20250622",
+        "GAME_NAME": "มาเลย์ พิเศษ",
+        "COUNTRY_CODE": "MY",
+        "RESULT_3UP": "392",
+        "RESULT_2DOWN": "67"
+      },
+      {
+        "GAME_CODE": "L03-03-184000-20250622",
+        "GAME_NAME": "หุ้นอิยิปต์",
+        "COUNTRY_CODE": "EG",
+        "RESULT_3UP": "598",
+        "RESULT_2DOWN": "54"
+      },
+      {
+        "GAME_CODE": "L03-03-185000-20250622",
+        "GAME_NAME": "ฮานอย(VIP)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "939",
+        "RESULT_2DOWN": "27"
+      },
+      {
+        "GAME_CODE": "L03-03-191000-20250622",
+        "GAME_NAME": "ฮานอยพัฒนา พิเศษ",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "204",
+        "RESULT_2DOWN": "93"
+      },
+      {
+        "GAME_CODE": "L03-03-195000-20250622",
+        "GAME_NAME": "ลาวพัฒนา (EXTRA)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "781",
+        "RESULT_2DOWN": "35"
+      },
+      {
+        "GAME_CODE": "L03-03-201000-20250622",
+        "GAME_NAME": "หวยลาวสามัคคี",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "115",
+        "RESULT_2DOWN": "71"
+      },
+      {
+        "GAME_CODE": "L03-03-203000-20250622",
+        "GAME_NAME": "ฮานอยพิเศษ(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "834",
+        "RESULT_2DOWN": "20"
+      },
+      {
+        "GAME_CODE": "L03-03-205500-20250622",
+        "GAME_NAME": "ลาวอาเซียนพิเศษ",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "778",
+        "RESULT_2DOWN": "54"
+      },
+      {
+        "GAME_CODE": "L03-03-210000-20250622",
+        "GAME_NAME": "หุ้นน้ำมันปาล์ม",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "984",
+        "RESULT_2DOWN": "21"
+      },
+      {
+        "GAME_CODE": "L03-03-211000-20250622",
+        "GAME_NAME": "หวยลาว(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "068",
+        "RESULT_2DOWN": "90"
+      },
+      {
+        "GAME_CODE": "L03-03-212004-20250622",
+        "GAME_NAME": "ลาวกาชาด(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "378",
+        "RESULT_2DOWN": "26"
+      },
+      {
+        "GAME_CODE": "L03-03-212500-20250622",
+        "GAME_NAME": "ลาวสามัคคี(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "498",
+        "RESULT_2DOWN": "54"
+      },
+      {
+        "GAME_CODE": "L03-03-213000-20250622",
+        "GAME_NAME": "ฮานอยสามัคคี(EXTRA)",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "743",
+        "RESULT_2DOWN": "15"
+      },
+      {
+        "GAME_CODE": "L03-03-214459-20250622",
+        "GAME_NAME": "อังกฤษ VIPV2",
+        "COUNTRY_CODE": "EN",
+        "RESULT_3UP": "846",
+        "RESULT_2DOWN": "77"
+      },
+      {
+        "GAME_CODE": "L03-03-214500-20250622",
+        "GAME_NAME": "ลาวสตาร์(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "694",
+        "RESULT_2DOWN": "62"
+      },
+      {
+        "GAME_CODE": "L03-03-220100-20250622",
+        "GAME_NAME": "ลาว12ราศี(VIP)",
+        "COUNTRY_CODE": "LA",
+        "RESULT_3UP": "597",
+        "RESULT_2DOWN": "80"
+      },
+      {
+        "GAME_CODE": "L03-03-221001-20250622",
+        "GAME_NAME": "ฮานอยสัญจร",
+        "COUNTRY_CODE": "VN",
+        "RESULT_3UP": "490",
+        "RESULT_2DOWN": "51"
+      },
+      {
+        "GAME_CODE": "L03-03-224500-20250622",
+        "GAME_NAME": "เยอรมัน VIPV2",
+        "COUNTRY_CODE": "GM",
+        "RESULT_3UP": "667",
+        "RESULT_2DOWN": "89"
+      },
+      {
+        "GAME_CODE": "L03-03-230000-20250622",
+        "GAME_NAME": "หุ้นบิตคอยน์",
+        "COUNTRY_CODE": "US",
+        "RESULT_3UP": "981",
+        "RESULT_2DOWN": "24"
+      },
+      {
+        "GAME_CODE": "L03-03-232000-20250622",
+        "GAME_NAME": "ลาวกาชาด",
+        "COUNTRY_CODE": null,
+        "RESULT_3UP": "807",
+        "RESULT_2DOWN": "56"
+      },
+      {
+        "GAME_CODE": "L03-03-234500-20250622",
+        "GAME_NAME": "รัสเซีย VIPV2",
+        "COUNTRY_CODE": "RS",
+        "RESULT_3UP": "914",
+        "RESULT_2DOWN": "53"
+      }
+    ],
+    "DATE_GAME": "22-Jun-2025"
+  }
+}
