@@ -7,6 +7,7 @@ Full-stack lottery result tracking system to store and display lottery results f
 **Selected**: Option B - Python + FastAPI + React
 - **Backend**: Python + FastAPI + PostgreSQL
 - **Frontend**: React + TypeScript
+- **Development Environment**: Full Docker setup (Option A)
 - **Benefits**: Python excellent for data processing, FastAPI modern and fast, great for learning
 
 ## Data Source
@@ -141,6 +142,7 @@ lottery-tracker/
 │   │   ├── scheduler/      # API import scheduler
 │   │   └── main.py         # FastAPI app
 │   ├── requirements.txt
+│   ├── Dockerfile
 │   └── database.py
 ├── frontend/
 │   ├── src/
@@ -148,7 +150,9 @@ lottery-tracker/
 │   │   ├── pages/          # Main pages
 │   │   ├── services/       # API calls
 │   │   └── types/          # TypeScript types
-│   └── package.json
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml      # Full Docker setup
 ├── PROJECT_REQUIREMENTS.md
 └── README.md
 ```
@@ -183,19 +187,59 @@ lottery-tracker/
 - **Integration**: API consumption, data transformation, error handling
 - **DevOps**: Environment management, deployment basics
 
-## Key Decisions Made
-1. ✅ Store both full GAME_CODE and base game ID
-2. ✅ Include category field for filtering
-3. ✅ Handle missing results with status system
-4. ✅ Auto-add new games from API responses
-5. ✅ Hourly API scheduling (configurable)
-6. ✅ No status history needed - current status only
-7. ✅ Use is_active field for game visibility control
+## Technical Decisions Made
 
-## Next Steps
-1. Create project structure
-2. Set up FastAPI backend with database
-3. Implement data models and basic endpoints
-4. Create API data processor
-5. Set up React frontend foundation
-6. Implement table display component
+### Database & Infrastructure
+1. ✅ **Database**: PostgreSQL (better for learning real-world skills)
+2. ✅ **Development Environment**: Full Docker setup (Option A)
+3. ✅ **Docker Architecture**: Backend + Frontend + PostgreSQL in containers
+4. ✅ **Authentication**: Add later with third-party (Google/GitHub)
+
+### Data Management
+5. ✅ Store both full GAME_CODE and base game ID
+6. ✅ Include category field for filtering
+7. ✅ Handle missing results with status system
+8. ✅ Auto-add new games from API responses
+9. ✅ **Data Retention**: Keep forever
+10. ✅ **Duplicate Handling**: Replace existing results
+11. ✅ **Timezone**: Display in local timezone
+
+### Development Approach
+12. ✅ **Scheduling**: Hourly API calls (configurable)
+13. ✅ **Status History**: Current status only (no history)
+14. ✅ **Game Visibility**: Use is_active field for control
+15. ✅ **Code Style**: Moderate comments (good but not excessive)
+16. ✅ **Complexity**: Start simple, add advanced features incrementally
+
+## Development Priority & Next Steps
+
+### **Priority #1**: External API → Database Storage
+First working feature should be getting data from external API and storing in database.
+
+### Development Phases
+1. **Phase 1**: Docker + PostgreSQL + FastAPI setup
+2. **Phase 2**: External API integration + data storage  
+3. **Phase 3**: Basic table display
+4. **Phase 4**: Add advanced features incrementally
+
+### Immediate Next Steps
+1. Create Docker setup (docker-compose.yml)
+2. Set up FastAPI backend with PostgreSQL
+3. Implement database models
+4. Create external API integration
+5. Test data import and storage
+6. Set up React frontend foundation
+
+### Docker Services Architecture
+```yaml
+# docker-compose.yml structure
+services:
+  postgres:     # PostgreSQL database
+  backend:      # FastAPI application
+  frontend:     # React development server
+```
+
+### Access Points
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000  
+- Database: localhost:5432
