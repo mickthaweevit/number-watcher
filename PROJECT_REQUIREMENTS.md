@@ -194,6 +194,7 @@ lottery-tracker/
 2. ✅ **Development Environment**: Full Docker setup (Option A)
 3. ✅ **Docker Architecture**: Backend + Frontend + PostgreSQL in containers
 4. ✅ **Authentication**: Add later with third-party (Google/GitHub)
+5. ✅ **Hosting**: Supabase (Database - Free forever) + Render (App hosting - Free tier)
 
 ### Data Management
 5. ✅ Store both full GAME_CODE and base game ID
