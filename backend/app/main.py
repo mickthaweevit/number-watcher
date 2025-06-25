@@ -17,10 +17,10 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
 
-# CORS middleware for React frontend
+# CORS middleware for Vue 3 frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
