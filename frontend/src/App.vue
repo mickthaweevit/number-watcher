@@ -5,7 +5,8 @@
       <p class="mt-1 text-sm text-gray-600">API Status: {{ apiStatus }}</p>
     </header>
     
-    <main>
+    <main class="p-6">
+      <SchedulerControl />
       <ResultsTable />
     </main>
   </div>
@@ -15,6 +16,7 @@
 import { ref, onMounted } from 'vue'
 import { gameApi } from './services/api'
 import ResultsTable from './components/ResultsTable.vue'
+import SchedulerControl from './components/SchedulerControl.vue'
 
 const apiStatus = ref('Checking...')
 

@@ -25,6 +25,7 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: postgresql://numwatch_user:numwatch_pass@postgres:5432/numwatch_db
+      EXTERNAL_API_URL: https://api.pansook24.co/api/home
     depends_on:
       postgres:
         condition: service_healthy

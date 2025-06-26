@@ -23,10 +23,18 @@ export interface Result {
   game: Game;
 }
 
+export interface DateResult {
+  result_2down: string | null;
+  result_3up: string | null;
+  result_4up: string | null;
+  status: string;
+  hasData: boolean; // Track if game has data for future features
+}
+
 export interface TableData {
   gameName: string;
   gameId: number;
   category: string;
   countryCode: string | null;
-  results: { [date: string]: string };
+  results: { [date: string]: DateResult };
 }

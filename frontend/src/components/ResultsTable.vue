@@ -20,14 +20,35 @@
     
     <!-- Main Content -->
     <div v-else>
+      <!-- Result Type Tabs -->
+      <div class="mb-4">
+        <div class="border-b border-gray-200">
+          <nav class="-mb-px flex space-x-6">
+            <button
+              v-for="tab in resultTabs"
+              :key="tab.key"
+              @click="activeTab = tab.key"
+              :class="[
+                'py-1 px-1 border-b-2 font-medium text-xs',
+                activeTab === tab.key
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700'
+              ]"
+            >
+              {{ tab.label }}
+            </button>
+          </nav>
+        </div>
+      </div>
+      
       <!-- Category Filter -->
-      <div class="mb-5">
-        <label class="text-sm font-medium text-gray-700 mr-3">Filter by Category:</label>
+      <div class="mb-4">
+        <label class="text-xs font-medium text-gray-600 mr-2">Category:</label>
         <select 
           v-model="selectedCategory"
-          class="border border-gray-300 rounded px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
-          <option value="all">All Categories</option>
+          <option value="all">All</option>
           <option v-for="category in categories" :key="category" :value="category">
             {{ category }}
           </option>
@@ -35,46 +56,58 @@
       </div>
 
       <!-- Results Table -->
-      <div class="overflow-x-auto border border-gray-200 rounded-lg">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
+      <div class="overflow-x-auto border border-gray-300 rounded">
+        <table class="min-w-full text-xs">
+          <thead class="bg-gray-100">
             <tr>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
-                Game Name
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+                Game
               </th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
-                Category
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+                Cat
               </th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200">
-                Country
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+                CC
               </th>
               <th 
                 v-for="date in uniqueDates" 
                 :key="date"
-                class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-r border-gray-200 last:border-r-0"
+                class="date-column px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300 last:border-r-0"
               >
-                {{ date }}
+                {{ formatDate(date) }}
               </th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="game in filteredTableData" :key="game.gameId" class="hover:bg-gray-50">
-              <td class="px-3 py-2 text-sm text-gray-900 border-r border-gray-200">
+          <tbody class="bg-white">
+            <tr v-for="game in filteredTableData" :key="game.gameId" class="border-b border-gray-200 hover:bg-gray-50">
+              <td class="px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
                 {{ game.gameName }}
               </td>
-              <td class="px-3 py-2 text-sm text-gray-900 border-r border-gray-200">
+              <td class="px-2 py-1 text-gray-700 border-r border-gray-200">
                 {{ game.category }}
               </td>
-              <td class="px-3 py-2 text-sm text-gray-900 border-r border-gray-200">
+              <td class="px-2 py-1 text-gray-700 border-r border-gray-200 text-center">
                 {{ game.countryCode || '-' }}
               </td>
               <td 
                 v-for="date in uniqueDates" 
                 :key="date"
-                class="px-3 py-2 text-sm text-center border-r border-gray-200 last:border-r-0"
-                :class="getResultCellClass(game.results[date])"
+                class="date-column px-2 py-1 text-center border-r border-gray-200 last:border-r-0"
+                :class="getResultCellClass(game.results[date]?.[activeTab])"
               >
-                {{ game.results[date] || '-' }}
+                <span v-if="game.results[date]?.[activeTab] === 'รอผล'" class="inline-block">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24">
+                    <path fill="currentColor" :d="mdiTimerSand" />
+                  </svg>
+                </span>
+                <span v-else-if="game.results[date]?.[activeTab] === 'ยกเลิก'" class="inline-block">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24">
+                    <path fill="currentColor" :d="mdiCancel" />
+                  </svg>
+                </span>
+                <span v-else>
+                  {{ game.results[date]?.[activeTab] || '-' }}
+                </span>
               </td>
             </tr>
           </tbody>
@@ -82,8 +115,8 @@
       </div>
 
       <!-- Footer Info -->
-      <div class="mt-4 text-sm text-gray-600">
-        Showing {{ filteredTableData.length }} games • Total results: {{ results.length }}
+      <div class="mt-3 text-xs text-gray-500">
+        {{ filteredTableData.length }} games • {{ results.length }} results
       </div>
     </div>
   </div>
@@ -92,14 +125,29 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { gameApi } from '../services/api'
-import type { Result, TableData } from '../types'
+import type { Result, TableData, DateResult } from '../types'
+import { mdiCancel, mdiTimerSand } from '@mdi/js'
 
 // Reactive state
 const results = ref<Result[]>([])
 const tableData = ref<TableData[]>([])
 const loading = ref(true)
 const selectedCategory = ref('all')
+const activeTab = ref('result_3up') // Default to 3-Up
 const error = ref('')
+
+// Tab configuration
+const resultTabs = [
+  { key: 'result_2down', label: '2-Down' },
+  { key: 'result_3up', label: '3-Up' },
+  { key: 'result_4up', label: '4-Up' }
+]
+
+// Format date for compact display
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr)
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
 
 // Computed properties
 const categories = computed(() => {
@@ -150,33 +198,51 @@ const transformDataForTable = (results: Result[]) => {
 
     const gameData = gameMap.get(result.game_id)!
     
-    // Format result display
-    let resultDisplay = ''
-    if (result.status === 'waiting') {
-      resultDisplay = 'รอผล'
-    } else if (result.status === 'cancelled') {
-      resultDisplay = 'ยกเลิก'
-    } else if (result.status === 'completed') {
-      const parts = []
-      if (result.result_3up) parts.push(result.result_3up)
-      if (result.result_2down) parts.push(result.result_2down)
-      if (result.result_4up) parts.push(result.result_4up)
-      resultDisplay = parts.join('/') || '-'
-    } else {
-      resultDisplay = '-'
+    // Initialize date entry if not exists
+    if (!gameData.results[result.result_date]) {
+      gameData.results[result.result_date] = {
+        result_2down: null,
+        result_3up: null,
+        result_4up: null,
+        status: result.status,
+        hasData: false
+      }
     }
-
-    gameData.results[result.result_date] = resultDisplay
+    
+    const dateEntry = gameData.results[result.result_date]
+    
+    // Process each result type separately
+    if (result.status === 'waiting') {
+      dateEntry.result_2down = 'รอผล'
+      dateEntry.result_3up = 'รอผล'
+      dateEntry.result_4up = 'รอผล'
+      dateEntry.hasData = true
+    } else if (result.status === 'cancelled') {
+      dateEntry.result_2down = 'ยกเลิก'
+      dateEntry.result_3up = 'ยกเลิก'
+      dateEntry.result_4up = 'ยกเลิก'
+      dateEntry.hasData = true
+    } else if (result.status === 'completed') {
+      // Set individual result types
+      dateEntry.result_2down = result.result_2down || null
+      dateEntry.result_3up = result.result_3up || null
+      dateEntry.result_4up = result.result_4up || null
+      
+      // Track if this game has data for future features
+      dateEntry.hasData = !!(result.result_2down || result.result_3up || result.result_4up)
+    }
   })
 
   tableData.value = Array.from(gameMap.values())
 }
 
-const getResultCellClass = (result: string | undefined) => {
+const getResultCellClass = (result: string | null | undefined) => {
   if (result === 'รอผล') {
-    return 'bg-yellow-100 text-yellow-800'
+    return 'text-yellow-500'
   } else if (result === 'ยกเลิก') {
-    return 'bg-red-100 text-red-800'
+    return 'text-red-500'
+  } else if (!result) {
+    return 'text-gray-400' // Lighter color for empty results
   }
   return 'text-gray-900'
 }
@@ -186,3 +252,57 @@ onMounted(() => {
   fetchResults()
 })
 </script>
+
+<style lang="scss" scoped>
+$border-color: #d1d5db;
+$hover-bg: #f9fafb;
+$text-primary: #111827;
+$text-secondary: #6b7280;
+$text-muted: #9ca3af;
+
+.date-column {
+  width: 40px;
+  min-width: 40px;
+  max-width: 40px;
+}
+
+.results-table {
+  th {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: $text-secondary;
+    border-right: 1px solid $border-color;
+    
+    &:last-child {
+      border-right: none;
+    }
+  }
+  
+  tr {
+    &:hover {
+      background-color: $hover-bg;
+    }
+    
+    td {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      
+      &.result-cell {
+        &.waiting {
+          background-color: #fef3c7;
+          color: #92400e;
+        }
+        
+        &.cancelled {
+          background-color: #fee2e2;
+          color: #991b1b;
+        }
+        
+        &.empty {
+          color: $text-muted;
+        }
+      }
+    }
+  }
+}
+</style>

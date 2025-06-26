@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
@@ -9,13 +10,27 @@ from .models.result import Result
 from .schemas.game import Game as GameSchema
 from .schemas.result import Result as ResultSchema
 from .services.data_processor import process_api_response
+from .services.external_api import ExternalAPIService
+from .services.scheduler import lottery_scheduler
 import json
+import os
+from datetime import datetime
 
 # Create database tables
 from .database import Base
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
+
+@app.on_event("startup")
+async def startup_event():
+    """Start the lottery data scheduler on app startup"""
+    lottery_scheduler.start_scheduler()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Stop the lottery data scheduler on app shutdown"""
+    lottery_scheduler.stop_scheduler()
 
 # CORS middleware for Vue 3 frontend
 app.add_middleware(
@@ -123,6 +138,67 @@ async def import_sample_data(db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
+@app.post("/import-live-data")
+async def import_live_data(date: Optional[str] = Query(None, description="Date in format YYYY-MM-DDTHH:MM:SS.000Z, defaults to today")):
+    # Set default date to today if not provided
+    if date is None:
+        date = datetime.now().strftime('%Y-%m-%dT%H:%M:%S.000Z')
+    external_api_url = os.getenv("EXTERNAL_API_URL")
+    
+    if not external_api_url:
+        raise HTTPException(
+            status_code=400, 
+            detail="External API URL not configured. Set EXTERNAL_API_URL environment variable."
+        )
+    
+    try:
+        async with ExternalAPIService(base_url=external_api_url) as api_service:
+            result = await api_service.import_live_data(date)
+            
+            if not result["success"]:
+                raise HTTPException(status_code=500, detail=result["message"])
+            
+            return result
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Live import failed: {str(e)}")
+
+@app.get("/scheduler/status")
+async def get_scheduler_status():
+    """Get scheduler status and next scheduled jobs"""
+    return lottery_scheduler.get_status()
+
+@app.post("/scheduler/start")
+async def start_scheduler():
+    """Start the lottery data scheduler"""
+    lottery_scheduler.start_scheduler()
+    return {"message": "Scheduler started", "status": lottery_scheduler.get_status()}
+
+@app.post("/scheduler/stop")
+async def stop_scheduler():
+    """Stop the lottery data scheduler"""
+    lottery_scheduler.stop_scheduler()
+    return {"message": "Scheduler stopped", "status": lottery_scheduler.get_status()}
+
+@app.post("/scheduler/trigger")
+async def trigger_manual_import():
+    """Manually trigger a scheduled import"""
+    result = lottery_scheduler.trigger_manual_import()
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result
+
+@app.post("/scheduler/import-range")
+async def import_date_range(
+    start_date: str = Query(..., description="Start date in format YYYY-MM-DDTHH:MM:SS.000Z"),
+    end_date: str = Query(..., description="End date in format YYYY-MM-DDTHH:MM:SS.000Z")
+):
+    """Import data for a date range (max 30 days)"""
+    result = lottery_scheduler.trigger_date_range_import(start_date, end_date)
+    if not result["success"]:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result
 
 @app.delete("/clear-data")
 async def clear_data(db: Session = Depends(get_db)):
