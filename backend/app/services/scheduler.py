@@ -29,7 +29,7 @@ class LotteryScheduler:
         self.is_running = True
         
         # Schedule imports every 5 minutes
-        schedule.every(1).minutes.do(self._run_scheduled_import)
+        schedule.every(5).minutes.do(self._run_scheduled_import)
         
         # Start scheduler in background thread
         self.scheduler_thread = threading.Thread(target=self._run_scheduler, daemon=True)
@@ -93,10 +93,14 @@ class LotteryScheduler:
             logger.error(f"Error in scheduled import: {str(e)}")
     
     async def _async_import(self) -> Dict[str, Any]:
-        """Async import method"""
+        """Async import method for current date"""
         try:
+            # Get current date and convert to previous day at 17:00 UTC
+            today = datetime.now()
+            api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
+            
             async with ExternalAPIService(base_url=self.external_api_url) as api_service:
-                result = await api_service.import_live_data()
+                result = await api_service.import_live_data(api_date)
                 return result
         except Exception as e:
             return {
@@ -230,16 +234,19 @@ class LotteryScheduler:
             "total_results_updated": total_results_updated
         }
     
-    async def _async_import_for_date(self, date: str) -> Dict[str, Any]:
+    async def _async_import_for_date(self, date_str: str) -> Dict[str, Any]:
         """Async import method for specific date"""
         try:
+            # Convert to previous day at 17:00 UTC
+            date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+            api_date = (date - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
+            
             async with ExternalAPIService(base_url=self.external_api_url) as api_service:
-                result = await api_service.import_live_data(date)
-                return result
+                return await api_service.import_live_data(api_date)
         except Exception as e:
             return {
                 "success": False,
-                "message": f"Import error for {date}: {str(e)}",
+                "message": f"Import error for {date_str}: {str(e)}",
                 "games_created": 0,
                 "results_updated": 0,
                 "total_records": 0

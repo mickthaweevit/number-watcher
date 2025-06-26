@@ -41,26 +41,43 @@
         </div>
       </div>
       
-      <!-- Category Filter -->
-      <div class="mb-4">
-        <label class="text-xs font-medium text-gray-600 mr-2">Category:</label>
-        <select 
-          v-model="selectedCategory"
-          class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          <option value="all">All</option>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
-          </option>
-        </select>
+      <!-- Filters -->
+      <div class="mb-4 flex space-x-4">
+        <!-- Category Filter -->
+        <div>
+          <label class="text-xs font-medium text-gray-600 mr-2">Category:</label>
+          <select 
+            v-model="selectedCategory"
+            class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="all">All</option>
+            <option v-for="category in categories" :key="category" :value="category">
+              {{ category }}
+            </option>
+          </select>
+        </div>
+        
+        <!-- Country Code Filter -->
+        <div>
+          <label class="text-xs font-medium text-gray-600 mr-2">Country:</label>
+          <select 
+            v-model="selectedCountry"
+            class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+          >
+            <option value="all">All</option>
+            <option v-for="code in countryCodes" :key="code" :value="code">
+              {{ code }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <!-- Results Table -->
-      <div class="overflow-x-auto border border-gray-300 rounded">
+      <div class="table-container border border-gray-300 rounded">
         <table class="min-w-full text-xs">
-          <thead class="bg-gray-100">
+          <thead class="bg-gray-100 sticky-header">
             <tr>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+              <th class="sticky-col-1 px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
                 Game
               </th>
               <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
@@ -80,13 +97,13 @@
           </thead>
           <tbody class="bg-white">
             <tr v-for="game in filteredTableData" :key="game.gameId" class="border-b border-gray-200 hover:bg-gray-50">
-              <td class="px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
+              <td class="sticky-col-1 px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
                 {{ game.gameName }}
               </td>
-              <td class="px-2 py-1 text-gray-700 border-r border-gray-200">
+              <td class="sticky-col-2 px-2 py-1 text-gray-700 border-r border-gray-200">
                 {{ game.category }}
               </td>
-              <td class="px-2 py-1 text-gray-700 border-r border-gray-200 text-center">
+              <td class="sticky-col-3 px-2 py-1 text-gray-700 border-r border-gray-200 text-center">
                 {{ game.countryCode || '-' }}
               </td>
               <td 
@@ -133,6 +150,7 @@ const results = ref<Result[]>([])
 const tableData = ref<TableData[]>([])
 const loading = ref(true)
 const selectedCategory = ref('all')
+const selectedCountry = ref('all') // Country Code filter
 const activeTab = ref('result_3up') // Default to 3-Up
 const error = ref('')
 
@@ -155,15 +173,36 @@ const categories = computed(() => {
   return Array.from(cats)
 })
 
+const countryCodes = computed(() => {
+  const codes = new Set(results.value.map(r => r.game.country_code).filter(Boolean))
+  return Array.from(codes).sort()
+})
+
 const uniqueDates = computed(() => {
   const dates = new Set(results.value.map(r => r.result_date))
   return Array.from(dates).sort()
 })
 
 const filteredTableData = computed(() => {
-  return selectedCategory.value === 'all' 
+  // Apply category filter
+  let filtered = selectedCategory.value === 'all' 
     ? tableData.value 
     : tableData.value.filter(game => game.category === selectedCategory.value)
+  
+  // Apply country code filter
+  if (selectedCountry.value !== 'all') {
+    filtered = filtered.filter(game => game.countryCode === selectedCountry.value)
+  }
+    
+  // Filter out games with no results for the active tab type
+  return filtered.filter(game => {
+    // Check if game has at least one result for the active tab type
+    return Object.values(game.results).some(dateResult => {
+      // Only show games that have data for the current active tab
+      return dateResult[activeTab.value] !== null && 
+             dateResult[activeTab.value] !== undefined
+    })
+  })
 })
 
 // Methods
@@ -244,7 +283,44 @@ const getResultCellClass = (result: string | null | undefined) => {
   } else if (!result) {
     return 'text-gray-400' // Lighter color for empty results
   }
+  
+  // Apply pattern highlighting only for 3-Up tab
+  if (activeTab.value === 'result_3up' && result && result.length === 3) {
+    const patternClass = getPatternClass(result)
+    if (patternClass) {
+      return `text-gray-900 ${patternClass}`
+    }
+  }
+  
   return 'text-gray-900'
+}
+
+const getPatternClass = (result: string): string => {
+  if (result.length !== 3) return ''
+  
+  const [d1, d2, d3] = result.split('')
+  
+  // Priority 1: All 3 digits same (111, 222, 333)
+  if (d1 === d2 && d2 === d3) {
+    return 'pattern-all-same'
+  }
+  
+  // Priority 2: First 2 digits same (113, 225, 882)
+  if (d1 === d2) {
+    return 'pattern-first-two'
+  }
+  
+  // Priority 3: Digit 1 & 3 same (040, 747, 202)
+  if (d1 === d3) {
+    return 'pattern-first-third'
+  }
+  
+  // Priority 4: Last 2 digits same (200, 877, 399)
+  if (d2 === d3) {
+    return 'pattern-last-two'
+  }
+  
+  return ''
 }
 
 // Lifecycle
@@ -260,10 +336,70 @@ $text-primary: #111827;
 $text-secondary: #6b7280;
 $text-muted: #9ca3af;
 
+// Pattern highlighting colors - easy to customize
+$pattern-all-same: #fecaca;     // Light red - highest priority
+$pattern-first-two: #bfdbfe;    // Light blue
+$pattern-first-third: #bbf7d0;  // Light green
+$pattern-last-two: #fef3c7;     // Light yellow
+
+// Table container with proper overflow settings
+.table-container {
+  overflow-x: auto;
+  overflow-y: visible;
+  max-height: 80vh;
+}
+
 .date-column {
   width: 40px;
   min-width: 40px;
   max-width: 40px;
+}
+
+// Sticky columns for horizontal scroll
+.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  background-color: white;
+  z-index: 10;
+  min-width: 120px;
+  max-width: 120px;
+}
+
+// Sticky header for vertical scroll - sticks to window top
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+// Make all header cells sticky
+.sticky-header th {
+  position: sticky;
+  top: 0;
+  background-color: #f3f4f6;
+}
+
+// Header sticky columns
+thead .sticky-col-1 {
+  background-color: #f3f4f6;
+  z-index: 30;
+}
+
+// Pattern highlighting classes
+:deep(.pattern-all-same) {
+  background-color: $pattern-all-same !important;
+}
+
+:deep(.pattern-first-two) {
+  background-color: $pattern-first-two !important;
+}
+
+:deep(.pattern-first-third) {
+  background-color: $pattern-first-third !important;
+}
+
+:deep(.pattern-last-two) {
+  background-color: $pattern-last-two !important;
 }
 
 .results-table {
