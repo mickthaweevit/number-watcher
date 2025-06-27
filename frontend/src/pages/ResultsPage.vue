@@ -140,7 +140,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { gameApi } from '../services/api'
 import type { Result, TableData, DateResult } from '../types'
 import { mdiCancel, mdiTimerSand } from '@mdi/js'
@@ -153,6 +153,9 @@ const selectedCategory = ref('all')
 const selectedCountry = ref('all') // Country Code filter
 const activeTab = ref('result_3up') // Default to 3-Up
 const error = ref('')
+
+// Request cancellation
+let abortController: AbortController | null = null
 
 // Tab configuration
 const resultTabs = [
@@ -208,14 +211,25 @@ const filteredTableData = computed(() => {
 // Methods
 const fetchResults = async () => {
   try {
+    // Cancel previous request if exists
+    if (abortController) {
+      abortController.abort()
+    }
+    
+    // Create new abort controller
+    abortController = new AbortController()
+    
     loading.value = true
     error.value = ''
-    const data = await gameApi.getAllResults()
+    const data = await gameApi.getAllResults(abortController.signal)
     results.value = data
     transformDataForTable(data)
-  } catch (err) {
-    error.value = 'Failed to fetch results'
-    console.error('API Error:', err)
+  } catch (err: any) {
+    // Don't show error if request was cancelled
+    if (err.name !== 'AbortError') {
+      error.value = 'Failed to fetch results'
+      console.error('API Error:', err)
+    }
   } finally {
     loading.value = false
   }
@@ -326,6 +340,13 @@ const getPatternClass = (result: string): string => {
 // Lifecycle
 onMounted(() => {
   fetchResults()
+})
+
+onUnmounted(() => {
+  // Cancel any pending requests when component unmounts
+  if (abortController) {
+    abortController.abort()
+  }
 })
 </script>
 

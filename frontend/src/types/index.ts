@@ -38,3 +38,17 @@ export interface TableData {
   countryCode: string | null;
   results: { [date: string]: DateResult };
 }
+
+export interface ImportLog {
+  id: number;
+  filename: string | null;
+  import_type: string;
+  started_at: string;
+  completed_at: string | null;
+  status: string;
+  records_processed: number;
+  games_created: number;
+  results_created: number;
+  error_message: string | null;
+  file_size: number | null;
+}

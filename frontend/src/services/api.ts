@@ -25,13 +25,13 @@ const api = axios.create({
 });
 
 export const gameApi = {
-  getAllGames: async (): Promise<Game[]> => {
-    const response = await api.get('/games');
+  getAllGames: async (signal?: AbortSignal): Promise<Game[]> => {
+    const response = await api.get('/games', { signal });
     return response.data;
   },
 
-  getAllResults: async (): Promise<Result[]> => {
-    const response = await api.get('/results');
+  getAllResults: async (signal?: AbortSignal): Promise<Result[]> => {
+    const response = await api.get('/results', { signal });
     return response.data;
   },
 
@@ -57,8 +57,8 @@ export const gameApi = {
   },
 
   // Scheduler endpoints
-  getSchedulerStatus: async () => {
-    const response = await api.get('/scheduler/status');
+  getSchedulerStatus: async (signal?: AbortSignal) => {
+    const response = await api.get('/scheduler/status', { signal });
     return response.data;
   },
 
@@ -81,6 +81,27 @@ export const gameApi = {
     const response = await api.post('/scheduler/import-range', null, {
       params: { start_date: startDate, end_date: endDate }
     });
+    return response.data;
+  },
+
+  // Backup endpoints
+  exportData: async () => {
+    const response = await api.get('/export-data');
+    return response.data;
+  },
+
+  importBackup: async (backupData: any) => {
+    const response = await api.post('/import-backup', backupData);
+    return response.data;
+  },
+
+  getImportLogs: async (signal?: AbortSignal) => {
+    const response = await api.get('/import-logs', { signal });
+    return response.data;
+  },
+
+  clearImportLogs: async () => {
+    const response = await api.delete('/import-logs');
     return response.data;
   }
 };

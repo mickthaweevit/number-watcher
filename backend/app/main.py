@@ -4,11 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 from .database import engine, get_db
-from .models import game, result
+from .models import game, result, import_log
 from .models.game import Game
 from .models.result import Result
+from .models.import_log import ImportLog
 from .schemas.game import Game as GameSchema
 from .schemas.result import Result as ResultSchema
+from .schemas.import_log import ImportLog as ImportLogSchema
 from .services.data_processor import process_api_response
 from .services.external_api import ExternalAPIService
 from .services.scheduler import lottery_scheduler
@@ -18,6 +20,8 @@ from datetime import datetime
 
 # Create database tables
 from .database import Base
+# Import all models to ensure they're registered
+from .models import game, result, import_log
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
@@ -64,6 +68,15 @@ async def get_results(db: Session = Depends(get_db)):
 @app.post("/import-sample-data")
 async def import_sample_data(db: Session = Depends(get_db)):
     """Import data from responseData.json for testing"""
+    # Create import log entry
+    import_log = ImportLog(
+        filename="responseData.json",
+        import_type="sample_data",
+        status="running"
+    )
+    db.add(import_log)
+    db.flush()
+    
     try:
         # Read the sample data file
         with open('/app/responseData.json', 'r', encoding='utf-8') as file:
@@ -128,6 +141,15 @@ async def import_sample_data(db: Session = Depends(get_db)):
             imported_count += 1
         
         db.commit()
+        
+        # Update import log with success
+        import_log.status = "success"
+        import_log.completed_at = datetime.now()
+        import_log.records_processed = imported_count
+        import_log.games_created = games_created
+        import_log.results_created = results_updated
+        db.commit()
+        
         return {
             "message": f"Successfully processed {imported_count} records",
             "games_created": games_created,
@@ -137,6 +159,13 @@ async def import_sample_data(db: Session = Depends(get_db)):
         
     except Exception as e:
         db.rollback()
+        
+        # Update import log with failure
+        import_log.status = "failed"
+        import_log.completed_at = datetime.now()
+        import_log.error_message = str(e)
+        db.commit()
+        
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
 
 @app.post("/import-live-data")
@@ -199,6 +228,173 @@ async def import_date_range(
     if not result["success"]:
         raise HTTPException(status_code=500, detail=result["message"])
     return result
+
+@app.get("/import-logs", response_model=List[ImportLogSchema])
+async def get_import_logs(db: Session = Depends(get_db)):
+    """Get recent import logs (last 20)"""
+    logs = db.query(ImportLog).order_by(ImportLog.started_at.desc()).limit(20).all()
+    return logs
+
+@app.delete("/import-logs")
+async def clear_import_logs(db: Session = Depends(get_db)):
+    """Clear all import log histories"""
+    try:
+        logs_deleted = db.query(ImportLog).count()
+        db.query(ImportLog).delete()
+        db.commit()
+        
+        return {
+            "message": "Import logs cleared successfully",
+            "logs_deleted": logs_deleted
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Clear logs failed: {str(e)}")
+
+@app.get("/export-data")
+async def export_data(db: Session = Depends(get_db)):
+    """Export all data as JSON backup"""
+    try:
+        # Get all games with their results
+        games = db.query(Game).all()
+        results = db.query(Result).all()
+        
+        # Convert to dictionaries
+        games_data = []
+        for game in games:
+            games_data.append({
+                "id": game.id,
+                "base_game_id": game.base_game_id,
+                "game_name": game.game_name,
+                "country_code": game.country_code,
+                "category": game.category,
+                "is_active": game.is_active,
+                "created_at": game.created_at.isoformat() if game.created_at else None
+            })
+        
+        results_data = []
+        for result in results:
+            results_data.append({
+                "id": result.id,
+                "game_id": result.game_id,
+                "full_game_code": result.full_game_code,
+                "result_date": result.result_date.isoformat() if result.result_date else None,
+                "result_3up": result.result_3up,
+                "result_2down": result.result_2down,
+                "result_4up": result.result_4up,
+                "status": result.status,
+                "created_at": result.created_at.isoformat() if result.created_at else None
+            })
+        
+        backup_data = {
+            "export_date": datetime.now().isoformat(),
+            "version": "1.0",
+            "games": games_data,
+            "results": results_data,
+            "stats": {
+                "total_games": len(games_data),
+                "total_results": len(results_data)
+            }
+        }
+        
+        return backup_data
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
+
+@app.post("/import-backup")
+async def import_backup(backup_data: dict, db: Session = Depends(get_db)):
+    """Import data from JSON backup"""
+    # Extract metadata if provided
+    metadata = backup_data.get("_metadata", {})
+    filename = metadata.get("filename")
+    file_size = metadata.get("file_size")
+    
+    # Create import log entry
+    import_log = ImportLog(
+        filename=filename,
+        import_type="backup",
+        status="running",
+        records_processed=len(backup_data.get("games", [])) + len(backup_data.get("results", [])),
+        file_size=file_size
+    )
+    db.add(import_log)
+    db.flush()
+    
+    try:
+        if "games" not in backup_data or "results" not in backup_data:
+            raise HTTPException(status_code=400, detail="Invalid backup format")
+        
+        games_created = 0
+        results_created = 0
+        
+        # Import games first
+        for game_data in backup_data["games"]:
+            existing_game = db.query(Game).filter(Game.base_game_id == game_data["base_game_id"]).first()
+            if not existing_game:
+                new_game = Game(
+                    base_game_id=game_data["base_game_id"],
+                    game_name=game_data["game_name"],
+                    country_code=game_data["country_code"],
+                    category=game_data["category"],
+                    is_active=game_data.get("is_active", True)
+                )
+                db.add(new_game)
+                games_created += 1
+        
+        db.flush()  # Flush to get game IDs
+        
+        # Import results
+        for result_data in backup_data["results"]:
+            # Find the game by base_game_id (since IDs might be different)
+            game = db.query(Game).filter(Game.base_game_id.in_(
+                [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
+            )).first()
+            
+            if game:
+                existing_result = db.query(Result).filter(
+                    Result.game_id == game.id,
+                    Result.result_date == result_data["result_date"]
+                ).first()
+                
+                if not existing_result:
+                    new_result = Result(
+                        game_id=game.id,
+                        full_game_code=result_data["full_game_code"],
+                        result_date=result_data["result_date"],
+                        result_3up=result_data["result_3up"],
+                        result_2down=result_data["result_2down"],
+                        result_4up=result_data["result_4up"],
+                        status=result_data["status"]
+                    )
+                    db.add(new_result)
+                    results_created += 1
+        
+        db.commit()
+        
+        # Update import log with success
+        import_log.status = "success"
+        import_log.completed_at = datetime.now()
+        import_log.games_created = games_created
+        import_log.results_created = results_created
+        db.commit()
+        
+        return {
+            "message": "Backup imported successfully",
+            "games_created": games_created,
+            "results_created": results_created
+        }
+        
+    except Exception as e:
+        db.rollback()
+        
+        # Update import log with failure
+        import_log.status = "failed"
+        import_log.completed_at = datetime.now()
+        import_log.error_message = str(e)
+        db.commit()
+        
+        raise HTTPException(status_code=500, detail=f"Import backup failed: {str(e)}")
 
 @app.delete("/clear-data")
 async def clear_data(db: Session = Depends(get_db)):
