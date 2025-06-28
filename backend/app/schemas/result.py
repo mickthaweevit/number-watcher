@@ -23,3 +23,6 @@ class Result(ResultBase):
 
     class Config:
         from_attributes = True
+
+# Alias for backward compatibility
+ResultResponse = Result

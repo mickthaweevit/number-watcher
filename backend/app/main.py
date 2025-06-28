@@ -4,13 +4,18 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 from .database import engine, get_db
-from .models import game, result, import_log
+from .models import game, result, import_log, user, dashboard_profile
 from .models.game import Game
 from .models.result import Result
 from .models.import_log import ImportLog
+from .models.user import User
+from .models.dashboard_profile import DashboardProfile
 from .schemas.game import Game as GameSchema
 from .schemas.result import Result as ResultSchema
 from .schemas.import_log import ImportLog as ImportLogSchema
+from .schemas.user import UserCreate, UserLogin, UserResponse, Token
+from .schemas.dashboard_profile import DashboardProfileCreate, DashboardProfileResponse
+from .services.auth import authenticate_user, create_access_token, get_current_user, get_password_hash
 from .services.data_processor import process_api_response
 from .services.external_api import ExternalAPIService
 from .services.scheduler import lottery_scheduler
@@ -21,7 +26,7 @@ from datetime import datetime
 # Create database tables
 from .database import Base
 # Import all models to ensure they're registered
-from .models import game, result, import_log
+from .models import game, result, import_log, user, dashboard_profile
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
@@ -415,3 +420,99 @@ async def clear_data(db: Session = Depends(get_db)):
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Clear failed: {str(e)}")
+
+# Authentication endpoints
+@app.post("/auth/register", response_model=UserResponse)
+async def register(user_data: UserCreate, db: Session = Depends(get_db)):
+    """Register a new user"""
+    # Check if username already exists
+    if db.query(User).filter(User.username == user_data.username).first():
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    # Check if email already exists
+    if db.query(User).filter(User.email == user_data.email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create new user
+    hashed_password = get_password_hash(user_data.password)
+    db_user = User(
+        username=user_data.username,
+        email=user_data.email,
+        password_hash=hashed_password
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    
+    return db_user
+
+@app.post("/auth/login", response_model=Token)
+async def login(user_data: UserLogin, db: Session = Depends(get_db)):
+    """Login user and return JWT token"""
+    user = authenticate_user(db, user_data.username, user_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Update last login
+    user.last_login = datetime.now()
+    db.commit()
+    
+    access_token = create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/auth/me", response_model=UserResponse)
+async def get_current_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user information"""
+    return current_user
+
+# Profile endpoints
+@app.get("/profiles", response_model=List[DashboardProfileResponse])
+async def get_user_profiles(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Get all dashboard profiles for current user"""
+    profiles = db.query(DashboardProfile).filter(DashboardProfile.user_id == current_user.id).all()
+    return profiles
+
+@app.post("/profiles", response_model=DashboardProfileResponse)
+async def create_profile(profile_data: DashboardProfileCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Create a new dashboard profile for current user"""
+    # Check if profile name already exists for this user
+    existing_profile = db.query(DashboardProfile).filter(
+        DashboardProfile.user_id == current_user.id,
+        DashboardProfile.profile_name == profile_data.profile_name
+    ).first()
+    
+    if existing_profile:
+        raise HTTPException(status_code=400, detail="Profile name already exists")
+    
+    db_profile = DashboardProfile(
+        user_id=current_user.id,
+        profile_name=profile_data.profile_name,
+        bet_amount=profile_data.bet_amount,
+        selected_patterns=profile_data.selected_patterns,
+        selected_game_ids=profile_data.selected_game_ids
+    )
+    db.add(db_profile)
+    db.commit()
+    db.refresh(db_profile)
+    
+    return db_profile
+
+@app.delete("/profiles/{profile_id}")
+async def delete_profile(profile_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Delete a dashboard profile (only if it belongs to current user)"""
+    profile = db.query(DashboardProfile).filter(
+        DashboardProfile.id == profile_id,
+        DashboardProfile.user_id == current_user.id
+    ).first()
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    db.delete(profile)
+    db.commit()
+    
+    return {"message": "Dashboard profile deleted successfully"}

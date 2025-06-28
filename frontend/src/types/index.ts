@@ -52,3 +52,22 @@ export interface ImportLog {
   error_message: string | null;
   file_size: number | null;
 }
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  created_at: string;
+  last_login?: string;
+}
+
+export interface DashboardProfile {
+  id: number;
+  user_id: number;
+  profile_name: string;
+  bet_amount: number;
+  selected_patterns: string[];
+  selected_game_ids: number[];
+  created_at: string;
+  updated_at: string;
+}

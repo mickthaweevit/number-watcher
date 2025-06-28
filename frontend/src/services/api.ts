@@ -1,6 +1,41 @@
 import axios from 'axios';
 import type { Game, Result } from '../types';
 
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  created_at: string;
+  last_login?: string;
+}
+
+export interface DashboardProfile {
+  id: number;
+  user_id: number;
+  profile_name: string;
+  bet_amount: number;
+  selected_patterns: string[];
+  selected_game_ids: number[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoginData {
+  username: string;
+  password: string;
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface Token {
+  access_token: string;
+  token_type: string;
+}
+
 export interface SchedulerStatus {
   is_running: boolean;
   external_api_configured: boolean;
@@ -23,6 +58,27 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const api = axios.create({
   baseURL: API_URL,
 });
+
+// Add token to requests if available
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Handle 401 responses
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const gameApi = {
   getAllGames: async (signal?: AbortSignal): Promise<Game[]> => {
@@ -102,6 +158,40 @@ export const gameApi = {
 
   clearImportLogs: async () => {
     const response = await api.delete('/import-logs');
+    return response.data;
+  }
+};
+
+export const authApi = {
+  register: async (userData: RegisterData): Promise<User> => {
+    const response = await api.post('/auth/register', userData);
+    return response.data;
+  },
+
+  login: async (userData: LoginData): Promise<Token> => {
+    const response = await api.post('/auth/login', userData);
+    return response.data;
+  },
+
+  getCurrentUser: async (): Promise<User> => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  }
+};
+
+export const profileApi = {
+  getProfiles: async (): Promise<DashboardProfile[]> => {
+    const response = await api.get('/profiles');
+    return response.data;
+  },
+
+  createProfile: async (profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<DashboardProfile> => {
+    const response = await api.post('/profiles', profileData);
+    return response.data;
+  },
+
+  deleteProfile: async (profileId: number): Promise<{ message: string }> => {
+    const response = await api.delete(`/profiles/${profileId}`);
     return response.data;
   }
 };

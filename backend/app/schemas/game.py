@@ -19,3 +19,6 @@ class Game(GameBase):
 
     class Config:
         from_attributes = True
+
+# Alias for backward compatibility
+GameResponse = Game

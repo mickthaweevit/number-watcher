@@ -22,3 +22,6 @@ class ImportLog(ImportLogBase):
 
     class Config:
         from_attributes = True
+
+# Alias for backward compatibility
+ImportLogResponse = ImportLog

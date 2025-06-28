@@ -2,42 +2,79 @@
   <div class="bg-white rounded-lg shadow-md p-6">
     <h2 class="text-xl font-bold text-gray-800 mb-6">3-Up Pattern Analysis Dashboard</h2>
     
-    <!-- Input Controls -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-      <!-- Bet Amount -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Bet Amount</label>
-        <input
-          v-model.number="betAmount"
-          type="number"
-          min="1"
-          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter bet amount"
-        />
-      </div>
-      
-      <!-- Pattern Selection -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Selected Patterns</label>
-        <div class="space-y-2">
-          <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center">
-            <input
-              v-model="selectedPatterns"
-              :value="pattern.key"
-              type="checkbox"
-              class="mr-2"
-            />
-            <span class="text-sm">{{ pattern.label }}</span>
-          </label>
+    <!-- User Welcome Section -->
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800">Welcome, {{ user?.username }}!</h3>
+          <p class="text-sm text-gray-600">{{ user?.email }}</p>
         </div>
       </div>
-      
-      <!-- Game Selection -->
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Add Game</label>
+    </div>
+    
+    <!-- Profile Management -->
+    <div class="bg-green-50 p-4 rounded-lg mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">Profile Management</h3>
+      <div class="flex gap-3 mb-3">
+        <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded">
+          <option :value="null">Select saved profile...</option>
+          <option v-for="profile in profiles" :key="profile.id" :value="profile.id">
+            {{ profile.profile_name }}
+          </option>
+        </select>
+        <button @click="loadProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
+          Load
+        </button>
+        <button @click="showSaveProfileForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          Save Current
+        </button>
+        <button @click="deleteProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
+          Delete
+        </button>
+      </div>
+    </div>
+    
+    <!-- Global Controls -->
+    <div class="bg-blue-50 p-4 rounded-lg mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Global Settings</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Bet Amount -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Bet Amount (applies to all games)</label>
+          <input
+            v-model.number="betAmount"
+            type="number"
+            min="1"
+            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter bet amount"
+          />
+        </div>
+        
+        <!-- Pattern Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Selected Patterns (applies to all games)</label>
+          <div class="space-y-2">
+            <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center">
+              <input
+                v-model="selectedPatterns"
+                :value="pattern.key"
+                type="checkbox"
+                class="mr-2"
+              />
+              <span class="text-sm">{{ pattern.label }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Game Management -->
+    <div class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">Game Management</h3>
+      <div class="flex gap-3 mb-4">
         <select
           v-model="selectedGameId"
-          class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+          class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Select a game to add</option>
           <option v-for="game in availableGames" :key="game.id" :value="game.id">
@@ -47,10 +84,62 @@
         <button
           @click="addGame"
           :disabled="!selectedGameId"
-          class="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Add Game
         </button>
+      </div>
+      
+      <!-- Game Results Preview -->
+      <div v-if="selectedGames.length > 0" class="overflow-x-auto">
+        <table class="min-w-full text-xs">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+                Actions
+              </th>
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+                Cal
+              </th>
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">Game</th>
+              <th v-for="date in baseTableData.dates" :key="date.raw" class="px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300">
+                {{ date.formatted }}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white">
+            <tr v-for="gameAnalysis in baseTableData.games" :key="gameAnalysis.game.id" class="border-b border-gray-200">
+              <td class="px-2 py-1 text-center border-r border-gray-200">
+                <button
+                  @click="removeGame(gameAnalysis.game.id)"
+                  class="text-red-600 hover:text-red-800 p-1"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+                  </svg>
+                </button>
+              </td>
+              <td class="px-2 py-1 text-center border-r border-gray-200">
+                <input
+                  v-model="gameAnalysis.calculate"
+                  type="checkbox"
+                  class="rounded"
+                />
+              </td>
+              <td class="px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
+                {{ gameAnalysis.game.game_name }}
+              </td>
+              <template v-for="date in baseTableData.dates" :key="date.raw">
+                <td v-if="gameAnalysis.calculate" class="px-2 py-1 text-center border-r border-gray-200" :class="getCellData(gameAnalysis.game.id, date.raw).cssClass">
+                  {{ getCellData(gameAnalysis.game.id, date.raw).result || '-' }}
+                </td>
+                <td v-else class="px-2 py-1 text-center border-r border-gray-200">
+                  <span class="text-gray-400">-</span>
+                </td>
+              </template>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     
@@ -61,28 +150,25 @@
         <table class="min-w-full bg-white border border-gray-200 rounded">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calculate</th>
+              <!-- <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calculate</th> -->
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Category</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total Results</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pattern Matches</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Win Amount</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Loss Amount</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Net</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr v-for="gameAnalysis in selectedGames" :key="gameAnalysis.game.id" class="hover:bg-gray-50">
-              <td class="px-3 py-2">
+              <!-- <td class="px-3 py-2">
                 <input
                   v-model="gameAnalysis.calculate"
                   type="checkbox"
                   class="rounded"
                 />
-              </td>
+              </td> -->
               <td class="px-3 py-2 text-sm text-gray-900">{{ gameAnalysis.game.game_name }}</td>
-              <td class="px-3 py-2 text-sm text-gray-600">{{ gameAnalysis.game.category }}</td>
               <td class="px-3 py-2 text-sm text-gray-600">
                 {{ gameAnalysis.calculate ? gameAnalysis.totalResults : '-' }}
               </td>
@@ -100,14 +186,6 @@
               </td>
               <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(gameAnalysis.netAmount)">
                 {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.netAmount) : '-' }}
-              </td>
-              <td class="px-3 py-2">
-                <button
-                  @click="removeGame(gameAnalysis.game.id)"
-                  class="text-red-600 hover:text-red-800 text-sm"
-                >
-                  Remove
-                </button>
               </td>
             </tr>
           </tbody>
@@ -163,22 +241,52 @@
         </div>
       </div>
     </div>
+
+    <!-- Save Profile Modal -->
+    <div v-if="showSaveProfileForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold mb-4">Save Profile</h3>
+        <form @submit.prevent="saveProfile">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Profile Name</label>
+            <input v-model="newProfileName" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter profile name">
+          </div>
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Save
+            </button>
+            <button type="button" @click="showSaveProfileForm = false" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { gameApi } from '../services/api'
-import type { Game, Result } from '../types'
+import { ref, computed, onMounted, watch } from 'vue'
+import { gameApi, authApi, profileApi } from '../services/api'
+import type { Game, Result, User, DashboardProfile } from '../types'
 
 // Reactive state
-const betAmount = ref(10)
+const betAmount = ref(10) // Default bet amount
 const selectedPatterns = ref<string[]>([])
 const selectedGameId = ref('')
 const selectedGames = ref<GameAnalysis[]>([])
 const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
+
+// User state (always logged in now)
+const user = ref<User | null>(null)
+
+// Profile state
+const profiles = ref<DashboardProfile[]>([])
+const selectedProfileId = ref<number | null>(null)
+const showSaveProfileForm = ref(false)
+const newProfileName = ref('')
 
 // Pattern definitions with count information
 const availablePatterns = [
@@ -262,6 +370,9 @@ const addGame = () => {
   
   selectedGames.value.push(analysis)
   selectedGameId.value = ''
+  
+  // Recalculate all games when new game is added
+  recalculateAllGames()
 }
 
 const removeGame = (gameId: number) => {
@@ -308,7 +419,7 @@ const analyzeGame = (game: Game, results: Result[]): GameAnalysis => {
   const totalResults = results.filter(r => r.result_3up && r.status === 'completed').length
   const winAmount = patternMatches * betAmount.value * 1000 // Prize per win
   const totalBetAmount = totalResults * dailyBetAmount // Total amount bet across all days
-  const lossAmount = totalBetAmount - (patternMatches * betAmount.value * 1000) // Amount lost
+  const lossAmount = totalBetAmount // Amount lost
   const netAmount = winAmount - totalBetAmount // Net = total winnings - total bets
   
   return {
@@ -358,8 +469,190 @@ const getNetClass = (amount: number): string => {
   return 'text-gray-600'
 }
 
+// Watch for changes in global settings
+const recalculateAllGames = () => {
+  selectedGames.value.forEach(gameAnalysis => {
+    if (gameAnalysis.calculate) {
+      const gameResults = allResults.value.filter(r => r.game_id === gameAnalysis.game.id && r.result_3up)
+      const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
+      Object.assign(gameAnalysis, newAnalysis)
+    }
+  })
+}
+
+// Watch for changes in bet amount or patterns
+watch([betAmount, selectedPatterns], () => {
+  recalculateAllGames()
+}, { deep: true })
+
+// Get current user (always authenticated)
+const getCurrentUser = async () => {
+  try {
+    user.value = await authApi.getCurrentUser()
+    await fetchProfiles()
+  } catch (error) {
+    console.error('Failed to get user:', error)
+  }
+}
+
+// Profile methods
+const fetchProfiles = async () => {
+  try {
+    profiles.value = await profileApi.getProfiles()
+  } catch (error) {
+    console.error('Failed to fetch profiles:', error)
+  }
+}
+
+const saveProfile = async () => {
+  if (!newProfileName.value.trim()) {
+    alert('Please enter a profile name')
+    return
+  }
+  
+  try {
+    const profileData = {
+      profile_name: newProfileName.value,
+      bet_amount: betAmount.value,
+      selected_patterns: selectedPatterns.value,
+      selected_game_ids: selectedGames.value.map(g => g.game.id)
+    }
+    
+    await profileApi.createProfile(profileData)
+    await fetchProfiles()
+    showSaveProfileForm.value = false
+    newProfileName.value = ''
+    alert('Profile saved successfully!')
+  } catch (error) {
+    alert('Failed to save profile. Name may already exist.')
+  }
+}
+
+const loadProfile = async () => {
+  if (!selectedProfileId.value) return
+  
+  const profile = profiles.value.find(p => p.id === selectedProfileId.value)
+  if (!profile) return
+  
+  // Apply profile settings
+  betAmount.value = profile.bet_amount
+  selectedPatterns.value = [...profile.selected_patterns]
+  
+  // Load games
+  selectedGames.value = []
+  for (const gameId of profile.selected_game_ids) {
+    const game = allGames.value.find(g => g.id === gameId)
+    if (game) {
+      const gameResults = allResults.value.filter(r => r.game_id === game.id && r.result_3up)
+      selectedGames.value.push(analyzeGame(game, gameResults))
+    }
+  }
+  
+  alert('Profile loaded successfully!')
+}
+
+const deleteProfile = async () => {
+  if (!selectedProfileId.value) return
+  
+  const profile = profiles.value.find(p => p.id === selectedProfileId.value)
+  if (!profile) return
+  
+  if (confirm(`Delete profile "${profile.profile_name}"?`)) {
+    try {
+      await profileApi.deleteProfile(selectedProfileId.value)
+      await fetchProfiles()
+      selectedProfileId.value = null
+      alert('Profile deleted successfully!')
+    } catch (error) {
+      alert('Failed to delete profile')
+    }
+  }
+}
+
+// Base table data (doesn't change with patterns)
+const baseTableData = computed(() => {
+  if (selectedGames.value.length === 0) return { dates: [], games: [], cells: {} }
+  
+  const gameIds = selectedGames.value.map(g => g.game.id)
+  const dates = Array.from(new Set(
+    allResults.value
+      .filter(r => gameIds.includes(r.game_id))
+      .map(r => r.result_date)
+  )).sort()
+  
+  const formattedDates = dates.map(date => ({
+    raw: date,
+    formatted: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }))
+  
+  const cells: { [key: string]: { result: string | null, baseClass: string } } = {}
+  
+  selectedGames.value.forEach(gameAnalysis => {
+    dates.forEach(date => {
+      const key = `${gameAnalysis.game.id}-${date}`
+      const result = allResults.value.find(r => r.game_id === gameAnalysis.game.id && r.result_date === date)
+      
+      let cellResult: string | null = null
+      let baseClass = 'text-gray-400'
+      
+      if (result) {
+        if (result.status === 'waiting') {
+          cellResult = 'รอผล'
+          baseClass = 'text-yellow-600 bg-yellow-50'
+        } else if (result.status === 'cancelled') {
+          cellResult = 'ยกเลิก'
+          baseClass = 'text-red-600 bg-red-50'
+        } else if (result.result_3up) {
+          cellResult = result.result_3up
+          baseClass = 'text-gray-900'
+        }
+      }
+      
+      cells[key] = { result: cellResult, baseClass }
+    })
+  })
+  
+  return { dates: formattedDates, games: selectedGames.value, cells }
+})
+
+// Pattern classes (only recalculates when patterns change)
+const patternClasses = computed(() => {
+  const classes: { [key: string]: string } = {}
+  
+  Object.entries(baseTableData.value.cells).forEach(([key, cell]) => {
+    if (cell.result && cell.result.length === 3 && cell.baseClass === 'text-gray-900') {
+      const [d1, d2, d3] = cell.result.split('')
+      
+      if (selectedPatterns.value.includes('all_same') && d1 === d2 && d2 === d3) {
+        classes[key] = 'bg-red-100'
+      } else if (selectedPatterns.value.includes('first_two') && d1 === d2 && d2 !== d3) {
+        classes[key] = 'bg-blue-100'
+      } else if (selectedPatterns.value.includes('first_third') && d1 === d3 && d1 !== d2) {
+        classes[key] = 'bg-green-100'
+      } else if (selectedPatterns.value.includes('last_two') && d2 === d3 && d1 !== d2) {
+        classes[key] = 'bg-yellow-100'
+      }
+    }
+  })
+  
+  return classes
+})
+
+// Helper function to get cell data with pattern highlighting
+const getCellData = (gameId: number, date: string) => {
+  const key = `${gameId}-${date}`
+  const baseCell = baseTableData.value.cells[key] || { result: null, baseClass: 'text-gray-400' }
+  const patternClass = patternClasses.value[key] || ''
+  
+  return {
+    result: baseCell.result,
+    cssClass: patternClass ? `${baseCell.baseClass} ${patternClass}` : baseCell.baseClass
+  }
+}
+
 // Lifecycle
-onMounted(() => {
-  fetchData()
+onMounted(async () => {
+  await getCurrentUser()
+  await fetchData()
 })
 </script>
