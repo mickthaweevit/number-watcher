@@ -196,4 +196,21 @@ export const profileApi = {
   }
 };
 
+export const adminApi = {
+  createInviteCode: async (inviteData: { expires_at: string | null }) => {
+    const response = await api.post('/admin/invite-codes', inviteData);
+    return response.data;
+  },
+
+  getInviteCodes: async () => {
+    const response = await api.get('/admin/invite-codes');
+    return response.data;
+  },
+
+  getUsers: async (): Promise<User[]> => {
+    const response = await api.get('/admin/users');
+    return response.data;
+  }
+};
+
 export default api;

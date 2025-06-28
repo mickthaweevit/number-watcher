@@ -93,6 +93,16 @@
               placeholder="Choose a password"
             />
           </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Invite Code</label>
+            <input
+              v-model="registerData.invite_code"
+              type="text"
+              required
+              class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter your invite code"
+            />
+          </div>
         </div>
         
         <div v-if="error" class="text-red-600 text-sm text-center">
@@ -135,7 +145,7 @@ const loading = ref(false)
 const error = ref('')
 
 const loginData = ref({ username: '', password: '' })
-const registerData = ref({ username: '', email: '', password: '' })
+const registerData = ref({ username: '', email: '', password: '', invite_code: '' })
 
 const login = async () => {
   try {

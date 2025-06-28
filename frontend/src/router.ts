@@ -37,6 +37,12 @@ const routes = [
     name: 'Scheduler',
     component: SchedulerPage,
     beforeEnter: requireAuth
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('./pages/AdminPage.vue'),
+    beforeEnter: requireAuth
   }
 ]
 

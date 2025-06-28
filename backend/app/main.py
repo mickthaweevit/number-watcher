@@ -4,17 +4,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from typing import List
 from .database import engine, get_db
-from .models import game, result, import_log, user, dashboard_profile
+from .models import game, result, import_log, user, dashboard_profile, invite_code
 from .models.game import Game
 from .models.result import Result
 from .models.import_log import ImportLog
 from .models.user import User
 from .models.dashboard_profile import DashboardProfile
+from .models.invite_code import InviteCode
 from .schemas.game import Game as GameSchema
 from .schemas.result import Result as ResultSchema
 from .schemas.import_log import ImportLog as ImportLogSchema
 from .schemas.user import UserCreate, UserLogin, UserResponse, Token
 from .schemas.dashboard_profile import DashboardProfileCreate, DashboardProfileResponse
+from .schemas.invite_code import InviteCodeCreate, InviteCodeResponse, UserRegisterWithInvite
 from .services.auth import authenticate_user, create_access_token, get_current_user, get_password_hash
 from .services.data_processor import process_api_response
 from .services.external_api import ExternalAPIService
@@ -26,7 +28,7 @@ from datetime import datetime
 # Create database tables
 from .database import Base
 # Import all models to ensure they're registered
-from .models import game, result, import_log, user, dashboard_profile
+from .models import game, result, import_log, user, dashboard_profile, invite_code
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
@@ -423,8 +425,21 @@ async def clear_data(db: Session = Depends(get_db)):
 
 # Authentication endpoints
 @app.post("/auth/register", response_model=UserResponse)
-async def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    """Register a new user"""
+async def register(user_data: UserRegisterWithInvite, db: Session = Depends(get_db)):
+    """Register a new user with invite code"""
+    # Validate invite code
+    invite = db.query(InviteCode).filter(
+        InviteCode.code == user_data.invite_code,
+        InviteCode.is_used == False
+    ).first()
+    
+    if not invite:
+        raise HTTPException(status_code=400, detail="Invalid or used invite code")
+    
+    # Check if invite code is expired
+    if invite.expires_at and invite.expires_at < datetime.now():
+        raise HTTPException(status_code=400, detail="Invite code has expired")
+    
     # Check if username already exists
     if db.query(User).filter(User.username == user_data.username).first():
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -441,6 +456,12 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
         password_hash=hashed_password
     )
     db.add(db_user)
+    db.flush()
+    
+    # Mark invite code as used
+    invite.is_used = True
+    invite.used_by = db_user.id
+    
     db.commit()
     db.refresh(db_user)
     
@@ -516,3 +537,39 @@ async def delete_profile(profile_id: int, current_user: User = Depends(get_curre
     db.commit()
     
     return {"message": "Dashboard profile deleted successfully"}
+
+# Admin-only endpoints
+def require_admin(current_user: User = Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return current_user
+
+@app.post("/admin/invite-codes", response_model=InviteCodeResponse)
+async def create_invite_code(invite_data: InviteCodeCreate, admin_user: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """Create a new invite code (admin only)"""
+    import secrets
+    
+    code = secrets.token_urlsafe(16)
+    
+    db_invite = InviteCode(
+        code=code,
+        created_by=admin_user.id,
+        expires_at=invite_data.expires_at
+    )
+    db.add(db_invite)
+    db.commit()
+    db.refresh(db_invite)
+    
+    return db_invite
+
+@app.get("/admin/invite-codes", response_model=List[InviteCodeResponse])
+async def get_invite_codes(admin_user: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """Get all invite codes (admin only)"""
+    codes = db.query(InviteCode).order_by(InviteCode.created_at.desc()).all()
+    return codes
+
+@app.get("/admin/users", response_model=List[UserResponse])
+async def get_all_users(admin_user: User = Depends(require_admin), db: Session = Depends(get_db)):
+    """Get all users (admin only)"""
+    users = db.query(User).order_by(User.created_at.desc()).all()
+    return users

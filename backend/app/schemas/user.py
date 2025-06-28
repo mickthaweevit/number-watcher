@@ -15,6 +15,7 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: str
+    is_admin: bool
     created_at: datetime
     last_login: Optional[datetime] = None
     

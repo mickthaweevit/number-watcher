@@ -33,6 +33,14 @@
           >
             Scheduler
           </router-link>
+          <router-link 
+            v-if="isAdmin"
+            to="/admin" 
+            class="px-4 py-2 rounded transition-colors"
+            :class="$route.path === '/admin' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-200'"
+          >
+            Admin
+          </router-link>
           <button 
             @click="logout"
             class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
@@ -50,13 +58,31 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { authApi } from './services/api'
 import SchedulerStatus from './components/SchedulerStatus.vue'
 
 const router = useRouter()
+const isAdmin = ref(false)
+
+const checkAdminStatus = async () => {
+  try {
+    const user = await authApi.getCurrentUser()
+    isAdmin.value = user.is_admin
+  } catch (error) {
+    isAdmin.value = false
+  }
+}
 
 const logout = () => {
   localStorage.removeItem('auth_token')
   router.push('/login')
 }
+
+onMounted(() => {
+  if (localStorage.getItem('auth_token')) {
+    checkAdminStatus()
+  }
+})
 </script>
