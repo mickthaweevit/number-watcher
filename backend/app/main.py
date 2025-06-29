@@ -29,7 +29,14 @@ from datetime import datetime
 from .database import Base
 # Import all models to ensure they're registered
 from .models import game, result, import_log, user, dashboard_profile, invite_code
-Base.metadata.create_all(bind=engine)
+# Create database tables (with error handling for deployment)
+try:
+    Base.metadata.create_all(bind=engine)
+    print("✅ Database tables created successfully")
+except Exception as e:
+    print(f"⚠️ Database connection failed during startup: {e}")
+    print("📝 Tables will be created on first API call")
+    # Don't fail the app startup - let it handle DB connection later
 
 app = FastAPI(title="NumWatch API", version="1.0.0")
 
