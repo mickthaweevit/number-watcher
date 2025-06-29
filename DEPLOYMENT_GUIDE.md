@@ -47,8 +47,9 @@
    ```
    Name: numwatch-backend
    Environment: Python 3
-   Build Command: pip install -r backend/requirements.txt
+   Build Command: cd backend && pip install -r requirements.txt
    Start Command: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+   Root Directory: backend
    Python Version: 3.11.9
    ```
 
