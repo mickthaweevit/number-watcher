@@ -1,0 +1,58 @@
+2025-06-29T10:51:47.066841895Z ==> Cloning from https://github.com/mickthaweevit/number-watcher
+2025-06-29T10:51:48.043266742Z ==> Checking out commit d3d221ee8542eb15777ffe58ab50b214aaa18f52 in branch main
+2025-06-29T10:51:51.113785754Z ==> Installing dependencies with npm...
+2025-06-29T10:51:51.275885593Z ==> Using Node.js version 22.16.0 (default)
+2025-06-29T10:51:51.323225824Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2025-06-29T10:51:54.040678836Z ==> Using Bun version 1.1.0 (default)
+2025-06-29T10:51:54.040710117Z ==> Docs on specifying a Bun version: https://render.com/docs/bun-version
+2025-06-29T10:52:34.376388953Z 
+2025-06-29T10:52:34.376464404Z added 204 packages, and audited 205 packages in 40s
+2025-06-29T10:52:34.376501865Z 
+2025-06-29T10:52:34.376510565Z 47 packages are looking for funding
+2025-06-29T10:52:34.376516525Z   run `npm fund` for details
+2025-06-29T10:52:34.394017398Z 
+2025-06-29T10:52:34.394040148Z 5 moderate severity vulnerabilities
+2025-06-29T10:52:34.394047048Z 
+2025-06-29T10:52:34.394053908Z To address all issues (including breaking changes), run:
+2025-06-29T10:52:34.394061038Z   npm audit fix --force
+2025-06-29T10:52:34.394066769Z 
+2025-06-29T10:52:34.394072849Z Run `npm audit` for details.
+2025-06-29T10:52:36.087367866Z 
+2025-06-29T10:52:36.087413126Z added 2 packages, and audited 207 packages in 1s
+2025-06-29T10:52:36.087418996Z 
+2025-06-29T10:52:36.087424276Z 48 packages are looking for funding
+2025-06-29T10:52:36.087463247Z   run `npm fund` for details
+2025-06-29T10:52:36.112919263Z 
+2025-06-29T10:52:36.112969023Z 5 moderate severity vulnerabilities
+2025-06-29T10:52:36.112975433Z 
+2025-06-29T10:52:36.112981764Z To address all issues (including breaking changes), run:
+2025-06-29T10:52:36.112988074Z   npm audit fix --force
+2025-06-29T10:52:36.112992804Z 
+2025-06-29T10:52:36.112998684Z Run `npm audit` for details.
+2025-06-29T10:52:36.156729955Z ==> Running build command 'npm install && npm run build'...
+2025-06-29T10:52:37.626339343Z 
+2025-06-29T10:52:37.626371604Z up to date, audited 207 packages in 1s
+2025-06-29T10:52:37.626377624Z 
+2025-06-29T10:52:37.626407255Z 48 packages are looking for funding
+2025-06-29T10:52:37.626418775Z   run `npm fund` for details
+2025-06-29T10:52:37.662001729Z 
+2025-06-29T10:52:37.66204149Z 5 moderate severity vulnerabilities
+2025-06-29T10:52:37.66204783Z 
+2025-06-29T10:52:37.66205615Z To address all issues (including breaking changes), run:
+2025-06-29T10:52:37.66206196Z   npm audit fix --force
+2025-06-29T10:52:37.66206683Z 
+2025-06-29T10:52:37.662073231Z Run `npm audit` for details.
+2025-06-29T10:52:37.930218662Z 
+2025-06-29T10:52:37.930253242Z > numwatch-frontend-vue@0.1.0 build
+2025-06-29T10:52:37.930260642Z > vue-tsc && vite build
+2025-06-29T10:52:37.930265732Z 
+2025-06-29T10:52:38.004782898Z 
+2025-06-29T10:52:38.004818728Z /opt/render/project/src/frontend/node_modules/vue-tsc/bin/vue-tsc.js:68
+2025-06-29T10:52:38.004824568Z 			throw err;
+2025-06-29T10:52:38.004829868Z 			^
+2025-06-29T10:52:38.004835749Z Search string not found: "/supportedTSExtensions = .*(?=;)/"
+2025-06-29T10:52:38.004841149Z (Use `node --trace-uncaught ...` to show where the exception was thrown)
+2025-06-29T10:52:38.004845899Z 
+2025-06-29T10:52:38.004850899Z Node.js v22.16.0
+2025-06-29T10:52:38.025326801Z ==> Build failed 😞
+2025-06-29T10:52:38.025353781Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys

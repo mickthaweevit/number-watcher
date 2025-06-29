@@ -150,23 +150,13 @@ async def get_database_info():
 
 @app.get("/games", response_model=List[GameSchema])
 async def get_games(db: Session = Depends(get_db)):
-    """Get all games - optimized fields"""
+    """Get all games"""
     try:
-        # Only select fields needed by frontend
-        games = db.query(
-            Game.id,
-            Game.game_name,
-            Game.category,
-            Game.country_code,
-            Game.base_game_id,
-            Game.is_active
-        ).filter(Game.is_active == True).all()
+        games = db.query(Game).filter(Game.is_active == True).all()
         return games
     except Exception as e:
         print(f"Error in get_games: {str(e)}")
-        # Fallback to original query
-        games = db.query(Game).filter(Game.is_active == True).all()
-        return games
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.get("/results", response_model=List[ResultSchema])
 async def get_results(db: Session = Depends(get_db)):
