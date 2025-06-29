@@ -58,12 +58,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { authApi } from './services/api'
 import SchedulerStatus from './components/SchedulerStatus.vue'
 
 const router = useRouter()
+const route = useRoute()
 const isAdmin = ref(false)
 
 const checkAdminStatus = async () => {
@@ -80,9 +81,18 @@ const logout = () => {
   router.push('/login')
 }
 
-onMounted(() => {
+const updateAdminStatus = () => {
   if (localStorage.getItem('auth_token')) {
     checkAdminStatus()
+  } else {
+    isAdmin.value = false
   }
+}
+
+onMounted(updateAdminStatus)
+
+// Update admin status when route changes (after login)
+watch(() => route.path, () => {
+  updateAdminStatus()
 })
 </script>
