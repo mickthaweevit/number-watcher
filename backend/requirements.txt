@@ -3,7 +3,7 @@ uvicorn[standard]==0.22.0
 sqlalchemy==2.0.15
 psycopg2-binary==2.9.6
 alembic==1.11.1
-pydantic==1.10.8
+pydantic==1.9.2
 python-multipart==0.0.6
 httpx==0.24.1
 schedule==1.2.0
