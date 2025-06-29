@@ -43,10 +43,15 @@ async def shutdown_event():
     """Stop the lottery data scheduler on app shutdown"""
     lottery_scheduler.stop_scheduler()
 
-# CORS middleware for Vue 3 frontend
+# CORS middleware - support both development and production
+import os
+
+# Get CORS origins from environment or use default
+cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
