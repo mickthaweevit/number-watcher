@@ -150,19 +150,41 @@ async def get_database_info():
 
 @app.get("/games", response_model=List[GameSchema])
 async def get_games(db: Session = Depends(get_db)):
-    """Get all games"""
-    games = db.query(Game).all()
-    return games
+    """Get all games - optimized fields"""
+    try:
+        # Only select fields needed by frontend
+        games = db.query(
+            Game.id,
+            Game.game_name,
+            Game.category,
+            Game.country_code,
+            Game.base_game_id,
+            Game.is_active
+        ).filter(Game.is_active == True).all()
+        return games
+    except Exception as e:
+        print(f"Error in get_games: {str(e)}")
+        # Fallback to original query
+        games = db.query(Game).filter(Game.is_active == True).all()
+        return games
 
 @app.get("/results", response_model=List[ResultSchema])
 async def get_results(db: Session = Depends(get_db)):
     """Get all results with game information"""
     try:
-        results = db.query(Result).join(Game).all()
+        # Optimized query - select only needed fields
+        from sqlalchemy.orm import joinedload
+        results = db.query(Result).options(joinedload(Result.game)).all()
         return results
     except Exception as e:
-        print(f"Error in get_results: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        print(f"Error in get_results (optimized): {str(e)}")
+        # Fallback to original query
+        try:
+            results = db.query(Result).join(Game).all()
+            return results
+        except Exception as fallback_error:
+            print(f"Fallback error: {str(fallback_error)}")
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.post("/import-sample-data")
 async def import_sample_data(db: Session = Depends(get_db)):
