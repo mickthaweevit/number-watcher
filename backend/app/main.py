@@ -72,6 +72,18 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+@app.get("/db-test")
+async def test_database():
+    """Test database connection"""
+    try:
+        # Try to connect to database
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            result = conn.execute(text("SELECT 1"))
+            return {"database": "connected", "test_query": "success"}
+    except Exception as e:
+        return {"database": "failed", "error": str(e)}
+
 @app.get("/games", response_model=List[GameSchema])
 async def get_games(db: Session = Depends(get_db)):
     """Get all games"""
