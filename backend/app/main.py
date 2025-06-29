@@ -72,6 +72,45 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+@app.get("/performance")
+async def check_performance(db: Session = Depends(get_db)):
+    """Check database performance metrics"""
+    import time
+    from sqlalchemy import text
+    
+    metrics = {}
+    
+    # Test results query performance
+    start = time.time()
+    result_count = db.query(Result).count()
+    metrics["results_count_time"] = round((time.time() - start) * 1000, 2)
+    metrics["total_results"] = result_count
+    
+    # Test games query performance
+    start = time.time()
+    game_count = db.query(Game).count()
+    metrics["games_count_time"] = round((time.time() - start) * 1000, 2)
+    metrics["total_games"] = game_count
+    
+    # Test join query performance
+    start = time.time()
+    join_count = db.query(Result).join(Game).count()
+    metrics["join_query_time"] = round((time.time() - start) * 1000, 2)
+    
+    # Check if indexes exist
+    try:
+        index_check = db.execute(text("""
+            SELECT COUNT(*) as index_count 
+            FROM pg_indexes 
+            WHERE tablename IN ('results', 'games') 
+            AND indexname LIKE 'idx_%'
+        """)).fetchone()
+        metrics["custom_indexes"] = index_check[0] if index_check else 0
+    except:
+        metrics["custom_indexes"] = "error"
+    
+    return metrics
+
 @app.get("/db-test")
 async def test_database():
     """Test database connection"""
@@ -117,9 +156,41 @@ async def get_games(db: Session = Depends(get_db)):
 
 @app.get("/results", response_model=List[ResultSchema])
 async def get_results(db: Session = Depends(get_db)):
-    """Get all results with game information"""
-    results = db.query(Result).join(Game).all()
-    return results
+    """Get all results with game information - optimized"""
+    results = db.query(
+        Result.id,
+        Result.game_id,
+        Result.result_date,
+        Result.result_3up,
+        Result.result_2down,
+        Result.result_4up,
+        Result.status,
+        Game.game_name,
+        Game.category,
+        Game.country_code
+    ).join(Game).all()
+    
+    # Convert to Result objects
+    result_objects = []
+    for row in results:
+        result_obj = Result(
+            id=row.id,
+            game_id=row.game_id,
+            result_date=row.result_date,
+            result_3up=row.result_3up,
+            result_2down=row.result_2down,
+            result_4up=row.result_4up,
+            status=row.status
+        )
+        result_obj.game = Game(
+            id=row.game_id,
+            game_name=row.game_name,
+            category=row.category,
+            country_code=row.country_code
+        )
+        result_objects.append(result_obj)
+    
+    return result_objects
 
 @app.post("/import-sample-data")
 async def import_sample_data(db: Session = Depends(get_db)):
