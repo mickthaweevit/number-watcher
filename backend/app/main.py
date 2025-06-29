@@ -585,3 +585,38 @@ async def get_all_users(admin_user: User = Depends(require_admin), db: Session =
     """Get all users (admin only)"""
     users = db.query(User).order_by(User.created_at.desc()).all()
     return users
+
+@app.post("/create-admin")
+async def create_admin_user(db: Session = Depends(get_db)):
+    """Create first admin user - only works if no admin exists"""
+    # Check if any admin already exists
+    existing_admin = db.query(User).filter(User.is_admin == True).first()
+    if existing_admin:
+        raise HTTPException(status_code=400, detail="Admin user already exists")
+    
+    # Generate secure password
+    import secrets
+    import string
+    alphabet = string.ascii_letters + string.digits + "!@#$%^&*"
+    admin_password = ''.join(secrets.choice(alphabet) for _ in range(12))
+    
+    # Create admin user
+    hashed_password = get_password_hash(admin_password)
+    admin_user = User(
+        username="admin",
+        email="admin@numwatch.app",
+        password_hash=hashed_password,
+        is_admin=True
+    )
+    
+    db.add(admin_user)
+    db.commit()
+    db.refresh(admin_user)
+    
+    return {
+        "message": "Admin user created successfully",
+        "username": "admin",
+        "password": admin_password,
+        "email": "admin@numwatch.app",
+        "warning": "Save these credentials! Password will not be shown again."
+    }
