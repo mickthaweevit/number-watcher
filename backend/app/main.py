@@ -84,6 +84,31 @@ async def test_database():
     except Exception as e:
         return {"database": "failed", "error": str(e)}
 
+@app.get("/db-info")
+async def get_database_info():
+    """Show database connection info (without password)"""
+    import os
+    from urllib.parse import urlparse
+    
+    db_url = os.getenv("DATABASE_URL", "Not set")
+    
+    if db_url == "Not set":
+        return {"error": "DATABASE_URL environment variable not set"}
+    
+    try:
+        parsed = urlparse(db_url)
+        return {
+            "host": parsed.hostname,
+            "port": parsed.port,
+            "database": parsed.path.lstrip('/'),
+            "username": parsed.username,
+            "password_set": "Yes" if parsed.password else "No",
+            "password_length": len(parsed.password) if parsed.password else 0,
+            "full_url_set": "Yes"
+        }
+    except Exception as e:
+        return {"error": f"Failed to parse DATABASE_URL: {str(e)}"}
+
 @app.get("/games", response_model=List[GameSchema])
 async def get_games(db: Session = Depends(get_db)):
     """Get all games"""
