@@ -4,11 +4,12 @@
 
 ### **Current Project Status**
 - ✅ **Backend**: FastAPI + PostgreSQL fully working
-- ✅ **Database**: Games, Results, Users, and DashboardProfiles models with data import
+- ✅ **Database**: Games, Results, Users, DashboardProfiles, and InviteCodes models
 - ✅ **API Integration**: Sample data processing working
 - ✅ **Frontend**: Vue 3 complete with all components working
 - ✅ **Authentication**: Login-first system with JWT tokens and route protection
 - ✅ **User Profiles**: Save/load dashboard configurations with database storage
+- ✅ **Admin System**: Invite-only registration with admin panel
 - ✅ **Full Stack**: Complete working application ready
 - ✅ **Phase 4A**: Real-time API integration complete
 - ✅ **Phase 4B**: Scheduled background jobs complete
@@ -17,7 +18,8 @@
 - ✅ **Phase 5B**: Advanced filtering (category, country, result-specific) complete
 - ✅ **Phase 5C**: Sticky table headers and columns for better navigation
 - ✅ **Phase 5D**: Navigation system with request cancellation complete
-- ✅ **Phase 6**: User authentication and profile management complete
+- ✅ **Phase 6A**: User authentication and profile management complete
+- ✅ **Phase 6B**: Invite-only registration system with admin panel complete
 - ⏳ **Next**: Phase 7 advanced features (charts, analytics, export)
 
 ### **Immediate Commands to Resume**
@@ -277,15 +279,35 @@ curl http://localhost:8000/results
 - ✅ **API Security**: 401 error handling with auto-redirect to login
 - ✅ **Clean UI**: Dedicated login page, simplified dashboard
 
-### **Step 8: Authentication Testing**
-- Register new user account at http://localhost:5173/login
-- Login with credentials
-- Navigate between protected pages (Dashboard, Results, Scheduler)
-- Save and load dashboard profiles
-- Test logout functionality
-- Verify 401 handling (expired tokens redirect to login)
+### **Step 8: Phase 6B Admin System Complete** ✅
+- ✅ **Invite-Only Registration**: Users need valid invite codes to register
+- ✅ **Admin Panel**: Complete admin interface at /admin route
+- ✅ **Admin User Creation**: Database seed script for first admin
+- ✅ **Invite Code Management**: Create, view, and track invite codes
+- ✅ **User Management**: Admin can view all users and their details
+- ✅ **Role-Based Access**: Admin-only endpoints with proper authorization
+- ✅ **Security**: Invite code validation, expiration, and usage tracking
 
-### **Step 9: Next Phase Features**
+### **Step 9: Admin System Setup**
+```bash
+# Rebuild with new database schema
+docker-compose down -v
+docker-compose up --build
+
+# Create first admin user
+docker exec -it numwatch_backend python create_admin.py
+# Credentials: admin / admin123
+```
+
+### **Step 10: Admin System Testing**
+- Login as admin (admin/admin123) at http://localhost:5173/login
+- Navigate to Admin panel (/admin) - link appears for admin users only
+- Create invite codes with optional expiration dates
+- View all users and invite code usage
+- Test invite-only registration (logout and try to register)
+- Verify non-admin users cannot access admin endpoints
+
+### **Step 11: Next Phase Features**
 - Data visualization with charts
 - Statistical analysis and patterns
 - Export functionality (CSV/Excel)
