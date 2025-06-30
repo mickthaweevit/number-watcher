@@ -41,36 +41,7 @@
         </div>
       </div>
       
-      <!-- Filters -->
-      <div class="mb-4 flex space-x-4">
-        <!-- Category Filter -->
-        <div>
-          <label class="text-xs font-medium text-gray-600 mr-2">Category:</label>
-          <select 
-            v-model="selectedCategory"
-            class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="all">All</option>
-            <option v-for="category in categories" :key="category" :value="category">
-              {{ category }}
-            </option>
-          </select>
-        </div>
-        
-        <!-- Country Code Filter -->
-        <div>
-          <label class="text-xs font-medium text-gray-600 mr-2">Country:</label>
-          <select 
-            v-model="selectedCountry"
-            class="border border-gray-300 rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          >
-            <option value="all">All</option>
-            <option v-for="code in countryCodes" :key="code" :value="code">
-              {{ code }}
-            </option>
-          </select>
-        </div>
-      </div>
+
 
       <!-- Results Table -->
       <div class="table-container border border-gray-300 rounded">
@@ -79,12 +50,6 @@
             <tr>
               <th class="sticky-col-1 px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
                 Game
-              </th>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
-                Cat
-              </th>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
-                CC
               </th>
               <th 
                 v-for="date in uniqueDates" 
@@ -99,12 +64,6 @@
             <tr v-for="game in filteredTableData" :key="game.gameId" class="border-b border-gray-200 hover:bg-gray-50">
               <td class="sticky-col-1 px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
                 {{ game.gameName }}
-              </td>
-              <td class="sticky-col-2 px-2 py-1 text-gray-700 border-r border-gray-200">
-                {{ game.category }}
-              </td>
-              <td class="sticky-col-3 px-2 py-1 text-gray-700 border-r border-gray-200 text-center">
-                {{ game.countryCode || '-' }}
               </td>
               <td 
                 v-for="date in uniqueDates" 
@@ -149,8 +108,7 @@ import { mdiCancel, mdiTimerSand } from '@mdi/js'
 const results = ref<Result[]>([])
 const tableData = ref<TableData[]>([])
 const loading = ref(true)
-const selectedCategory = ref('all')
-const selectedCountry = ref('all') // Country Code filter
+// Removed category and country filters
 const activeTab = ref('result_3up') // Default to 3-Up
 const error = ref('')
 
@@ -178,18 +136,8 @@ const uniqueDates = computed(() => {
 })
 
 const filteredTableData = computed(() => {
-  // Apply category filter
-  let filtered = selectedCategory.value === 'all' 
-    ? tableData.value 
-    : tableData.value.filter(game => game.category === selectedCategory.value)
-  
-  // Apply country code filter
-  if (selectedCountry.value !== 'all') {
-    filtered = filtered.filter(game => game.countryCode === selectedCountry.value)
-  }
-    
   // Filter out games with no results for the active tab type
-  return filtered.filter(game => {
+  return tableData.value.filter(game => {
     // Check if game has at least one result for the active tab type
     return Object.values(game.results).some(dateResult => {
       // Only show games that have data for the current active tab
@@ -234,8 +182,6 @@ const transformDataForTable = (results: Result[]) => {
       gameMap.set(result.game_id, {
         gameName: result.game.game_name,
         gameId: result.game_id,
-        category: result.game.category,
-        countryCode: result.game.country_code,
         results: {}
       })
     }

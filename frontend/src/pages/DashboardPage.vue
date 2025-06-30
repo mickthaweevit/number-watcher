@@ -78,7 +78,7 @@
         >
           <option value="">Select a game to add</option>
           <option v-for="game in availableGames" :key="game.id" :value="game.id">
-            {{ game.game_name }} ({{ game.category }})
+            {{ game.game_name }}
           </option>
         </select>
         <button
