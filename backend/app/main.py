@@ -21,6 +21,7 @@ from .schemas.dashboard_profile import DashboardProfileCreate, DashboardProfileR
 from .schemas.invite_code import InviteCodeCreate, InviteCodeResponse, UserRegisterWithInvite
 from .services.auth import authenticate_user, create_access_token, get_current_user, get_password_hash
 from .services.data_processor import process_api_response
+from .services.data_processor_v2 import process_api_response_v2
 from .services.external_api import ExternalAPIService
 from .services.scheduler import lottery_scheduler
 import json
@@ -725,6 +726,104 @@ async def get_all_users(admin_user: User = Depends(require_admin), db: Session =
     """Get all users (admin only)"""
     users = db.query(User).order_by(User.created_at.desc()).all()
     return users
+
+@app.post("/import-sample-data-v2")
+async def import_sample_data_v2(db: Session = Depends(get_db)):
+    """Import data from responseDataNew.json for testing new format"""
+    # Create import log entry
+    import_log = ImportLog(
+        filename="responseDataNew.json",
+        import_type="sample_data_v2",
+        status="running"
+    )
+    db.add(import_log)
+    db.flush()
+    
+    try:
+        # Read the new sample data file
+        with open('/app/responseDataNew.json', 'r', encoding='utf-8') as file:
+            api_data = json.load(file)
+        
+        # Process the API response with new processor
+        processed_games = process_api_response_v2(api_data)
+        
+        # Deduplicate by product_id + result_date + yk_round
+        unique_games = {}
+        for game_data in processed_games:
+            key = f"{game_data['product_id']}_{game_data['result_date']}_{game_data['yk_round']}"
+            unique_games[key] = game_data
+        
+        processed_games = list(unique_games.values())
+        
+        imported_count = 0
+        games_created = 0
+        results_created = 0
+        
+        for game_data in processed_games:
+            # Check if game exists, if not create it
+            game = db.query(GameV2).filter(GameV2.product_id == game_data['product_id']).first()
+            if not game:
+                game = GameV2(
+                    product_id=game_data['product_id'],
+                    product_name_th=game_data['product_name_th'],
+                    product_code=game_data['product_code']
+                )
+                db.add(game)
+                db.flush()
+                games_created += 1
+            
+            # Check if result exists for this game, date and round
+            existing_result = db.query(ResultV2).filter(
+                ResultV2.game_id == game.id,
+                ResultV2.result_date == game_data['result_date'],
+                ResultV2.yk_round == game_data['yk_round']
+            ).first()
+            
+            if not existing_result:
+                # Create new result
+                new_result = ResultV2(
+                    game_id=game.id,
+                    period_id=game_data['period_id'],
+                    award1=game_data['award1'],
+                    award2=game_data['award2'],
+                    award3=game_data['award3'],
+                    result_date=game_data['result_date'],
+                    status=game_data['status'],
+                    yk_round=game_data['yk_round']
+                )
+                db.add(new_result)
+                results_created += 1
+            
+            imported_count += 1
+        
+        db.commit()
+        
+        # Update import log with success
+        import_log.status = "success"
+        import_log.completed_at = datetime.now()
+        import_log.records_processed = imported_count
+        import_log.games_created = games_created
+        import_log.results_created = results_created
+        db.commit()
+        
+        return {
+            "message": f"Successfully processed {imported_count} records from new format",
+            "games_created": games_created,
+            "results_created": results_created,
+            "total_unique_records": len(processed_games),
+            "filtered_products": len([item for item in api_data.get('info', []) if item.get('productCode') not in ['YK', 'YK5', 'TH']])
+        }
+        
+    except Exception as e:
+        db.rollback()
+        
+        # Update import log with failure
+        import_log.status = "failed"
+        import_log.completed_at = datetime.now()
+        import_log.error_message = str(e)
+        db.commit()
+        
+        raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
 
 @app.post("/create-admin")
 async def create_admin_user(db: Session = Depends(get_db)):
