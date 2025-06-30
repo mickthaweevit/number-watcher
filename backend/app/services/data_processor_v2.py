@@ -2,7 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 import re
 
-def process_api_response_v2(api_data: Dict[str, Any]) -> List[Dict[str, Any]]:
+def process_api_response_v2(api_data: Dict[str, Any], input_date: str = None) -> List[Dict[str, Any]]:
     """
     Process new API format response and convert to standardized format
     
@@ -40,8 +40,16 @@ def process_api_response_v2(api_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     
     for item in filtered_products:
         try:
-            # Parse date from periodName (e.g., "วันจันทร์ 16/06/68")
-            result_date = parse_period_date(item.get("periodName", ""))
+            # Use input date if provided, otherwise try to parse from periodName
+            if input_date:
+                # Convert YYYYMMDD to YYYY-MM-DD
+                try:
+                    date_obj = datetime.strptime(input_date, '%Y%m%d')
+                    result_date = date_obj.strftime('%Y-%m-%d')
+                except ValueError:
+                    result_date = parse_period_date(item.get("periodName", ""))
+            else:
+                result_date = parse_period_date(item.get("periodName", ""))
             
             if not result_date:
                 continue  # Skip if can't parse date

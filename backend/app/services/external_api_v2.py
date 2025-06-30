@@ -60,8 +60,8 @@ class ExternalAPIServiceV2:
             if not api_data.get("success"):
                 raise Exception(f"API returned unsuccessful response for {date_str}")
             
-            # Process the data
-            processed_games = process_api_response_v2(api_data)
+            # Process the data with input date
+            processed_games = process_api_response_v2(api_data, date_str)
             
             if not processed_games:
                 import_log.status = "success"

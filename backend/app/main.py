@@ -781,8 +781,9 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
         if api_data is None:
             raise FileNotFoundError("responseDataNew.json not found in any expected location")
         
-        # Process the API response with new processor
-        processed_games = process_api_response_v2(api_data)
+        # Process the API response with new processor (use today's date)
+        today_date = datetime.now().strftime('%Y%m%d')
+        processed_games = process_api_response_v2(api_data, today_date)
         
         # Deduplicate by product_id + result_date + yk_round
         unique_games = {}
