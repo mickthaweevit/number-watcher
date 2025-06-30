@@ -13,10 +13,10 @@
           </option>
         </select>
         <button @click="saveCurrentProfile" :disabled="!canSaveCurrent" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
-          บันทึกปัจจุบัน
+          บันทึก
         </button>
         <button @click="showSaveAsNewForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-          บันทึกใหม่
+          บันทึกโปรไฟล์ใหม่
         </button>
         <button @click="deleteProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
           ลบ
@@ -256,7 +256,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { onBeforeRouteLeave } from 'vue-router'
 import { gameApi, authApi, profileApi } from '../services/api'
 import type { Game, Result, User, DashboardProfile } from '../types'
 
@@ -739,9 +740,38 @@ const getCellData = (gameId: number, date: string) => {
   }
 }
 
+// Navigation guards and lifecycle
+// 1. Vue Router guard (catches internal navigation)
+onBeforeRouteLeave((to, from, next) => {
+  if (hasUnsavedChanges.value) {
+    if (confirm('คุณมีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก ต้องการออกจากหน้านี้?')) {
+      next()
+    } else {
+      next(false)
+    }
+  } else {
+    next()
+  }
+})
+
 // Lifecycle
 onMounted(async () => {
   await getCurrentUser()
   await fetchData()
+  
+  // 2. Browser beforeunload (catches external navigation)
+  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+    if (hasUnsavedChanges.value) {
+      e.preventDefault()
+      e.returnValue = '' // Required for Chrome
+    }
+  }
+  
+  window.addEventListener('beforeunload', handleBeforeUnload)
+  
+  // Cleanup on unmount
+  onUnmounted(() => {
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+  })
 })
 </script>
