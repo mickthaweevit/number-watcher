@@ -15,7 +15,7 @@
     <!-- Profile Management -->
     <div class="bg-green-50 p-4 rounded-lg mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">Profile Management</h3>
-      <div class="flex gap-3 mb-3">
+      <div class="flex flex-wrap gap-3 mb-3">
         <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded">
           <option :value="null">Select saved profile...</option>
           <option v-for="profile in profiles" :key="profile.id" :value="profile.id">

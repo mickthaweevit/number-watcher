@@ -1,20 +1,20 @@
 <template>
   <div class="p-2 md:p-5">
-    <h2 class="text-lg md:text-xl font-semibold mb-4">NumWatch Results Table</h2>
+    <h2 class="text-lg md:text-xl font-semibold mb-4">ตารางผลหวย</h2>
     
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-8">
-      <div class="text-gray-600">Loading...</div>
+      <div class="text-gray-600">กำลังโหลด...</div>
     </div>
     
     <!-- Error State -->
     <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4">
-      <div class="text-red-800 font-medium mb-2">Error: {{ error }}</div>
+      <div class="text-red-800 font-medium mb-2">ข้อผิดพลาด: {{ error }}</div>
       <button 
         @click="fetchResults" 
         class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
       >
-        Retry
+        ลองอีกครั้ง
       </button>
     </div>
     
@@ -49,7 +49,7 @@
           <thead class="bg-gray-100 sticky-header">
             <tr>
               <th class="sticky-col-1 px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
-                Game
+                หวย
               </th>
               <th 
                 v-for="date in uniqueDates" 
@@ -92,7 +92,7 @@
 
       <!-- Footer Info -->
       <div class="mt-3 text-xs text-gray-500">
-        {{ filteredTableData.length }} games • {{ results.length }} results
+        {{ filteredTableData.length }} หวย • {{ results.length }} ผล
       </div>
     </div>
   </div>
@@ -117,9 +117,9 @@ let abortController: AbortController | null = null
 
 // Tab configuration
 const resultTabs = [
-  { key: 'result_2down', label: '2-Down' },
-  { key: 'result_3up', label: '3-Up' },
-  { key: 'result_4up', label: '4-Up' }
+  { key: 'result_2down', label: 'ล่าง 2 ตัว' },
+  { key: 'result_3up', label: 'บน 3 ตัว' },
+  { key: 'result_4up', label: 'บน 4 ตัว' }
 ]
 
 // Format date for compact display
