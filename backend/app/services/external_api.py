@@ -108,9 +108,7 @@ class ExternalAPIService:
                     if not game:
                         game = Game(
                             base_game_id=game_data['base_game_id'],
-                            game_name=game_data['game_name'],
-                            country_code=game_data['country_code'],
-                            category=game_data['category']
+                            game_name=game_data['game_name']
                         )
                         db.add(game)
                         db.flush()
