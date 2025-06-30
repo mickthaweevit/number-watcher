@@ -23,6 +23,7 @@ from .services.auth import authenticate_user, create_access_token, get_current_u
 from .services.data_processor import process_api_response
 from .services.data_processor_v2 import process_api_response_v2
 from .services.external_api import ExternalAPIService
+from .services.external_api_v2 import ExternalAPIServiceV2
 from .services.scheduler import lottery_scheduler
 import json
 import os
@@ -860,6 +861,60 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
         db.commit()
         
         raise HTTPException(status_code=500, detail=f"Import failed: {str(e)}")
+
+@app.post("/import-live-data-v2")
+async def import_live_data_v2(
+    date: Optional[str] = Query(None, description="Date in format YYYYMMDD, defaults to today"),
+    db: Session = Depends(get_db)
+):
+    """Import live data from new API format"""
+    # Set default date to today if not provided
+    if date is None:
+        date = datetime.now().strftime('%Y%m%d')
+    
+    external_api_url_v2 = os.getenv("EXTERNAL_API_URL_V2")
+    
+    if not external_api_url_v2:
+        raise HTTPException(
+            status_code=400, 
+            detail="External API URL V2 not configured. Set EXTERNAL_API_URL_V2 environment variable."
+        )
+    
+    try:
+        async with ExternalAPIServiceV2(base_url=external_api_url_v2) as api_service:
+            result = await api_service.import_data_for_date(date, db)
+            
+            if not result["success"]:
+                raise HTTPException(status_code=500, detail=result["message"])
+            
+            return result
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Live import failed: {str(e)}")
+
+@app.post("/import-date-range-v2")
+async def import_date_range_v2(
+    start_date: str = Query(..., description="Start date in format YYYYMMDD"),
+    end_date: str = Query(..., description="End date in format YYYYMMDD"),
+    db: Session = Depends(get_db)
+):
+    """Import data for a date range from new API format"""
+    external_api_url_v2 = os.getenv("EXTERNAL_API_URL_V2")
+    
+    if not external_api_url_v2:
+        raise HTTPException(
+            status_code=400, 
+            detail="External API URL V2 not configured. Set EXTERNAL_API_URL_V2 environment variable."
+        )
+    
+    try:
+        async with ExternalAPIServiceV2(base_url=external_api_url_v2) as api_service:
+            result = await api_service.import_date_range(start_date, end_date, db)
+            
+            return result
+            
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Date range import failed: {str(e)}")
 
 @app.post("/create-admin")
 async def create_admin_user(db: Session = Depends(get_db)):

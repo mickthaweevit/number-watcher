@@ -35,7 +35,7 @@ def process_api_response_v2(api_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     # Filter out unwanted product codes
     filtered_products = [
         item for item in api_data["info"] 
-        if item.get("productCode") not in ["YK", "YK5", "TH"]
+        if item.get("productCode") not in ["YK", "YK5", "TH", "AOM", "BAAC"]
     ]
     
     for item in filtered_products:
