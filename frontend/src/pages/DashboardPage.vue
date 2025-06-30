@@ -6,17 +6,17 @@
     <div class="bg-green-50 p-4 rounded-lg mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการโปรไฟล์</h3>
       <div class="flex flex-wrap gap-3 mb-3">
-        <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded">
+        <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded" :class="{ 'border-orange-400': hasUnsavedChanges }">
           <option :value="null">เลือกโปรไฟล์ที่บันทึก...</option>
           <option v-for="profile in profiles" :key="profile.id" :value="profile.id">
-            {{ profile.profile_name }}
+            {{ profile.profile_name }} {{ hasUnsavedChanges && selectedProfileId === profile.id ? '*' : '' }}
           </option>
         </select>
-        <button @click="loadProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
-          โหลด
-        </button>
-        <button @click="showSaveProfileForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <button @click="saveCurrentProfile" :disabled="!canSaveCurrent" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
           บันทึกปัจจุบัน
+        </button>
+        <button @click="showSaveAsNewForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          บันทึกใหม่
         </button>
         <button @click="deleteProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
           ลบ
@@ -232,11 +232,11 @@
       </div>
     </div>
 
-    <!-- Save Profile Modal -->
-    <div v-if="showSaveProfileForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <!-- Save as New Profile Modal -->
+    <div v-if="showSaveAsNewForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold mb-4">บันทึกโปรไฟล์</h3>
-        <form @submit.prevent="saveProfile">
+        <h3 class="text-xl font-bold mb-4">บันทึกโปรไฟล์ใหม่</h3>
+        <form @submit.prevent="saveAsNewProfile">
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อโปรไฟล์</label>
             <input v-model="newProfileName" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="กรอกชื่อโปรไฟล์">
@@ -245,7 +245,7 @@
             <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
               บันทึก
             </button>
-            <button type="button" @click="showSaveProfileForm = false" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            <button type="button" @click="showSaveAsNewForm = false; newProfileName = ''" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
               ยกเลิก
             </button>
           </div>
@@ -276,7 +276,13 @@ const user = ref<User | null>(null)
 const profiles = ref<DashboardProfile[]>([])
 const selectedProfileId = ref<number | null>(null)
 const showSaveProfileForm = ref(false)
+const showSaveAsNewForm = ref(false)
 const newProfileName = ref('')
+const loadedProfileState = ref<any>(null)
+const hasUnsavedChanges = ref(false)
+
+// Request cancellation
+let loadProfileAbortController: AbortController | null = null
 
 // Pattern definitions with count information
 const availablePatterns = [
@@ -302,6 +308,10 @@ const availableGames = computed(() => {
   return allGames.value.filter(game => 
     !selectedGames.value.some(sg => sg.game.id === game.id)
   )
+})
+
+const canSaveCurrent = computed(() => {
+  return selectedProfileId.value !== null && hasUnsavedChanges.value
 })
 
 const totalStats = computed(() => {
@@ -470,9 +480,41 @@ const recalculateAllGames = () => {
   })
 }
 
+// Helper function to check for unsaved changes
+const checkForUnsavedChanges = () => {
+  if (!loadedProfileState.value) return false
+  
+  const arraysEqual = (a: any[], b: any[]) => {
+    return a.length === b.length && a.every((val, i) => val === b[i])
+  }
+  
+  return (
+    betAmount.value !== loadedProfileState.value.betAmount ||
+    !arraysEqual(selectedPatterns.value, loadedProfileState.value.selectedPatterns) ||
+    !arraysEqual(selectedGames.value.map(g => g.game.id), loadedProfileState.value.selectedGameIds)
+  )
+}
+
+// Watch for profile selection changes - auto load
+watch(selectedProfileId, (newProfileId) => {
+  if (newProfileId) {
+    loadProfile()
+  } else {
+    loadedProfileState.value = null
+    hasUnsavedChanges.value = false
+  }
+})
+
 // Watch for changes in bet amount or patterns
 watch([betAmount, selectedPatterns], () => {
   recalculateAllGames()
+}, { deep: true })
+
+// Track unsaved changes
+watch([betAmount, selectedPatterns, selectedGames], () => {
+  if (selectedProfileId.value && loadedProfileState.value) {
+    hasUnsavedChanges.value = checkForUnsavedChanges()
+  }
 }, { deep: true })
 
 // Get current user (always authenticated)
@@ -494,9 +536,37 @@ const fetchProfiles = async () => {
   }
 }
 
-const saveProfile = async () => {
+const saveCurrentProfile = async () => {
+  if (!selectedProfileId.value) return
+  
+  try {
+    const profileData = {
+      profile_name: profiles.value.find(p => p.id === selectedProfileId.value)?.profile_name || '',
+      bet_amount: betAmount.value,
+      selected_patterns: selectedPatterns.value,
+      selected_game_ids: selectedGames.value.map(g => g.game.id)
+    }
+    
+    await profileApi.updateProfile(selectedProfileId.value, profileData)
+    await fetchProfiles()
+    
+    // Update loaded state
+    loadedProfileState.value = {
+      betAmount: betAmount.value,
+      selectedPatterns: [...selectedPatterns.value],
+      selectedGameIds: [...selectedGames.value.map(g => g.game.id)]
+    }
+    
+    hasUnsavedChanges.value = false
+    alert('บันทึกโปรไฟล์สำเร็จแล้ว!')
+  } catch (error) {
+    alert('บันทึกโปรไฟล์ล้มเหลว')
+  }
+}
+
+const saveAsNewProfile = async () => {
   if (!newProfileName.value.trim()) {
-    alert('Please enter a profile name')
+    alert('กรุณากรอกชื่อโปรไฟล์')
     return
   }
   
@@ -510,35 +580,64 @@ const saveProfile = async () => {
     
     await profileApi.createProfile(profileData)
     await fetchProfiles()
-    showSaveProfileForm.value = false
+    showSaveAsNewForm.value = false
     newProfileName.value = ''
-    alert('Profile saved successfully!')
+    alert('สร้างโปรไฟล์ใหม่สำเร็จแล้ว!')
   } catch (error) {
-    alert('Failed to save profile. Name may already exist.')
+    alert('สร้างโปรไฟล์ล้มเหลว ชื่ออาจถูกใช้แล้ว')
   }
 }
 
 const loadProfile = async () => {
   if (!selectedProfileId.value) return
   
-  const profile = profiles.value.find(p => p.id === selectedProfileId.value)
-  if (!profile) return
-  
-  // Apply profile settings
-  betAmount.value = profile.bet_amount
-  selectedPatterns.value = [...profile.selected_patterns]
-  
-  // Load games
-  selectedGames.value = []
-  for (const gameId of profile.selected_game_ids) {
-    const game = allGames.value.find(g => g.id === gameId)
-    if (game) {
-      const gameResults = allResults.value.filter(r => r.game_id === game.id && r.result_3up)
-      selectedGames.value.push(analyzeGame(game, gameResults))
-    }
+  // Cancel previous request if still running
+  if (loadProfileAbortController) {
+    loadProfileAbortController.abort()
   }
   
-  alert('Profile loaded successfully!')
+  // Create new abort controller
+  loadProfileAbortController = new AbortController()
+  
+  try {
+    const profile = profiles.value.find(p => p.id === selectedProfileId.value)
+    if (!profile) return
+    
+    // Check if request was cancelled
+    if (loadProfileAbortController.signal.aborted) return
+    
+    // Apply profile settings
+    betAmount.value = profile.bet_amount
+    selectedPatterns.value = [...profile.selected_patterns]
+    
+    // Load games
+    selectedGames.value = []
+    for (const gameId of profile.selected_game_ids) {
+      if (loadProfileAbortController.signal.aborted) return // Check cancellation
+      
+      const game = allGames.value.find(g => g.id === gameId)
+      if (game) {
+        const gameResults = allResults.value.filter(r => r.game_id === game.id && r.result_3up)
+        selectedGames.value.push(analyzeGame(game, gameResults))
+      }
+    }
+    
+    // Store loaded state for comparison
+    loadedProfileState.value = {
+      betAmount: profile.bet_amount,
+      selectedPatterns: [...profile.selected_patterns],
+      selectedGameIds: [...profile.selected_game_ids]
+    }
+    
+    hasUnsavedChanges.value = false
+    
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      console.error('Profile load error:', error)
+    }
+  } finally {
+    loadProfileAbortController = null
+  }
 }
 
 const deleteProfile = async () => {

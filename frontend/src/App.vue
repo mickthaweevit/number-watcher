@@ -41,6 +41,7 @@
             รวมผลหวย
           </router-link>
           <router-link
+            v-if="isAdmin"
             to="/scheduler" 
             class="px-2 md:px-4 py-1 md:py-2 text-xs md:text-sm rounded transition-colors"
             :class="$route.path === '/scheduler' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-200'"

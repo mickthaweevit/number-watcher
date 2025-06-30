@@ -211,6 +211,11 @@ export const profileApi = {
     return response.data;
   },
 
+  updateProfile: async (profileId: number, profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<DashboardProfile> => {
+    const response = await api.put(`/profiles/${profileId}`, profileData);
+    return response.data;
+  },
+
   deleteProfile: async (profileId: number): Promise<{ message: string }> => {
     const response = await api.delete(`/profiles/${profileId}`);
     return response.data;

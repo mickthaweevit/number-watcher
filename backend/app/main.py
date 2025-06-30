@@ -691,6 +691,29 @@ async def create_profile(profile_data: DashboardProfileCreate, current_user: Use
     
     return db_profile
 
+@app.put("/profiles/{profile_id}", response_model=DashboardProfileResponse)
+async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Update a dashboard profile (only if it belongs to current user)"""
+    profile = db.query(DashboardProfile).filter(
+        DashboardProfile.id == profile_id,
+        DashboardProfile.user_id == current_user.id
+    ).first()
+    
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    
+    # Update profile fields
+    profile.profile_name = profile_data.profile_name
+    profile.bet_amount = profile_data.bet_amount
+    profile.selected_patterns = profile_data.selected_patterns
+    profile.selected_game_ids = profile_data.selected_game_ids
+    profile.updated_at = datetime.now()
+    
+    db.commit()
+    db.refresh(profile)
+    
+    return profile
+
 @app.delete("/profiles/{profile_id}")
 async def delete_profile(profile_id: int, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """Delete a dashboard profile (only if it belongs to current user)"""
