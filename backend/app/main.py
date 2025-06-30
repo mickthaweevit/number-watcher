@@ -169,7 +169,10 @@ async def get_games(
                     game_obj = Game(
                         id=g.id,
                         game_name=g.product_name_th,
-                        base_game_id=str(g.product_id)
+                        base_game_id=str(g.product_id),
+                        is_active=g.is_active,
+                        created_at=g.created_at,
+                        updated_at=g.created_at
                     )
                     mapped_games.append(game_obj)
                 return mapped_games
@@ -203,16 +206,22 @@ async def get_results(
                     result_obj = Result(
                         id=r.id,
                         game_id=r.game_id,
+                        full_game_code=f"V2-{r.period_id}",  # Generate a code
                         result_date=r.result_date,
                         result_3up=r.award1,
                         result_2down=r.award2,
                         result_4up=r.award3,
-                        status=r.status
+                        status=r.status,
+                        created_at=r.created_at,
+                        updated_at=r.created_at
                     )
                     result_obj.game = Game(
                         id=r.game.id,
                         game_name=r.game.product_name_th,
-                        base_game_id=str(r.game.product_id)
+                        base_game_id=str(r.game.product_id),
+                        is_active=r.game.is_active,
+                        created_at=r.game.created_at,
+                        updated_at=r.game.created_at
                     )
                     mapped_results.append(result_obj)
                 return mapped_results

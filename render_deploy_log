@@ -1,58 +1,319 @@
-2025-06-29T10:51:47.066841895Z ==> Cloning from https://github.com/mickthaweevit/number-watcher
-2025-06-29T10:51:48.043266742Z ==> Checking out commit d3d221ee8542eb15777ffe58ab50b214aaa18f52 in branch main
-2025-06-29T10:51:51.113785754Z ==> Installing dependencies with npm...
-2025-06-29T10:51:51.275885593Z ==> Using Node.js version 22.16.0 (default)
-2025-06-29T10:51:51.323225824Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
-2025-06-29T10:51:54.040678836Z ==> Using Bun version 1.1.0 (default)
-2025-06-29T10:51:54.040710117Z ==> Docs on specifying a Bun version: https://render.com/docs/bun-version
-2025-06-29T10:52:34.376388953Z 
-2025-06-29T10:52:34.376464404Z added 204 packages, and audited 205 packages in 40s
-2025-06-29T10:52:34.376501865Z 
-2025-06-29T10:52:34.376510565Z 47 packages are looking for funding
-2025-06-29T10:52:34.376516525Z   run `npm fund` for details
-2025-06-29T10:52:34.394017398Z 
-2025-06-29T10:52:34.394040148Z 5 moderate severity vulnerabilities
-2025-06-29T10:52:34.394047048Z 
-2025-06-29T10:52:34.394053908Z To address all issues (including breaking changes), run:
-2025-06-29T10:52:34.394061038Z   npm audit fix --force
-2025-06-29T10:52:34.394066769Z 
-2025-06-29T10:52:34.394072849Z Run `npm audit` for details.
-2025-06-29T10:52:36.087367866Z 
-2025-06-29T10:52:36.087413126Z added 2 packages, and audited 207 packages in 1s
-2025-06-29T10:52:36.087418996Z 
-2025-06-29T10:52:36.087424276Z 48 packages are looking for funding
-2025-06-29T10:52:36.087463247Z   run `npm fund` for details
-2025-06-29T10:52:36.112919263Z 
-2025-06-29T10:52:36.112969023Z 5 moderate severity vulnerabilities
-2025-06-29T10:52:36.112975433Z 
-2025-06-29T10:52:36.112981764Z To address all issues (including breaking changes), run:
-2025-06-29T10:52:36.112988074Z   npm audit fix --force
-2025-06-29T10:52:36.112992804Z 
-2025-06-29T10:52:36.112998684Z Run `npm audit` for details.
-2025-06-29T10:52:36.156729955Z ==> Running build command 'npm install && npm run build'...
-2025-06-29T10:52:37.626339343Z 
-2025-06-29T10:52:37.626371604Z up to date, audited 207 packages in 1s
-2025-06-29T10:52:37.626377624Z 
-2025-06-29T10:52:37.626407255Z 48 packages are looking for funding
-2025-06-29T10:52:37.626418775Z   run `npm fund` for details
-2025-06-29T10:52:37.662001729Z 
-2025-06-29T10:52:37.66204149Z 5 moderate severity vulnerabilities
-2025-06-29T10:52:37.66204783Z 
-2025-06-29T10:52:37.66205615Z To address all issues (including breaking changes), run:
-2025-06-29T10:52:37.66206196Z   npm audit fix --force
-2025-06-29T10:52:37.66206683Z 
-2025-06-29T10:52:37.662073231Z Run `npm audit` for details.
-2025-06-29T10:52:37.930218662Z 
-2025-06-29T10:52:37.930253242Z > numwatch-frontend-vue@0.1.0 build
-2025-06-29T10:52:37.930260642Z > vue-tsc && vite build
-2025-06-29T10:52:37.930265732Z 
-2025-06-29T10:52:38.004782898Z 
-2025-06-29T10:52:38.004818728Z /opt/render/project/src/frontend/node_modules/vue-tsc/bin/vue-tsc.js:68
-2025-06-29T10:52:38.004824568Z 			throw err;
-2025-06-29T10:52:38.004829868Z 			^
-2025-06-29T10:52:38.004835749Z Search string not found: "/supportedTSExtensions = .*(?=;)/"
-2025-06-29T10:52:38.004841149Z (Use `node --trace-uncaught ...` to show where the exception was thrown)
-2025-06-29T10:52:38.004845899Z 
-2025-06-29T10:52:38.004850899Z Node.js v22.16.0
-2025-06-29T10:52:38.025326801Z ==> Build failed 😞
-2025-06-29T10:52:38.025353781Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+2025-06-30T09:16:08.692681891Z   {'type': 'bool_type', 'loc': ('response', 45, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692683751Z   {'type': 'datetime_type', 'loc': ('response', 45, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692685381Z   {'type': 'string_type', 'loc': ('response', 46, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692687841Z   {'type': 'datetime_type', 'loc': ('response', 46, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692689601Z   {'type': 'bool_type', 'loc': ('response', 46, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692691281Z   {'type': 'datetime_type', 'loc': ('response', 46, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692693051Z   {'type': 'string_type', 'loc': ('response', 47, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692694691Z   {'type': 'datetime_type', 'loc': ('response', 47, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692696401Z   {'type': 'bool_type', 'loc': ('response', 47, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692698071Z   {'type': 'datetime_type', 'loc': ('response', 47, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692699821Z   {'type': 'string_type', 'loc': ('response', 48, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692701501Z   {'type': 'datetime_type', 'loc': ('response', 48, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692703161Z   {'type': 'bool_type', 'loc': ('response', 48, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692704911Z   {'type': 'datetime_type', 'loc': ('response', 48, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692715772Z   {'type': 'string_type', 'loc': ('response', 49, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692718462Z   {'type': 'datetime_type', 'loc': ('response', 49, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692721222Z   {'type': 'bool_type', 'loc': ('response', 49, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692723922Z   {'type': 'datetime_type', 'loc': ('response', 49, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692728182Z   {'type': 'string_type', 'loc': ('response', 50, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692730092Z   {'type': 'datetime_type', 'loc': ('response', 50, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692731822Z   {'type': 'bool_type', 'loc': ('response', 50, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692733492Z   {'type': 'datetime_type', 'loc': ('response', 50, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692735122Z   {'type': 'string_type', 'loc': ('response', 51, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:16:08.692740212Z   {'type': 'datetime_type', 'loc': ('response', 51, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692741932Z   {'type': 'bool_type', 'loc': ('response', 51, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:16:08.692743652Z   {'type': 'datetime_type', 'loc': ('response', 51, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:16:08.692745222Z 
+2025-06-30T09:16:22.933445535Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:16:23.060699503Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:16:52.874759244Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:16:52.941419566Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:17:22.905182837Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:17:22.990161393Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:17:52.895215417Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:17:52.968278342Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:18:22.865959448Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:18:22.940911432Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:18:52.882411966Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:18:52.973861474Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:19:22.86553243Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:19:22.932036388Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:19:23.001772489Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:19:52.871746308Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:19:52.936141702Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:19:57.87079613Z ==> Detected service running on port 10000
+2025-06-30T09:19:58.237231972Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-06-30T09:20:23.127103832Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:20:23.193327802Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:20:53.427785387Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:20:53.52806059Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T09:21:13.133742122Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=new HTTP/1.1" 200 OK
+2025-06-30T09:21:13.399041024Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 500 Internal Server Error
+2025-06-30T09:21:13.401629841Z ERROR:    Exception in ASGI application
+2025-06-30T09:21:13.401644201Z Traceback (most recent call last):
+2025-06-30T09:21:13.401650411Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
+2025-06-30T09:21:13.401655861Z     result = await app(  # type: ignore[func-returns-value]
+2025-06-30T09:21:13.401660171Z              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-06-30T09:21:13.401664391Z         self.scope, self.receive, self.send
+2025-06-30T09:21:13.401668811Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-06-30T09:21:13.401673142Z     )
+2025-06-30T09:21:13.401677162Z     ^
+2025-06-30T09:21:13.401681512Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+2025-06-30T09:21:13.401685772Z     return await self.app(scope, receive, send)
+2025-06-30T09:21:13.401702222Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-06-30T09:21:13.401705092Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1054, in __call__
+2025-06-30T09:21:13.401708082Z     await super().__call__(scope, receive, send)
+2025-06-30T09:21:13.401710812Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/applications.py", line 113, in __call__
+2025-06-30T09:21:13.401713592Z     await self.middleware_stack(scope, receive, send)
+2025-06-30T09:21:13.401716212Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 187, in __call__
+2025-06-30T09:21:13.401718843Z     raise exc
+2025-06-30T09:21:13.401721232Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 165, in __call__
+2025-06-30T09:21:13.401723763Z     await self.app(scope, receive, _send)
+2025-06-30T09:21:13.401726393Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+2025-06-30T09:21:13.401729763Z     await self.simple_response(scope, receive, send, request_headers=headers)
+2025-06-30T09:21:13.401732333Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+2025-06-30T09:21:13.401734793Z     await self.app(scope, receive, send)
+2025-06-30T09:21:13.401737143Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 62, in __call__
+2025-06-30T09:21:13.401739723Z     await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+2025-06-30T09:21:13.401742403Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-06-30T09:21:13.401745033Z     raise exc
+2025-06-30T09:21:13.401747683Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-06-30T09:21:13.401750473Z     await app(scope, receive, sender)
+2025-06-30T09:21:13.401753883Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/routing.py", line 715, in __call__
+2025-06-30T09:21:13.401756403Z     await self.middleware_stack(scope, receive, send)
+2025-06-30T09:21:13.401759043Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/routing.py", line 735, in app
+2025-06-30T09:21:13.401761684Z     await route.handle(scope, receive, send)
+2025-06-30T09:21:13.401764393Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/routing.py", line 288, in handle
+2025-06-30T09:21:13.401766973Z     await self.app(scope, receive, send)
+2025-06-30T09:21:13.401769444Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/routing.py", line 76, in app
+2025-06-30T09:21:13.401772004Z     await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+2025-06-30T09:21:13.401774714Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+2025-06-30T09:21:13.401777224Z     raise exc
+2025-06-30T09:21:13.401779854Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+2025-06-30T09:21:13.401782914Z     await app(scope, receive, sender)
+2025-06-30T09:21:13.401785464Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/starlette/routing.py", line 73, in app
+2025-06-30T09:21:13.401788674Z     response = await f(request)
+2025-06-30T09:21:13.401791244Z                ^^^^^^^^^^^^^^^^
+2025-06-30T09:21:13.401793934Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 327, in app
+2025-06-30T09:21:13.401801854Z     content = await serialize_response(
+2025-06-30T09:21:13.401804594Z               ^^^^^^^^^^^^^^^^^^^^^^^^^
+2025-06-30T09:21:13.401808074Z     ...<9 lines>...
+2025-06-30T09:21:13.401810665Z     )
+2025-06-30T09:21:13.401813245Z     ^
+2025-06-30T09:21:13.401815705Z   File "/opt/render/project/src/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 176, in serialize_response
+2025-06-30T09:21:13.401818225Z     raise ResponseValidationError(
+2025-06-30T09:21:13.401820815Z         errors=_normalize_errors(errors), body=response_content
+2025-06-30T09:21:13.401823465Z     )
+2025-06-30T09:21:13.401826125Z fastapi.exceptions.ResponseValidationError: 208 validation errors:
+2025-06-30T09:21:13.401828815Z   {'type': 'string_type', 'loc': ('response', 0, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401831265Z   {'type': 'datetime_type', 'loc': ('response', 0, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401843405Z   {'type': 'bool_type', 'loc': ('response', 0, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401847205Z   {'type': 'datetime_type', 'loc': ('response', 0, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401850025Z   {'type': 'string_type', 'loc': ('response', 1, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401852755Z   {'type': 'datetime_type', 'loc': ('response', 1, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401855435Z   {'type': 'bool_type', 'loc': ('response', 1, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401858275Z   {'type': 'datetime_type', 'loc': ('response', 1, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401860946Z   {'type': 'string_type', 'loc': ('response', 2, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401863456Z   {'type': 'datetime_type', 'loc': ('response', 2, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401865896Z   {'type': 'bool_type', 'loc': ('response', 2, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401868746Z   {'type': 'datetime_type', 'loc': ('response', 2, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401871216Z   {'type': 'string_type', 'loc': ('response', 3, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401873646Z   {'type': 'datetime_type', 'loc': ('response', 3, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401876366Z   {'type': 'bool_type', 'loc': ('response', 3, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401879046Z   {'type': 'datetime_type', 'loc': ('response', 3, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401881676Z   {'type': 'string_type', 'loc': ('response', 4, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401884096Z   {'type': 'datetime_type', 'loc': ('response', 4, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401886506Z   {'type': 'bool_type', 'loc': ('response', 4, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401888956Z   {'type': 'datetime_type', 'loc': ('response', 4, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401899187Z   {'type': 'string_type', 'loc': ('response', 5, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401901947Z   {'type': 'datetime_type', 'loc': ('response', 5, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401904516Z   {'type': 'bool_type', 'loc': ('response', 5, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401907097Z   {'type': 'datetime_type', 'loc': ('response', 5, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401909767Z   {'type': 'string_type', 'loc': ('response', 6, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401912257Z   {'type': 'datetime_type', 'loc': ('response', 6, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401914917Z   {'type': 'bool_type', 'loc': ('response', 6, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401917687Z   {'type': 'datetime_type', 'loc': ('response', 6, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401920237Z   {'type': 'string_type', 'loc': ('response', 7, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401922787Z   {'type': 'datetime_type', 'loc': ('response', 7, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401925447Z   {'type': 'bool_type', 'loc': ('response', 7, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401927957Z   {'type': 'datetime_type', 'loc': ('response', 7, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401930507Z   {'type': 'string_type', 'loc': ('response', 8, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401933217Z   {'type': 'datetime_type', 'loc': ('response', 8, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401943377Z   {'type': 'bool_type', 'loc': ('response', 8, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401946288Z   {'type': 'datetime_type', 'loc': ('response', 8, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401948957Z   {'type': 'string_type', 'loc': ('response', 9, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401951817Z   {'type': 'datetime_type', 'loc': ('response', 9, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401954738Z   {'type': 'bool_type', 'loc': ('response', 9, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401957388Z   {'type': 'datetime_type', 'loc': ('response', 9, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401959928Z   {'type': 'string_type', 'loc': ('response', 10, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401962498Z   {'type': 'datetime_type', 'loc': ('response', 10, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401964958Z   {'type': 'bool_type', 'loc': ('response', 10, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401967488Z   {'type': 'datetime_type', 'loc': ('response', 10, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401974698Z   {'type': 'string_type', 'loc': ('response', 11, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401977478Z   {'type': 'datetime_type', 'loc': ('response', 11, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401980018Z   {'type': 'bool_type', 'loc': ('response', 11, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401982478Z   {'type': 'datetime_type', 'loc': ('response', 11, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401985028Z   {'type': 'string_type', 'loc': ('response', 12, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401987478Z   {'type': 'datetime_type', 'loc': ('response', 12, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401990138Z   {'type': 'bool_type', 'loc': ('response', 12, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.401992829Z   {'type': 'datetime_type', 'loc': ('response', 12, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.401995518Z   {'type': 'string_type', 'loc': ('response', 13, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.401998079Z   {'type': 'datetime_type', 'loc': ('response', 13, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402000649Z   {'type': 'bool_type', 'loc': ('response', 13, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402002979Z   {'type': 'datetime_type', 'loc': ('response', 13, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402005439Z   {'type': 'string_type', 'loc': ('response', 14, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402008089Z   {'type': 'datetime_type', 'loc': ('response', 14, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402010739Z   {'type': 'bool_type', 'loc': ('response', 14, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402013519Z   {'type': 'datetime_type', 'loc': ('response', 14, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402015999Z   {'type': 'string_type', 'loc': ('response', 15, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402018579Z   {'type': 'datetime_type', 'loc': ('response', 15, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402022259Z   {'type': 'bool_type', 'loc': ('response', 15, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402024789Z   {'type': 'datetime_type', 'loc': ('response', 15, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402027489Z   {'type': 'string_type', 'loc': ('response', 16, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402030139Z   {'type': 'datetime_type', 'loc': ('response', 16, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402039799Z   {'type': 'bool_type', 'loc': ('response', 16, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402042599Z   {'type': 'datetime_type', 'loc': ('response', 16, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.4020454Z   {'type': 'string_type', 'loc': ('response', 17, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.40205203Z   {'type': 'datetime_type', 'loc': ('response', 17, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40205468Z   {'type': 'bool_type', 'loc': ('response', 17, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.4020573Z   {'type': 'datetime_type', 'loc': ('response', 17, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40205991Z   {'type': 'string_type', 'loc': ('response', 18, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.40206241Z   {'type': 'datetime_type', 'loc': ('response', 18, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40206495Z   {'type': 'bool_type', 'loc': ('response', 18, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.40206765Z   {'type': 'datetime_type', 'loc': ('response', 18, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40207014Z   {'type': 'string_type', 'loc': ('response', 19, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.40207268Z   {'type': 'datetime_type', 'loc': ('response', 19, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40207531Z   {'type': 'bool_type', 'loc': ('response', 19, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.4020778Z   {'type': 'datetime_type', 'loc': ('response', 19, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.40208047Z   {'type': 'string_type', 'loc': ('response', 20, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402082951Z   {'type': 'datetime_type', 'loc': ('response', 20, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402085711Z   {'type': 'bool_type', 'loc': ('response', 20, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402088371Z   {'type': 'datetime_type', 'loc': ('response', 20, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402090811Z   {'type': 'string_type', 'loc': ('response', 21, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402093261Z   {'type': 'datetime_type', 'loc': ('response', 21, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402095711Z   {'type': 'bool_type', 'loc': ('response', 21, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402098141Z   {'type': 'datetime_type', 'loc': ('response', 21, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402100581Z   {'type': 'string_type', 'loc': ('response', 22, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402103381Z   {'type': 'datetime_type', 'loc': ('response', 22, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402105881Z   {'type': 'bool_type', 'loc': ('response', 22, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402108591Z   {'type': 'datetime_type', 'loc': ('response', 22, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402111191Z   {'type': 'string_type', 'loc': ('response', 23, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402117561Z   {'type': 'datetime_type', 'loc': ('response', 23, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402120261Z   {'type': 'bool_type', 'loc': ('response', 23, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402123061Z   {'type': 'datetime_type', 'loc': ('response', 23, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402126031Z   {'type': 'string_type', 'loc': ('response', 24, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402128521Z   {'type': 'datetime_type', 'loc': ('response', 24, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402138292Z   {'type': 'bool_type', 'loc': ('response', 24, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402141312Z   {'type': 'datetime_type', 'loc': ('response', 24, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402144062Z   {'type': 'string_type', 'loc': ('response', 25, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402146632Z   {'type': 'datetime_type', 'loc': ('response', 25, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402149422Z   {'type': 'bool_type', 'loc': ('response', 25, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402151932Z   {'type': 'datetime_type', 'loc': ('response', 25, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402154452Z   {'type': 'string_type', 'loc': ('response', 26, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402156982Z   {'type': 'datetime_type', 'loc': ('response', 26, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402159652Z   {'type': 'bool_type', 'loc': ('response', 26, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402162522Z   {'type': 'datetime_type', 'loc': ('response', 26, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402165102Z   {'type': 'string_type', 'loc': ('response', 27, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402167722Z   {'type': 'datetime_type', 'loc': ('response', 27, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402170272Z   {'type': 'bool_type', 'loc': ('response', 27, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402172782Z   {'type': 'datetime_type', 'loc': ('response', 27, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402175162Z   {'type': 'string_type', 'loc': ('response', 28, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402177853Z   {'type': 'datetime_type', 'loc': ('response', 28, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402180413Z   {'type': 'bool_type', 'loc': ('response', 28, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402183173Z   {'type': 'datetime_type', 'loc': ('response', 28, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402185743Z   {'type': 'string_type', 'loc': ('response', 29, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402188163Z   {'type': 'datetime_type', 'loc': ('response', 29, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402194693Z   {'type': 'bool_type', 'loc': ('response', 29, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402197513Z   {'type': 'datetime_type', 'loc': ('response', 29, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402200193Z   {'type': 'string_type', 'loc': ('response', 30, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402202883Z   {'type': 'datetime_type', 'loc': ('response', 30, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402205503Z   {'type': 'bool_type', 'loc': ('response', 30, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402208103Z   {'type': 'datetime_type', 'loc': ('response', 30, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402210473Z   {'type': 'string_type', 'loc': ('response', 31, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402213093Z   {'type': 'datetime_type', 'loc': ('response', 31, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402215823Z   {'type': 'bool_type', 'loc': ('response', 31, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402218473Z   {'type': 'datetime_type', 'loc': ('response', 31, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402221163Z   {'type': 'string_type', 'loc': ('response', 32, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402223674Z   {'type': 'datetime_type', 'loc': ('response', 32, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402246274Z   {'type': 'bool_type', 'loc': ('response', 32, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402271735Z   {'type': 'datetime_type', 'loc': ('response', 32, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402280725Z   {'type': 'string_type', 'loc': ('response', 33, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402283645Z   {'type': 'datetime_type', 'loc': ('response', 33, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402286335Z   {'type': 'bool_type', 'loc': ('response', 33, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402289345Z   {'type': 'datetime_type', 'loc': ('response', 33, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402291945Z   {'type': 'string_type', 'loc': ('response', 34, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402293805Z   {'type': 'datetime_type', 'loc': ('response', 34, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402295445Z   {'type': 'bool_type', 'loc': ('response', 34, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402297145Z   {'type': 'datetime_type', 'loc': ('response', 34, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402298915Z   {'type': 'string_type', 'loc': ('response', 35, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402300535Z   {'type': 'datetime_type', 'loc': ('response', 35, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402309385Z   {'type': 'bool_type', 'loc': ('response', 35, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402311265Z   {'type': 'datetime_type', 'loc': ('response', 35, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402312905Z   {'type': 'string_type', 'loc': ('response', 36, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402314536Z   {'type': 'datetime_type', 'loc': ('response', 36, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402316165Z   {'type': 'bool_type', 'loc': ('response', 36, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402317856Z   {'type': 'datetime_type', 'loc': ('response', 36, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402319476Z   {'type': 'string_type', 'loc': ('response', 37, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402321106Z   {'type': 'datetime_type', 'loc': ('response', 37, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402322766Z   {'type': 'bool_type', 'loc': ('response', 37, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402324376Z   {'type': 'datetime_type', 'loc': ('response', 37, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402326066Z   {'type': 'string_type', 'loc': ('response', 38, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402327766Z   {'type': 'datetime_type', 'loc': ('response', 38, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402329376Z   {'type': 'bool_type', 'loc': ('response', 38, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402331036Z   {'type': 'datetime_type', 'loc': ('response', 38, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402332666Z   {'type': 'string_type', 'loc': ('response', 39, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402334276Z   {'type': 'datetime_type', 'loc': ('response', 39, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402335886Z   {'type': 'bool_type', 'loc': ('response', 39, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402337506Z   {'type': 'datetime_type', 'loc': ('response', 39, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402339156Z   {'type': 'string_type', 'loc': ('response', 40, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402340796Z   {'type': 'datetime_type', 'loc': ('response', 40, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402342426Z   {'type': 'bool_type', 'loc': ('response', 40, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402351476Z   {'type': 'datetime_type', 'loc': ('response', 40, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402354576Z   {'type': 'string_type', 'loc': ('response', 41, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402357157Z   {'type': 'datetime_type', 'loc': ('response', 41, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402364166Z   {'type': 'bool_type', 'loc': ('response', 41, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402366987Z   {'type': 'datetime_type', 'loc': ('response', 41, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402370347Z   {'type': 'string_type', 'loc': ('response', 42, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402372077Z   {'type': 'datetime_type', 'loc': ('response', 42, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402373697Z   {'type': 'bool_type', 'loc': ('response', 42, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402375377Z   {'type': 'datetime_type', 'loc': ('response', 42, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402377027Z   {'type': 'string_type', 'loc': ('response', 43, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402378627Z   {'type': 'datetime_type', 'loc': ('response', 43, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402380237Z   {'type': 'bool_type', 'loc': ('response', 43, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402381937Z   {'type': 'datetime_type', 'loc': ('response', 43, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402383597Z   {'type': 'string_type', 'loc': ('response', 44, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402385197Z   {'type': 'datetime_type', 'loc': ('response', 44, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402386787Z   {'type': 'bool_type', 'loc': ('response', 44, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402388447Z   {'type': 'datetime_type', 'loc': ('response', 44, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402390157Z   {'type': 'string_type', 'loc': ('response', 45, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402391787Z   {'type': 'datetime_type', 'loc': ('response', 45, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402393407Z   {'type': 'bool_type', 'loc': ('response', 45, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402395077Z   {'type': 'datetime_type', 'loc': ('response', 45, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402396707Z   {'type': 'string_type', 'loc': ('response', 46, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402398327Z   {'type': 'datetime_type', 'loc': ('response', 46, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402399937Z   {'type': 'bool_type', 'loc': ('response', 46, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402401547Z   {'type': 'datetime_type', 'loc': ('response', 46, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402403187Z   {'type': 'string_type', 'loc': ('response', 47, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402404807Z   {'type': 'datetime_type', 'loc': ('response', 47, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402406398Z   {'type': 'bool_type', 'loc': ('response', 47, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402415618Z   {'type': 'datetime_type', 'loc': ('response', 47, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402417378Z   {'type': 'string_type', 'loc': ('response', 48, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402419038Z   {'type': 'datetime_type', 'loc': ('response', 48, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402420668Z   {'type': 'bool_type', 'loc': ('response', 48, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402431478Z   {'type': 'datetime_type', 'loc': ('response', 48, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402434348Z   {'type': 'string_type', 'loc': ('response', 49, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402436858Z   {'type': 'datetime_type', 'loc': ('response', 49, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402439318Z   {'type': 'bool_type', 'loc': ('response', 49, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402442158Z   {'type': 'datetime_type', 'loc': ('response', 49, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402444988Z   {'type': 'string_type', 'loc': ('response', 50, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402446698Z   {'type': 'datetime_type', 'loc': ('response', 50, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402448319Z   {'type': 'bool_type', 'loc': ('response', 50, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402449979Z   {'type': 'datetime_type', 'loc': ('response', 50, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402451619Z   {'type': 'string_type', 'loc': ('response', 51, 'full_game_code'), 'msg': 'Input should be a valid string', 'input': None}
+2025-06-30T09:21:13.402453299Z   {'type': 'datetime_type', 'loc': ('response', 51, 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402454948Z   {'type': 'bool_type', 'loc': ('response', 51, 'game', 'is_active'), 'msg': 'Input should be a valid boolean', 'input': None}
+2025-06-30T09:21:13.402456639Z   {'type': 'datetime_type', 'loc': ('response', 51, 'game', 'created_at'), 'msg': 'Input should be a valid datetime', 'input': None}
+2025-06-30T09:21:13.402458179Z 
+2025-06-30T09:21:23.371072308Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T09:21:23.444775872Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
