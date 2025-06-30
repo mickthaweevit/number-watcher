@@ -797,10 +797,15 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
         games_created = 0
         results_created = 0
         
+        print(f"Processing {len(processed_games)} games from v2 format")
+        
         for game_data in processed_games:
+            print(f"Processing game: {game_data['product_name_th']} (ID: {game_data['product_id']})")
+            
             # Check if game exists, if not create it
             game = db.query(GameV2).filter(GameV2.product_id == game_data['product_id']).first()
             if not game:
+                print(f"Creating new game: {game_data['product_name_th']}")
                 game = GameV2(
                     product_id=game_data['product_id'],
                     product_name_th=game_data['product_name_th'],
@@ -809,6 +814,8 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
                 db.add(game)
                 db.flush()
                 games_created += 1
+            else:
+                print(f"Game already exists: {game_data['product_name_th']}")
             
             # Check if result exists for this game, date and round
             existing_result = db.query(ResultV2).filter(
@@ -818,7 +825,7 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
             ).first()
             
             if not existing_result:
-                # Create new result
+                print(f"Creating new result for game {game.id}, date {game_data['result_date']}")
                 new_result = ResultV2(
                     game_id=game.id,
                     period_id=game_data['period_id'],
@@ -831,6 +838,8 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
                 )
                 db.add(new_result)
                 results_created += 1
+            else:
+                print(f"Result already exists for game {game.id}, date {game_data['result_date']}")
             
             imported_count += 1
         
