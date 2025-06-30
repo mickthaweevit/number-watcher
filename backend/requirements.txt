@@ -6,6 +6,7 @@ alembic==1.14.0
 pydantic==2.10.3
 python-multipart==0.0.12
 httpx==0.28.1
+aiohttp==3.10.11
 schedule==1.2.2
 passlib==1.7.4
 bcrypt==4.2.1
