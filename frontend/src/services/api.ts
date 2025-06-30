@@ -141,10 +141,24 @@ export const gameApi = {
   },
 
   importDateRange: async (startDate: string, endDate: string) => {
-    const response = await api.post('/scheduler/import-range', null, {
-      params: { start_date: startDate, end_date: endDate }
-    });
-    return response.data;
+    const source = getCurrentSource()
+    
+    if (source === 'new') {
+      // Convert ISO dates to YYYYMMDD format for v2 API
+      const start = new Date(startDate).toISOString().slice(0, 10).replace(/-/g, '')
+      const end = new Date(endDate).toISOString().slice(0, 10).replace(/-/g, '')
+      
+      const response = await api.post('/import-date-range-v2', null, {
+        params: { start_date: start, end_date: end }
+      });
+      return response.data;
+    } else {
+      // Use original v1 endpoint with ISO format
+      const response = await api.post('/scheduler/import-range', null, {
+        params: { start_date: startDate, end_date: endDate }
+      });
+      return response.data;
+    }
   },
 
   // Backup endpoints
