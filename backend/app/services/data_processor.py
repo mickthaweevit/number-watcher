@@ -39,14 +39,14 @@ def process_api_response(api_data: Dict) -> List[Dict]:
     """
     processed_games = []
     
-    # Process each category in the API response
-    for category, category_data in api_data.items():
-        if not isinstance(category_data, dict) or 'lists' not in category_data:
+    # Process each section in the API response
+    for _, section_data in api_data.items():
+        if not isinstance(section_data, dict) or 'lists' not in section_data:
             continue
             
-        date_game = category_data.get('DATE_GAME', '')
+        date_game = section_data.get('DATE_GAME', '')
         
-        for game_item in category_data['lists']:
+        for game_item in section_data['lists']:
             # Extract base game ID and date from GAME_CODE
             game_code = game_item.get('GAME_CODE', '')
             if not game_code:
