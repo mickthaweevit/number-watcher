@@ -741,8 +741,25 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
     
     try:
         # Read the new sample data file
-        with open('/app/responseDataNew.json', 'r', encoding='utf-8') as file:
-            api_data = json.load(file)
+        import os
+        # Try different paths for local vs production
+        possible_paths = [
+            '/app/responseDataNew.json',  # Production path
+            'responseDataNew.json',       # Local relative path
+            '../responseDataNew.json'     # Local parent directory
+        ]
+        
+        api_data = None
+        for path in possible_paths:
+            try:
+                with open(path, 'r', encoding='utf-8') as file:
+                    api_data = json.load(file)
+                    break
+            except FileNotFoundError:
+                continue
+        
+        if api_data is None:
+            raise FileNotFoundError("responseDataNew.json not found in any expected location")
         
         # Process the API response with new processor
         processed_games = process_api_response_v2(api_data)
