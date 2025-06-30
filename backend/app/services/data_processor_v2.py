@@ -2,7 +2,7 @@ from typing import Dict, Any, List
 from datetime import datetime
 import re
 
-def process_api_response_v2(api_data: Dict[str, Any], input_date: str = None) -> List[Dict[str, Any]]:
+def process_api_response_v2(api_data: Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Process new API format response and convert to standardized format
     
@@ -32,7 +32,7 @@ def process_api_response_v2(api_data: Dict[str, Any], input_date: str = None) ->
     
     processed_games = []
     
-    # Filter out unwanted product codes
+    # Filter out unwanted product codes (keep HNLOCAL)
     filtered_products = [
         item for item in api_data["info"] 
         if item.get("productCode") not in ["YK", "YK5", "TH", "AOM", "BAAC"]
@@ -40,16 +40,8 @@ def process_api_response_v2(api_data: Dict[str, Any], input_date: str = None) ->
     
     for item in filtered_products:
         try:
-            # Use input date if provided, otherwise try to parse from periodName
-            if input_date:
-                # Convert YYYYMMDD to YYYY-MM-DD
-                try:
-                    date_obj = datetime.strptime(input_date, '%Y%m%d')
-                    result_date = date_obj.strftime('%Y-%m-%d')
-                except ValueError:
-                    result_date = parse_period_date(item.get("periodName", ""))
-            else:
-                result_date = parse_period_date(item.get("periodName", ""))
+            # Always use periodName date format (dd/mm/yy Buddhist year)
+            result_date = parse_period_date(item.get("periodName", ""))
             
             if not result_date:
                 continue  # Skip if can't parse date
@@ -98,12 +90,16 @@ def parse_period_date(period_name: str) -> str:
         
         day, month, year = date_match.groups()
         
-        # Convert 2-digit year to 4-digit (assuming 68 = 2025, etc.)
+        # Convert Buddhist year (last 2 digits) to Gregorian year
+        # Buddhist year = Gregorian year + 543
+        # So 67 (Buddhist) = 2024 (Gregorian), 68 = 2025, etc.
         year_int = int(year)
-        if year_int >= 68:  # Adjust threshold as needed
-            full_year = 2000 + year_int
-        else:
-            full_year = 2100 + year_int
+        if year_int >= 50:  # 50-99 = 2007-2056
+            buddhist_year = 2500 + year_int
+        else:  # 00-49 = 2057-2106
+            buddhist_year = 2600 + year_int
+        
+        full_year = buddhist_year - 543  # Convert to Gregorian
         
         # Format as ISO date
         return f"{full_year}-{month.zfill(2)}-{day.zfill(2)}"
