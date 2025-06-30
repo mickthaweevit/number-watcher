@@ -31,7 +31,7 @@ from datetime import datetime
 # Create database tables
 from .database import Base
 # Import all models to ensure they're registered
-from .models import game, result, import_log, user, dashboard_profile, invite_code
+from .models import game, result, import_log, user, dashboard_profile, invite_code, game_v2, result_v2
 # Create database tables (with error handling for deployment)
 try:
     Base.metadata.create_all(bind=engine)
@@ -160,18 +160,23 @@ async def get_games(
     try:
         if source == "new":
             # Query new tables and map to old format
-            games_v2 = db.query(GameV2).filter(GameV2.is_active == True).all()
-            
-            # Map to old format
-            mapped_games = []
-            for g in games_v2:
-                game_obj = Game(
-                    id=g.id,
-                    game_name=g.product_name_th,
-                    base_game_id=str(g.product_id)
-                )
-                mapped_games.append(game_obj)
-            return mapped_games
+            try:
+                games_v2 = db.query(GameV2).filter(GameV2.is_active == True).all()
+                
+                # Map to old format
+                mapped_games = []
+                for g in games_v2:
+                    game_obj = Game(
+                        id=g.id,
+                        game_name=g.product_name_th,
+                        base_game_id=str(g.product_id)
+                    )
+                    mapped_games.append(game_obj)
+                return mapped_games
+            except Exception as e:
+                print(f"Error querying new games: {str(e)}")
+                # Return empty list if tables don't exist or are empty
+                return []
         else:
             # Original old format query
             games = db.query(Game).filter(Game.is_active == True).all()
@@ -189,27 +194,32 @@ async def get_results(
     try:
         if source == "new":
             # Query new tables and map to old format
-            results_v2 = db.query(ResultV2).join(GameV2).all()
-            
-            # Map to old format
-            mapped_results = []
-            for r in results_v2:
-                result_obj = Result(
-                    id=r.id,
-                    game_id=r.game_id,
-                    result_date=r.result_date,
-                    result_3up=r.award1,
-                    result_2down=r.award2,
-                    result_4up=r.award3,
-                    status=r.status
-                )
-                result_obj.game = Game(
-                    id=r.game.id,
-                    game_name=r.game.product_name_th,
-                    base_game_id=str(r.game.product_id)
-                )
-                mapped_results.append(result_obj)
-            return mapped_results
+            try:
+                results_v2 = db.query(ResultV2).join(GameV2).all()
+                
+                # Map to old format
+                mapped_results = []
+                for r in results_v2:
+                    result_obj = Result(
+                        id=r.id,
+                        game_id=r.game_id,
+                        result_date=r.result_date,
+                        result_3up=r.award1,
+                        result_2down=r.award2,
+                        result_4up=r.award3,
+                        status=r.status
+                    )
+                    result_obj.game = Game(
+                        id=r.game.id,
+                        game_name=r.game.product_name_th,
+                        base_game_id=str(r.game.product_id)
+                    )
+                    mapped_results.append(result_obj)
+                return mapped_results
+            except Exception as e:
+                print(f"Error querying new tables: {str(e)}")
+                # Return empty list if tables don't exist or are empty
+                return []
         else:
             # Original old format query
             from sqlalchemy.orm import joinedload
