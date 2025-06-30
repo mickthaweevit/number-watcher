@@ -101,10 +101,19 @@ class LotteryScheduler:
         except Exception as e:
             logger.error(f"Error in scheduled import: {str(e)}")
     
+    def get_current_source(self) -> str:
+        """Get current source from localStorage equivalent (environment or default)"""
+        # Check if there's a way to determine current source
+        # For now, use environment variable or default to 'old'
+        return os.getenv("DEFAULT_API_SOURCE", "old")
+    
     async def _async_import(self) -> Dict[str, Any]:
-        """Async import method for current date"""
+        """Async import method for current date - auto-detects API version"""
         try:
-            if self.api_version == "v2" and self.external_api_url_v2:
+            # Auto-detect API version based on current source preference
+            current_source = self.get_current_source()
+            
+            if current_source == "new" and self.external_api_url_v2:
                 # Use v2 API with YYYYMMDD format
                 today = datetime.now()
                 api_date = today.strftime('%Y%m%d')
@@ -115,7 +124,7 @@ class LotteryScheduler:
                 async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
                     result = await api_service.import_data_for_date(api_date, db)
                     return result
-            else:
+            elif self.external_api_url:
                 # Use v1 API with ISO format
                 today = datetime.now()
                 api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
@@ -123,6 +132,14 @@ class LotteryScheduler:
                 async with ExternalAPIService(base_url=self.external_api_url) as api_service:
                     result = await api_service.import_live_data(api_date)
                     return result
+            else:
+                return {
+                    "success": False,
+                    "message": "No API configured for current source",
+                    "games_created": 0,
+                    "results_updated": 0,
+                    "total_records": 0
+                }
         except Exception as e:
             return {
                 "success": False,
@@ -134,11 +151,13 @@ class LotteryScheduler:
     
     def get_status(self) -> Dict[str, Any]:
         """Get scheduler status"""
+        current_source = self.get_current_source()
         return {
             "is_running": self.is_running,
             "external_api_configured": bool(self.external_api_url),
             "external_api_v2_configured": bool(self.external_api_url_v2),
-            "api_version": self.api_version,
+            "current_source": current_source,
+            "active_api": "v2" if current_source == "new" else "v1",
             "next_jobs": [str(job) for job in schedule.jobs] if schedule.jobs else [],
             "thread_alive": self.scheduler_thread.is_alive() if self.scheduler_thread else False
         }

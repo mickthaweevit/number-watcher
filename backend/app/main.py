@@ -409,17 +409,20 @@ async def import_date_range(
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
-@app.post("/scheduler/set-version")
-async def set_scheduler_version(
-    version: str = Query(..., description="API version: v1 or v2")
+@app.post("/scheduler/set-source")
+async def set_scheduler_source(
+    source: str = Query(..., description="API source: old or new")
 ):
-    """Set scheduler API version"""
-    if version not in ["v1", "v2"]:
-        raise HTTPException(status_code=400, detail="Version must be v1 or v2")
+    """Set default API source for scheduler"""
+    if source not in ["old", "new"]:
+        raise HTTPException(status_code=400, detail="Source must be old or new")
     
-    lottery_scheduler.api_version = version
+    # Set environment variable (this will persist for current session)
+    os.environ["DEFAULT_API_SOURCE"] = source
+    
     return {
-        "message": f"Scheduler API version set to {version}",
+        "message": f"Scheduler default source set to {source}",
+        "active_api": "v2" if source == "new" else "v1",
         "status": lottery_scheduler.get_status()
     }
 
