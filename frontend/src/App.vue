@@ -35,7 +35,7 @@
           >
             Results
           </router-link>
-          <router-link 
+          <router-link
             to="/scheduler" 
             class="px-4 py-2 rounded transition-colors"
             :class="$route.path === '/scheduler' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-200'"
