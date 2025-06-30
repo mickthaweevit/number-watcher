@@ -409,6 +409,20 @@ async def import_date_range(
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
+@app.post("/scheduler/set-version")
+async def set_scheduler_version(
+    version: str = Query(..., description="API version: v1 or v2")
+):
+    """Set scheduler API version"""
+    if version not in ["v1", "v2"]:
+        raise HTTPException(status_code=400, detail="Version must be v1 or v2")
+    
+    lottery_scheduler.api_version = version
+    return {
+        "message": f"Scheduler API version set to {version}",
+        "status": lottery_scheduler.get_status()
+    }
+
 @app.get("/import-logs", response_model=List[ImportLogSchema])
 async def get_import_logs(db: Session = Depends(get_db)):
     """Get recent import logs (last 20)"""
