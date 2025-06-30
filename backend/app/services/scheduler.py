@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List
 import os
 from .external_api import ExternalAPIService
+from .external_api_v2 import ExternalAPIServiceV2
 
 logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ class LotteryScheduler:
         self.is_running = False
         self.scheduler_thread = None
         self.external_api_url = os.getenv("EXTERNAL_API_URL")
+        self.external_api_url_v2 = os.getenv("EXTERNAL_API_URL_V2")
         
     def start_scheduler(self):
         """Start the background scheduler"""
@@ -22,8 +24,8 @@ class LotteryScheduler:
             logger.warning("Scheduler is already running")
             return
         
-        if not self.external_api_url:
-            logger.warning("EXTERNAL_API_URL not configured, scheduler will not start")
+        if not self.external_api_url and not self.external_api_url_v2:
+            logger.warning("No external API URLs configured, scheduler will not start")
             return
         
         self.is_running = True
@@ -93,29 +95,57 @@ class LotteryScheduler:
             logger.error(f"Error in scheduled import: {str(e)}")
     
     async def _async_import(self) -> Dict[str, Any]:
-        """Async import method for current date"""
-        try:
-            # Get current date and convert to previous day at 17:00 UTC
-            today = datetime.now()
-            api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
-            
-            async with ExternalAPIService(base_url=self.external_api_url) as api_service:
-                result = await api_service.import_live_data(api_date)
-                return result
-        except Exception as e:
-            return {
-                "success": False,
-                "message": f"Scheduled import error: {str(e)}",
-                "games_created": 0,
-                "results_updated": 0,
-                "total_records": 0
-            }
+        """Async import method for current date - imports from both APIs"""
+        results = {"v1": None, "v2": None}
+        
+        # Import from V1 API if configured
+        if self.external_api_url:
+            try:
+                today = datetime.now()
+                api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
+                
+                async with ExternalAPIService(base_url=self.external_api_url) as api_service:
+                    results["v1"] = await api_service.import_live_data(api_date)
+            except Exception as e:
+                results["v1"] = {
+                    "success": False,
+                    "message": f"V1 import error: {str(e)}"
+                }
+        
+        # Import from V2 API if configured
+        if self.external_api_url_v2:
+            try:
+                today = datetime.now()
+                api_date = today.strftime('%Y%m%d')
+                
+                from ..database import get_db
+                db = next(get_db())
+                
+                async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
+                    results["v2"] = await api_service.import_data_for_date(api_date, db)
+            except Exception as e:
+                results["v2"] = {
+                    "success": False,
+                    "message": f"V2 import error: {str(e)}"
+                }
+        
+        # Combine results
+        v1_success = results["v1"] and results["v1"].get("success", False)
+        v2_success = results["v2"] and results["v2"].get("success", False)
+        
+        return {
+            "success": v1_success or v2_success,
+            "message": f"V1: {'✅' if v1_success else '❌'}, V2: {'✅' if v2_success else '❌'}",
+            "v1_result": results["v1"],
+            "v2_result": results["v2"]
+        }
     
     def get_status(self) -> Dict[str, Any]:
         """Get scheduler status"""
         return {
             "is_running": self.is_running,
             "external_api_configured": bool(self.external_api_url),
+            "external_api_v2_configured": bool(self.external_api_url_v2),
             "next_jobs": [str(job) for job in schedule.jobs] if schedule.jobs else [],
             "thread_alive": self.scheduler_thread.is_alive() if self.scheduler_thread else False
         }
