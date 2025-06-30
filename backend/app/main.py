@@ -25,6 +25,7 @@ from .services.data_processor_v2 import process_api_response_v2
 from .services.external_api import ExternalAPIService
 from .services.external_api_v2 import ExternalAPIServiceV2
 from .services.scheduler import lottery_scheduler
+from .services.scheduler_v2 import lottery_scheduler_v2
 import json
 import os
 from datetime import datetime
@@ -46,13 +47,15 @@ app = FastAPI(title="NumWatch API", version="1.0.0")
 
 @app.on_event("startup")
 async def startup_event():
-    """Start the lottery data scheduler on app startup"""
-    lottery_scheduler.start_scheduler()
+    """Start both lottery data schedulers on app startup"""
+    lottery_scheduler.start_scheduler()      # V1 scheduler
+    lottery_scheduler_v2.start_scheduler()   # V2 scheduler
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Stop the lottery data scheduler on app shutdown"""
-    lottery_scheduler.stop_scheduler()
+    """Stop both lottery data schedulers on app shutdown"""
+    lottery_scheduler.stop_scheduler()       # V1 scheduler
+    lottery_scheduler_v2.stop_scheduler()    # V2 scheduler
 
 # CORS middleware - support both development and production
 import os
@@ -375,8 +378,11 @@ async def import_live_data(date: Optional[str] = Query(None, description="Date i
 
 @app.get("/scheduler/status")
 async def get_scheduler_status():
-    """Get scheduler status and next scheduled jobs"""
-    return lottery_scheduler.get_status()
+    """Get both schedulers status"""
+    return {
+        "v1_scheduler": lottery_scheduler.get_status(),
+        "v2_scheduler": lottery_scheduler_v2.get_status()
+    }
 
 @app.post("/scheduler/start")
 async def start_scheduler():
@@ -409,22 +415,7 @@ async def import_date_range(
         raise HTTPException(status_code=500, detail=result["message"])
     return result
 
-@app.post("/scheduler/set-source")
-async def set_scheduler_source(
-    source: str = Query(..., description="API source: old or new")
-):
-    """Set default API source for scheduler"""
-    if source not in ["old", "new"]:
-        raise HTTPException(status_code=400, detail="Source must be old or new")
-    
-    # Set environment variable (this will persist for current session)
-    os.environ["DEFAULT_API_SOURCE"] = source
-    
-    return {
-        "message": f"Scheduler default source set to {source}",
-        "active_api": "v2" if source == "new" else "v1",
-        "status": lottery_scheduler.get_status()
-    }
+
 
 @app.get("/import-logs", response_model=List[ImportLogSchema])
 async def get_import_logs(db: Session = Depends(get_db)):

@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List
 import os
 from .external_api import ExternalAPIService
-from .external_api_v2 import ExternalAPIServiceV2
 
 logger = logging.getLogger(__name__)
 
@@ -16,8 +15,6 @@ class LotteryScheduler:
         self.is_running = False
         self.scheduler_thread = None
         self.external_api_url = os.getenv("EXTERNAL_API_URL")
-        self.external_api_url_v2 = os.getenv("EXTERNAL_API_URL_V2")
-        self.api_version = os.getenv("SCHEDULER_API_VERSION", "v1")  # Default to v1
         
     def start_scheduler(self):
         """Start the background scheduler"""
@@ -25,14 +22,8 @@ class LotteryScheduler:
             logger.warning("Scheduler is already running")
             return
         
-        # Check if at least one API URL is configured
-        if not self.external_api_url and not self.external_api_url_v2:
-            logger.warning("No external API URL configured, scheduler will not start")
-            return
-        
-        # Use v2 if configured and version is set to v2
-        if self.api_version == "v2" and not self.external_api_url_v2:
-            logger.warning("SCHEDULER_API_VERSION set to v2 but EXTERNAL_API_URL_V2 not configured")
+        if not self.external_api_url:
+            logger.warning("EXTERNAL_API_URL not configured, scheduler will not start")
             return
         
         self.is_running = True
@@ -101,45 +92,16 @@ class LotteryScheduler:
         except Exception as e:
             logger.error(f"Error in scheduled import: {str(e)}")
     
-    def get_current_source(self) -> str:
-        """Get current source from localStorage equivalent (environment or default)"""
-        # Check if there's a way to determine current source
-        # For now, use environment variable or default to 'old'
-        return os.getenv("DEFAULT_API_SOURCE", "old")
-    
     async def _async_import(self) -> Dict[str, Any]:
-        """Async import method for current date - auto-detects API version"""
+        """Async import method for current date"""
         try:
-            # Auto-detect API version based on current source preference
-            current_source = self.get_current_source()
+            # Get current date and convert to previous day at 17:00 UTC
+            today = datetime.now()
+            api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
             
-            if current_source == "new" and self.external_api_url_v2:
-                # Use v2 API with YYYYMMDD format
-                today = datetime.now()
-                api_date = today.strftime('%Y%m%d')
-                
-                from ..database import get_db
-                db = next(get_db())
-                
-                async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
-                    result = await api_service.import_data_for_date(api_date, db)
-                    return result
-            elif self.external_api_url:
-                # Use v1 API with ISO format
-                today = datetime.now()
-                api_date = (today - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
-                
-                async with ExternalAPIService(base_url=self.external_api_url) as api_service:
-                    result = await api_service.import_live_data(api_date)
-                    return result
-            else:
-                return {
-                    "success": False,
-                    "message": "No API configured for current source",
-                    "games_created": 0,
-                    "results_updated": 0,
-                    "total_records": 0
-                }
+            async with ExternalAPIService(base_url=self.external_api_url) as api_service:
+                result = await api_service.import_live_data(api_date)
+                return result
         except Exception as e:
             return {
                 "success": False,
@@ -151,13 +113,9 @@ class LotteryScheduler:
     
     def get_status(self) -> Dict[str, Any]:
         """Get scheduler status"""
-        current_source = self.get_current_source()
         return {
             "is_running": self.is_running,
             "external_api_configured": bool(self.external_api_url),
-            "external_api_v2_configured": bool(self.external_api_url_v2),
-            "current_source": current_source,
-            "active_api": "v2" if current_source == "new" else "v1",
             "next_jobs": [str(job) for job in schedule.jobs] if schedule.jobs else [],
             "thread_alive": self.scheduler_thread.is_alive() if self.scheduler_thread else False
         }
