@@ -1,100 +1,505 @@
-2025-06-30T10:34:37.483369409Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:34:47.449011329Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:34:54.74821929Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:34:54.811897458Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:34:57.445433553Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:07.440761135Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:17.443738783Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:24.782378779Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:35:24.87280027Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:35:27.446978451Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:38.635385446Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:48.6388252Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:35:54.742256355Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:35:54.806840654Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:35:58.626850213Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:08.633636566Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:18.642745292Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:24.746444146Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:36:24.814090713Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:36:28.621354123Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:38.624537568Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:49.791572611Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:36:54.759030783Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:36:54.828045403Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:36:59.846651615Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:37:10.689595397Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:37:18.551872236Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:37:18.554202242Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:37:18.678559001Z INFO:     184.22.247.188:0 - "GET /profiles HTTP/1.1" 200 OK
-2025-06-30T10:37:20.118326434Z INFO:     184.22.247.188:0 - "GET /games?source=new HTTP/1.1" 200 OK
-2025-06-30T10:37:20.121813652Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
-2025-06-30T10:37:22.92602557Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
-2025-06-30T10:37:22.928498873Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:37:24.847476297Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:37:24.958859858Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:37:54.84495466Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:37:54.926206665Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:38:24.840332795Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:38:24.901356862Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:38:54.833599439Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:38:54.905224557Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:39:24.935858273Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:39:25.000274074Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:39:54.95979247Z INFO:     184.22.247.188:0 - "OPTIONS /health HTTP/1.1" 200 OK
-2025-06-30T10:39:55.039073515Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:39:55.13290757Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:40:24.92188754Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:40:25.012548101Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:40:54.964688186Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:40:55.127857755Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:41:24.915328379Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:41:24.980568797Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:41:25.066374288Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:41:54.911289044Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:41:55.056275358Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:42:24.912614759Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:42:24.990721801Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:42:54.919798876Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:42:54.982334992Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:43:24.92588005Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:43:24.99025919Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:43:55.895128455Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:43:55.976132448Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:44:20.744010334Z ==> Deploying...
-2025-06-30T10:44:25.84865169Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:44:25.91657859Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:44:34.935533149Z ==> Running 'uvicorn app.main:app --host 0.0.0.0 --port $PORT'
-2025-06-30T10:44:52.238790405Z INFO:     Started server process [105]
-2025-06-30T10:44:52.238819835Z INFO:     Waiting for application startup.
-2025-06-30T10:44:52.239299046Z INFO:     Application startup complete.
-2025-06-30T10:44:52.239611983Z INFO:     Uvicorn running on http://0.0.0.0:10000 (Press CTRL+C to quit)
-2025-06-30T10:44:52.637476763Z ✅ Database tables created successfully
-2025-06-30T10:44:52.637498884Z INFO:     127.0.0.1:48022 - "HEAD / HTTP/1.1" 405 Method Not Allowed
-2025-06-30T10:44:55.906184848Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:44:56.089157384Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:45:01.556774026Z ==> Your service is live 🎉
-2025-06-30T10:45:01.744848771Z ==> 
-2025-06-30T10:45:01.927675157Z ==> ///////////////////////////////////////////////////////////
-2025-06-30T10:45:02.110839632Z ==> 
-2025-06-30T10:45:02.292984448Z ==> Available at your primary URL https://numwatch-backend.onrender.com
-2025-06-30T10:45:02.467575414Z ==> 
-2025-06-30T10:45:02.669449077Z ==> ///////////////////////////////////////////////////////////
-2025-06-30T10:45:06.527226639Z INFO:     35.230.45.39:0 - "GET / HTTP/1.1" 200 OK
-2025-06-30T10:45:15.801076238Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
-2025-06-30T10:45:15.83417841Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:45:15.849340755Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=new HTTP/1.1" 200 OK
-2025-06-30T10:45:15.887956708Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:45:16.128064153Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:45:16.158737581Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:45:16.170286676Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
-2025-06-30T10:45:16.17274281Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:45:17.91211586Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
-2025-06-30T10:45:17.951109562Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
-2025-06-30T10:45:17.951125652Z INFO:     184.22.247.188:0 - "OPTIONS /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:45:18.087569027Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
-2025-06-30T10:45:23.827711782Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-30T00:00:00.000Z HTTP/1.1" 200 OK
-2025-06-30T10:46:01.192139682Z INFO:     Shutting down
-2025-06-30T10:46:01.292639649Z INFO:     Waiting for application shutdown.
-2025-06-30T10:46:01.292852458Z INFO:     Application shutdown complete.
-2025-06-30T10:46:01.292924502Z INFO:     Finished server process [103]
+2025-06-30T11:52:15.179258817Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:52:45.037732167Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:52:45.189786447Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:53:15.050750242Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:53:15.190168268Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:53:45.035714915Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:53:45.197072996Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:53:50.135113244Z ==> Detected service running on port 10000
+2025-06-30T11:53:50.533375565Z ==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+2025-06-30T11:54:15.032356432Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:54:15.184581144Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:54:16.530897449Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:54:16.539476488Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:54:16.542811549Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:54:16.746491462Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:54:16.74797117Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T11:54:46.504235993Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:54:46.669574568Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:55:16.542148218Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:55:16.669837767Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:55:46.512001624Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:55:46.685045481Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:56:16.509356256Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:56:16.712974848Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:56:46.509220372Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:56:46.703796677Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:57:16.507955364Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:57:16.677586758Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:57:46.514694213Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:57:46.662785109Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:14.044073379Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:14.07933808Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:14.089922886Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:14.143319693Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:16.511125709Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:16.690997762Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:18.666829066Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:18.696348921Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:18.705652193Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:18.737680805Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:21.184578383Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:21.21527723Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:21.217343278Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:21.245126791Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:32.460201304Z INFO:     184.22.247.188:0 - "GET /docs HTTP/1.1" 200 OK
+2025-06-30T11:58:32.751310942Z INFO:     184.22.247.188:0 - "GET /openapi.json HTTP/1.1" 200 OK
+2025-06-30T11:58:45.199349893Z INFO:     184.22.247.188:0 - "DELETE /clear-data HTTP/1.1" 200 OK
+2025-06-30T11:58:46.518114148Z INFO:     184.22.247.188:0 - "OPTIONS /health HTTP/1.1" 200 OK
+2025-06-30T11:58:46.65244094Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:46.791635891Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:58:56.62580567Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:58:56.758545893Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:56.766831686Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T11:58:56.769679458Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:58:56.782046037Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:00.157485439Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=old HTTP/1.1" 200 OK
+2025-06-30T11:59:00.173896682Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:00.174996973Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:59:00.177666352Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:00.280613584Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T11:59:00.362215111Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:02.036883151Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:02.040412727Z INFO:     184.22.247.188:0 - "OPTIONS /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:02.041467716Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:02.194476963Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:05.811525329Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:59:05.850264655Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:05.955880866Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:05.956494618Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:05.964730999Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:05.967610923Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:13.560576395Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-30T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T11:59:13.948774307Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:13.94897179Z Failed to import data for 2025-06-01T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:15.160686537Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:15.16083605Z Failed to import data for 2025-06-02T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:16.442200753Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:16.442358307Z Failed to import data for 2025-06-03T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:17.658929413Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:17.659080706Z Failed to import data for 2025-06-04T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:18.975990686Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:18.976311142Z Failed to import data for 2025-06-05T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:20.250767388Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:20.250990762Z Failed to import data for 2025-06-06T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:21.567979493Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:21.568013174Z Failed to import data for 2025-06-07T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:22.813969193Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:22.814367331Z Failed to import data for 2025-06-08T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:24.028305628Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:24.028483992Z Failed to import data for 2025-06-09T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:25.227757969Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:25.228015504Z Failed to import data for 2025-06-10T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:26.375719518Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:26.375981302Z Failed to import data for 2025-06-11T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:27.562506094Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:27.562708278Z Failed to import data for 2025-06-12T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:28.835276108Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:28.835308689Z Failed to import data for 2025-06-13T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:30.166072655Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:30.166549304Z Failed to import data for 2025-06-14T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:31.450903133Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:31.451115377Z Failed to import data for 2025-06-15T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:32.668897115Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:32.669071248Z Failed to import data for 2025-06-16T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:33.957020724Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:33.95734238Z Failed to import data for 2025-06-17T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:35.174079029Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:35.174344804Z Failed to import data for 2025-06-18T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:36.428688398Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:36.428855491Z Failed to import data for 2025-06-19T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:37.581855623Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:37.582130968Z Failed to import data for 2025-06-20T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:38.86771734Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:38.867891603Z Failed to import data for 2025-06-21T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:40.196472399Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:40.196698183Z Failed to import data for 2025-06-22T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:41.460598244Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:41.460722726Z Failed to import data for 2025-06-23T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:42.726484752Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:42.726707956Z Failed to import data for 2025-06-24T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:43.968555969Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:43.968781063Z Failed to import data for 2025-06-25T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:45.163385054Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:45.163926524Z Failed to import data for 2025-06-26T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:46.344638228Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:46.344904492Z Failed to import data for 2025-06-27T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:47.564410834Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:47.564643828Z Failed to import data for 2025-06-28T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:48.80318153Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:48.803581857Z Failed to import data for 2025-06-29T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:50.003858973Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:50.004102507Z Failed to import data for 2025-06-30T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T11:59:51.00504126Z INFO:     184.22.247.188:0 - "POST /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-30T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T11:59:51.00882759Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T11:59:51.139019285Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:51.140102005Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:51.140557364Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:51.141959289Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:51.187174935Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:51.187787896Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:51.314174171Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:51.315044107Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:51.493061816Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:57.040240201Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:57.27506888Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:57.284442133Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=new HTTP/1.1" 200 OK
+2025-06-30T11:59:57.537252813Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:57.541662535Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T11:59:59.178596277Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T11:59:59.179072226Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:59.193170737Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T11:59:59.761485506Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T11:59:59.764745477Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:00:05.946663118Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:00:06.116612258Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:08.784873855Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:00:08.785728221Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:08.78784967Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:20.734569427Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:00:22.639770385Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:22.641829203Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:00:25.366259598Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:00:25.39185043Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:00:25.400318637Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:25.403567057Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:25.442340073Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:28.143482727Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:00:28.201350146Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:28.362974552Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:28.363633254Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:28.366989696Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:00:50.910382786Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:00:50.943143821Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:50.94525682Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:00:50.945839961Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:00:50.983921575Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:52.420559657Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:00:52.438118491Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:00:52.441771778Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:00.039899234Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-10T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T12:01:00.358437339Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:00.358675333Z Failed to import data for 2025-06-01T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:01.595895391Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:01.596096195Z Failed to import data for 2025-06-02T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:02.763728997Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:02.763949471Z Failed to import data for 2025-06-03T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:04.100494184Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:04.100752748Z Failed to import data for 2025-06-04T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:05.2564743Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:05.256703785Z Failed to import data for 2025-06-05T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:06.542346237Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:06.542560301Z Failed to import data for 2025-06-06T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:07.773279858Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:07.773635855Z Failed to import data for 2025-06-07T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:09.050282161Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:09.050453774Z Failed to import data for 2025-06-08T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:10.349040766Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:10.349764639Z Failed to import data for 2025-06-09T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:11.558341587Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:11.558610702Z Failed to import data for 2025-06-10T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:01:12.559528744Z INFO:     184.22.247.188:0 - "POST /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-10T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T12:01:12.571454044Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:12.662924004Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:12.756018274Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:12.868076834Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:17.368272655Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:17.370643859Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:01:21.00588299Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:21.072801957Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:21.618828355Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:21.645403995Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:01:21.647578836Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:21.647915292Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:21.69383032Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:21.74902232Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:23.793616324Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:23.810515736Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:23.813581243Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:33.814969327Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:43.820661071Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:50.709514272Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:50.711600951Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:50.724929367Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:50.740853591Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:50.742869769Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:01:50.783454178Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:51.564446257Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:51.683807652Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:01:53.572459965Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:53.58786936Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:53.589958278Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:53.601018043Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:01:53.641534581Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:55.503089983Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:55.736471055Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:55.737871051Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:55.739806546Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:01:55.740750254Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:02:25.518400872Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:02:25.58330732Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:02:58.669303787Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:02:58.794868697Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:03:30.43608833Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:03:30.507040631Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:03:44.409075486Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:04:00.493037092Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:04:00.555605468Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:04:30.417886261Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:04:30.536235338Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:00.438775923Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:00.572080536Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:30.432878119Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:30.557772266Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:54.382959572Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:54.407542727Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+2025-06-30T12:05:54.414420714Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+2025-06-30T12:05:54.668501838Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:54.673702104Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:05:54.928876718Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:59.255385618Z INFO:     184.22.247.188:0 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+2025-06-30T12:06:00.960122431Z INFO:     184.22.247.188:0 - "POST /auth/login HTTP/1.1" 200 OK
+2025-06-30T12:06:01.229810674Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:06:01.242112991Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.248103192Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.346295666Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.357486252Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.383754207Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:06:01.440052958Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:06:01.4455758Z INFO:     184.22.247.188:0 - "OPTIONS /profiles HTTP/1.1" 200 OK
+2025-06-30T12:06:01.545287352Z INFO:     184.22.247.188:0 - "GET /profiles HTTP/1.1" 200 OK
+2025-06-30T12:06:01.628092252Z INFO:     184.22.247.188:0 - "OPTIONS /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.635628121Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.710735018Z INFO:     184.22.247.188:0 - "GET /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.844053421Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:31.173558885Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:06:31.295958616Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:01.162537299Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:01.308939334Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:19.277132662Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:19.291498268Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:19.351245102Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:19.394400999Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:19.429541388Z INFO:     184.22.247.188:0 - "GET /profiles HTTP/1.1" 200 OK
+2025-06-30T12:07:19.575708918Z INFO:     184.22.247.188:0 - "GET /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:19.752607827Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:22.438394814Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:22.441253747Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:24.090826822Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:24.102791823Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:24.136353773Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:28.347600282Z INFO:     184.22.247.188:0 - "OPTIONS /import-date-range-v2?start_date=20250601&end_date=20250630 HTTP/1.1" 200 OK
+2025-06-30T12:07:35.659203578Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:43.742853187Z INFO:     184.22.247.188:0 - "POST /import-date-range-v2?start_date=20250601&end_date=20250630 HTTP/1.1" 200 OK
+2025-06-30T12:07:44.047987304Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:44.108758437Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:44.155953208Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:49.296847322Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:49.403299049Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:54.09214628Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:57.949771007Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:58.03981587Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:08:19.702270235Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:19.70851998Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:19.71555831Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:19.717423505Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:08:19.799747176Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:08:26.729091929Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:26.761361895Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:28.542390628Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:28.543871125Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:08:28.547325949Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:08:45.049301198Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:08:56.778551299Z INFO:     184.22.247.188:0 - "OPTIONS /health HTTP/1.1" 200 OK
+2025-06-30T12:08:56.902060391Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:56.985545263Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:09:26.735306929Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:09:26.877033127Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:09:56.741387918Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:09:56.878063132Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:21.418311053Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:10:21.546556102Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:21.563322232Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:21.808608243Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:10:21.95296975Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:21.991550413Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:10:25.785108419Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:10:25.803823995Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:25.810450277Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:27.544885237Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:27.548719198Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:01:53.589958278Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:53.601018043Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:01:53.641534581Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:55.503089983Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:01:55.736471055Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:01:55.737871051Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:01:55.739806546Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:01:55.740750254Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:02:25.518400872Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:02:25.58330732Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:02:58.669303787Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:02:58.794868697Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:03:30.43608833Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:03:30.507040631Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:03:44.409075486Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:04:00.493037092Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:04:00.555605468Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:04:30.417886261Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:04:30.536235338Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:00.438775923Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:00.572080536Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:30.432878119Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:30.557772266Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:54.382959572Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:54.407542727Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+2025-06-30T12:05:54.414420714Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 401 Unauthorized
+2025-06-30T12:05:54.668501838Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:05:54.673702104Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:05:54.928876718Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:05:59.255385618Z INFO:     184.22.247.188:0 - "OPTIONS /auth/login HTTP/1.1" 200 OK
+2025-06-30T12:06:00.960122431Z INFO:     184.22.247.188:0 - "POST /auth/login HTTP/1.1" 200 OK
+2025-06-30T12:06:01.229810674Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:06:01.242112991Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.248103192Z INFO:     184.22.247.188:0 - "OPTIONS /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.346295666Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.357486252Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:06:01.383754207Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:06:01.440052958Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:06:01.4455758Z INFO:     184.22.247.188:0 - "OPTIONS /profiles HTTP/1.1" 200 OK
+2025-06-30T12:06:01.545287352Z INFO:     184.22.247.188:0 - "GET /profiles HTTP/1.1" 200 OK
+2025-06-30T12:06:01.628092252Z INFO:     184.22.247.188:0 - "OPTIONS /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.635628121Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.710735018Z INFO:     184.22.247.188:0 - "GET /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:01.844053421Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:06:31.173558885Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:06:31.295958616Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:01.162537299Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:01.308939334Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:19.277132662Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:19.291498268Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:19.351245102Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:19.394400999Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:19.429541388Z INFO:     184.22.247.188:0 - "GET /profiles HTTP/1.1" 200 OK
+2025-06-30T12:07:19.575708918Z INFO:     184.22.247.188:0 - "GET /games?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:19.752607827Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:22.438394814Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:07:22.441253747Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:24.090826822Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:24.102791823Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:24.136353773Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:28.347600282Z INFO:     184.22.247.188:0 - "OPTIONS /import-date-range-v2?start_date=20250601&end_date=20250630 HTTP/1.1" 200 OK
+2025-06-30T12:07:35.659203578Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:43.742853187Z INFO:     184.22.247.188:0 - "POST /import-date-range-v2?start_date=20250601&end_date=20250630 HTTP/1.1" 200 OK
+2025-06-30T12:07:44.047987304Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:44.108758437Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:44.155953208Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:49.296847322Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:07:49.403299049Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:07:54.09214628Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:07:57.949771007Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:07:58.03981587Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:08:19.702270235Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:19.70851998Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:19.71555831Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:19.717423505Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:08:19.799747176Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:08:26.729091929Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:26.761361895Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:28.542390628Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:08:28.543871125Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:08:28.547325949Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:08:45.049301198Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:08:56.778551299Z INFO:     184.22.247.188:0 - "OPTIONS /health HTTP/1.1" 200 OK
+2025-06-30T12:08:56.902060391Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:08:56.985545263Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:09:26.735306929Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:09:26.877033127Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:09:56.741387918Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:09:56.878063132Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:21.418311053Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:10:21.546556102Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:21.563322232Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:21.808608243Z INFO:     184.22.247.188:0 - "OPTIONS /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:10:21.95296975Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:21.991550413Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:10:25.785108419Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:10:25.803823995Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:25.810450277Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:10:27.544885237Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:10:27.548719198Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:11:29.283766928Z INFO:     184.22.247.188:0 - "OPTIONS /health HTTP/1.1" 200 OK
+2025-06-30T12:11:29.422253326Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:11:29.513229107Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:11:59.203943416Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:11:59.274180274Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:12:30.75170627Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:12:30.948037816Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:00.684816756Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:13:00.760513464Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:30.669776359Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:13:30.749671584Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:34.846736047Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:13:34.934803544Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:13:35.053382454Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:13:35.060480885Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:13:35.143525589Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:38.7635934Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:13:38.773255419Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:13:41.437556925Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:41.447482928Z INFO:     184.22.247.188:0 - "GET /results?source=new HTTP/1.1" 200 OK
+2025-06-30T12:13:41.451729996Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:13:45.700221716Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:13:45.762486116Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:13:45.787679992Z INFO:     184.22.247.188:0 - "OPTIONS /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:13:45.788252472Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:13:45.949176145Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:13:56.465234281Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:06.471463689Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:08.917172987Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:14:08.986328714Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:16.472874549Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:26.453049885Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:28.329377435Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:14:28.3399274Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:14:28.364395561Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:28.378161056Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:14:28.391248588Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:28.647118894Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:36.54520977Z INFO:     184.22.247.188:0 - "OPTIONS /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-10T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T12:14:36.957976024Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:36.958142718Z Failed to import data for 2025-06-01T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:38.258441857Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:38.258670881Z Failed to import data for 2025-06-02T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:39.560922497Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:39.561130641Z Failed to import data for 2025-06-03T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:40.766358594Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:40.766511227Z Failed to import data for 2025-06-04T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:42.044687808Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:42.044874101Z Failed to import data for 2025-06-05T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:43.339512526Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:43.339790891Z Failed to import data for 2025-06-06T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:44.652225635Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:44.652462149Z Failed to import data for 2025-06-07T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:45.948948828Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:45.949249034Z Failed to import data for 2025-06-08T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:47.149391183Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:47.149608587Z Failed to import data for 2025-06-09T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:48.676805698Z Database error during live import: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:48.676834569Z Failed to import data for 2025-06-10T00:00:00.000Z: Database error: 'country_code' is an invalid keyword argument for Game
+2025-06-30T12:14:49.678144665Z INFO:     184.22.247.188:0 - "POST /scheduler/import-range?start_date=2025-06-01T00:00:00.000Z&end_date=2025-06-10T00:00:00.000Z HTTP/1.1" 200 OK
+2025-06-30T12:14:49.711075403Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:49.736404161Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:49.969615529Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:50.217200083Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:56.739446123Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:14:56.742567241Z INFO:     184.22.247.188:0 - "GET /health HTTP/1.1" 200 OK
+2025-06-30T12:14:56.773005263Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:56.789578089Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK
+2025-06-30T12:14:56.799744557Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:14:57.154740655Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:14:58.408885611Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:14:58.413742151Z INFO:     184.22.247.188:0 - "GET /results?source=old HTTP/1.1" 200 OK
+2025-06-30T12:15:06.442159294Z INFO:     184.22.247.188:0 - "GET /scheduler/status HTTP/1.1" 200 OK
+2025-06-30T12:15:06.453229698Z INFO:     184.22.247.188:0 - "GET /auth/me HTTP/1.1" 200 OK
+2025-06-30T12:15:06.45766444Z INFO:     184.22.247.188:0 - "GET /import-logs HTTP/1.1" 200 OK

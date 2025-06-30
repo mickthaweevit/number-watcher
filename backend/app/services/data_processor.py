@@ -69,8 +69,6 @@ def process_api_response(api_data: Dict) -> List[Dict]:
             processed_game = {
                 'base_game_id': base_game_id,
                 'game_name': game_item.get('GAME_NAME', ''),
-                'country_code': game_item.get('COUNTRY_CODE'),
-                'category': category,
                 'full_game_code': game_code,
                 'result_date': result_date,
                 'result_3up': result_3up,

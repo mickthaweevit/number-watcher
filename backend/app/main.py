@@ -283,9 +283,7 @@ async def import_sample_data(db: Session = Depends(get_db)):
             if not game:
                 game = Game(
                     base_game_id=game_data['base_game_id'],
-                    game_name=game_data['game_name'],
-                    country_code=game_data['country_code'],
-                    category=game_data['category']
+                    game_name=game_data['game_name']
                 )
                 db.add(game)
                 db.flush()  # Flush to get the ID without committing
@@ -448,8 +446,6 @@ async def export_data(db: Session = Depends(get_db)):
                 "id": game.id,
                 "base_game_id": game.base_game_id,
                 "game_name": game.game_name,
-                "country_code": game.country_code,
-                "category": game.category,
                 "is_active": game.is_active,
                 "created_at": game.created_at.isoformat() if game.created_at else None
             })
@@ -517,8 +513,6 @@ async def import_backup(backup_data: dict, db: Session = Depends(get_db)):
                 new_game = Game(
                     base_game_id=game_data["base_game_id"],
                     game_name=game_data["game_name"],
-                    country_code=game_data["country_code"],
-                    category=game_data["category"],
                     is_active=game_data.get("is_active", True)
                 )
                 db.add(new_game)
