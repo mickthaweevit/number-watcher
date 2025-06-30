@@ -12,6 +12,15 @@
         
         <!-- Navigation -->
         <nav class="flex gap-4 items-center">
+          <!-- API Source Selector -->
+          <select 
+            v-model="selectedApiSource" 
+            @change="updateApiSource"
+            class="text-sm border border-gray-300 rounded px-2 py-1 bg-white mr-2"
+          >
+            <option value="old">Source 1 (Old)</option>
+            <option value="new">Source 2 (New)</option>
+          </select>
           <router-link 
             to="/" 
             class="px-4 py-2 rounded transition-colors"
@@ -66,6 +75,7 @@ import SchedulerStatus from './components/SchedulerStatus.vue'
 const router = useRouter()
 const route = useRoute()
 const isAdmin = ref(false)
+const selectedApiSource = ref('old')
 
 const checkAdminStatus = async () => {
   try {
@@ -89,7 +99,24 @@ const updateAdminStatus = () => {
   }
 }
 
-onMounted(updateAdminStatus)
+const updateApiSource = () => {
+  localStorage.setItem('selectedApiSource', selectedApiSource.value)
+  // Trigger refresh of current page data
+  window.location.reload()
+}
+
+// Load saved API source on mount
+const loadApiSource = () => {
+  const saved = localStorage.getItem('selectedApiSource')
+  if (saved) {
+    selectedApiSource.value = saved
+  }
+}
+
+onMounted(() => {
+  updateAdminStatus()
+  loadApiSource()
+})
 
 // Update admin status when route changes (after login)
 watch(() => route.path, () => {

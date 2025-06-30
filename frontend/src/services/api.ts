@@ -55,6 +55,11 @@ export interface DateRangeImportResult {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
+// Get current API source
+const getCurrentSource = () => {
+  return localStorage.getItem('selectedApiSource') || 'old'
+}
+
 const api = axios.create({
   baseURL: API_URL,
 });
@@ -82,12 +87,14 @@ api.interceptors.response.use(
 
 export const gameApi = {
   getAllGames: async (signal?: AbortSignal): Promise<Game[]> => {
-    const response = await api.get('/games', { signal });
+    const source = getCurrentSource()
+    const response = await api.get(`/games?source=${source}`, { signal });
     return response.data;
   },
 
   getAllResults: async (signal?: AbortSignal): Promise<Result[]> => {
-    const response = await api.get('/results', { signal });
+    const source = getCurrentSource()
+    const response = await api.get(`/results?source=${source}`, { signal });
     return response.data;
   },
 

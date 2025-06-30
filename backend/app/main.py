@@ -11,6 +11,8 @@ from .models.import_log import ImportLog
 from .models.user import User
 from .models.dashboard_profile import DashboardProfile
 from .models.invite_code import InviteCode
+from .models.game_v2 import GameV2
+from .models.result_v2 import ResultV2
 from .schemas.game import Game as GameSchema
 from .schemas.result import Result as ResultSchema
 from .schemas.import_log import ImportLog as ImportLogSchema
@@ -149,23 +151,69 @@ async def get_database_info():
         return {"error": f"Failed to parse DATABASE_URL: {str(e)}"}
 
 @app.get("/games", response_model=List[GameSchema])
-async def get_games(db: Session = Depends(get_db)):
-    """Get all games"""
+async def get_games(
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
+    """Get games with source selection"""
     try:
-        games = db.query(Game).filter(Game.is_active == True).all()
-        return games
+        if source == "new":
+            # Query new tables and map to old format
+            games_v2 = db.query(GameV2).filter(GameV2.is_active == True).all()
+            
+            # Map to old format
+            mapped_games = []
+            for g in games_v2:
+                game_obj = Game(
+                    id=g.id,
+                    game_name=g.product_name_th,
+                    base_game_id=str(g.product_id)
+                )
+                mapped_games.append(game_obj)
+            return mapped_games
+        else:
+            # Original old format query
+            games = db.query(Game).filter(Game.is_active == True).all()
+            return games
     except Exception as e:
         print(f"Error in get_games: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.get("/results", response_model=List[ResultSchema])
-async def get_results(db: Session = Depends(get_db)):
-    """Get all results with game information"""
+async def get_results(
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
+    """Get results with source selection"""
     try:
-        # Optimized query - select only needed fields
-        from sqlalchemy.orm import joinedload
-        results = db.query(Result).options(joinedload(Result.game)).all()
-        return results
+        if source == "new":
+            # Query new tables and map to old format
+            results_v2 = db.query(ResultV2).join(GameV2).all()
+            
+            # Map to old format
+            mapped_results = []
+            for r in results_v2:
+                result_obj = Result(
+                    id=r.id,
+                    game_id=r.game_id,
+                    result_date=r.result_date,
+                    result_3up=r.award1,
+                    result_2down=r.award2,
+                    result_4up=r.award3,
+                    status=r.status
+                )
+                result_obj.game = Game(
+                    id=r.game.id,
+                    game_name=r.game.product_name_th,
+                    base_game_id=str(r.game.product_id)
+                )
+                mapped_results.append(result_obj)
+            return mapped_results
+        else:
+            # Original old format query
+            from sqlalchemy.orm import joinedload
+            results = db.query(Result).options(joinedload(Result.game)).all()
+            return results
     except Exception as e:
         print(f"Error in get_results (optimized): {str(e)}")
         # Fallback to original query
