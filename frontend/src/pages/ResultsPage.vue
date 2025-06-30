@@ -1,6 +1,6 @@
 <template>
-  <div class="p-5">
-    <h2 class="text-xl font-semibold mb-4">NumWatch Results Table</h2>
+  <div class="p-2 md:p-5">
+    <h2 class="text-lg md:text-xl font-semibold mb-4">NumWatch Results Table</h2>
     
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-8">
@@ -44,8 +44,8 @@
 
 
       <!-- Results Table -->
-      <div class="table-container border border-gray-300 rounded">
-        <table class="min-w-full text-xs">
+      <div class="table-container border border-gray-300 rounded overflow-x-auto">
+        <table class="min-w-full text-xs md:text-sm">
           <thead class="bg-gray-100 sticky-header">
             <tr>
               <th class="sticky-col-1 px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
@@ -308,9 +308,17 @@ $pattern-last-two: #fef3c7;     // Light yellow
 }
 
 .date-column {
-  width: 40px;
-  min-width: 40px;
-  max-width: 40px;
+  width: 35px;
+  min-width: 35px;
+  max-width: 35px;
+}
+
+@media (min-width: 768px) {
+  .date-column {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+  }
 }
 
 // Sticky columns for horizontal scroll
@@ -319,8 +327,15 @@ $pattern-last-two: #fef3c7;     // Light yellow
   left: 0;
   background-color: white;
   z-index: 10;
-  min-width: 120px;
-  max-width: 120px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
+@media (min-width: 768px) {
+  .sticky-col-1 {
+    min-width: 120px;
+    max-width: 120px;
+  }
 }
 
 // Sticky header for vertical scroll - sticks to window top
