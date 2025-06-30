@@ -2,8 +2,6 @@ export interface Game {
   id: number;
   base_game_id: string;
   game_name: string;
-  country_code: string | null;
-  category: string;
   is_active: boolean;
   created_at: string;
   updated_at: string | null;
@@ -34,8 +32,6 @@ export interface DateResult {
 export interface TableData {
   gameName: string;
   gameId: number;
-  category: string;
-  countryCode: string | null;
   results: { [date: string]: DateResult };
 }
 

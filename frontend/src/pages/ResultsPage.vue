@@ -170,16 +170,7 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 }
 
-// Computed properties
-const categories = computed(() => {
-  const cats = new Set(results.value.map(r => r.game.category))
-  return Array.from(cats)
-})
-
-const countryCodes = computed(() => {
-  const codes = new Set(results.value.map(r => r.game.country_code).filter(Boolean))
-  return Array.from(codes).sort()
-})
+// Computed properties - removed category and country filters
 
 const uniqueDates = computed(() => {
   const dates = new Set(results.value.map(r => r.result_date))

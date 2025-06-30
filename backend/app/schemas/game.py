@@ -5,8 +5,6 @@ from typing import Optional
 class GameBase(BaseModel):
     base_game_id: str
     game_name: str
-    country_code: Optional[str] = None
-    category: str
     is_active: bool = True
 
 class GameCreate(GameBase):
