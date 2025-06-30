@@ -4,7 +4,12 @@
     <header v-if="$route.name !== 'Login'" class="p-3 md:p-5 bg-gray-50 border-b border-gray-200">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div class="flex-1">
-          <h1 class="text-lg md:text-2xl font-bold text-gray-800">เลขไหนดี</h1>
+          <div class="flex items-center gap-4">
+            <h1 class="text-lg md:text-2xl font-bold text-gray-800">เลขไหนดี</h1>
+            <div v-if="user" class="text-sm text-gray-600">
+              ยินดีต้อนรับ, {{ user.username }}
+            </div>
+          </div>
           <div class="mt-1 hidden md:block">
             <SchedulerStatus />
           </div>
@@ -81,12 +86,15 @@ const router = useRouter()
 const route = useRoute()
 const isAdmin = ref(false)
 const selectedApiSource = ref('old')
+const user = ref(null)
 
 const checkAdminStatus = async () => {
   try {
-    const user = await authApi.getCurrentUser()
-    isAdmin.value = user.is_admin
+    const userData = await authApi.getCurrentUser()
+    user.value = userData
+    isAdmin.value = userData.is_admin
   } catch (error) {
+    user.value = null
     isAdmin.value = false
   }
 }

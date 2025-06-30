@@ -3,7 +3,7 @@
     <!-- API Status -->
     <div class="flex items-center gap-1">
       <span class="text-gray-600">API:</span>
-      <span :class="apiStatus.includes('Connected') ? 'text-green-600' : 'text-red-600'">
+      <span :class="apiStatus.includes('เชื่อมต่อแล้ว') ? 'text-green-600' : 'text-red-600'">
         {{ apiStatus }}
       </span>
     </div>
@@ -13,17 +13,17 @@
       <div class="flex items-center gap-1">
         <span class="text-gray-600">Scheduler:</span>
         <span :class="status.is_running ? 'text-green-600' : 'text-red-600'">
-          {{ status.is_running ? 'Running' : 'Stopped' }}
+          {{ status.is_running ? 'ทำงาน' : 'หยุด' }}
         </span>
       </div>
       
       <div class="flex items-center gap-1">
-        <span class="text-gray-600">Jobs:</span>
+        <span class="text-gray-600">งาน:</span>
         <span class="text-blue-600">{{ status.next_jobs?.length || 0 }}</span>
       </div>
       
       <div v-if="!status.external_api_configured" class="flex items-center gap-1">
-        <span class="text-orange-600">⚠ API Not Configured</span>
+        <span class="text-orange-600">⚠ ยังไม่ได้ตั้งค่า API</span>
       </div>
     </div>
   </div>
@@ -33,7 +33,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { gameApi, type SchedulerStatus } from '../services/api'
 
-const apiStatus = ref('Checking...')
+const apiStatus = ref('กำลังตรวจสอบ...')
 const status = ref<SchedulerStatus | null>(null)
 
 // Request cancellation
@@ -52,14 +52,14 @@ const checkStatus = async () => {
     
     // Check API health
     const healthResponse = await gameApi.healthCheck()
-    apiStatus.value = `Connected ${healthResponse.status}`
+    apiStatus.value = `เชื่อมต่อแล้ว ${healthResponse.status}`
     
     // Check scheduler status
     status.value = await gameApi.getSchedulerStatus(abortController.signal)
   } catch (error: any) {
     // Don't show error if request was cancelled
     if (error.name !== 'AbortError') {
-      apiStatus.value = 'Connection failed'
+      apiStatus.value = 'การเชื่อมต่อล้มเหลว'
       console.error('Status check failed:', error)
     }
   }

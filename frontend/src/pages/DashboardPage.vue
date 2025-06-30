@@ -1,58 +1,48 @@
 <template>
   <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-6">3-Up Pattern Analysis Dashboard</h2>
-    
-    <!-- User Welcome Section -->
-    <div class="bg-gray-50 p-4 rounded-lg mb-6">
-      <div class="flex items-center justify-between">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-800">Welcome, {{ user?.username }}!</h3>
-          <p class="text-sm text-gray-600">{{ user?.email }}</p>
-        </div>
-      </div>
-    </div>
+    <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
     <!-- Profile Management -->
     <div class="bg-green-50 p-4 rounded-lg mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Profile Management</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการโปรไฟล์</h3>
       <div class="flex flex-wrap gap-3 mb-3">
         <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded">
-          <option :value="null">Select saved profile...</option>
+          <option :value="null">เลือกโปรไฟล์ที่บันทึก...</option>
           <option v-for="profile in profiles" :key="profile.id" :value="profile.id">
             {{ profile.profile_name }}
           </option>
         </select>
         <button @click="loadProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
-          Load
+          โหลด
         </button>
         <button @click="showSaveProfileForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-          Save Current
+          บันทึกปัจจุบัน
         </button>
         <button @click="deleteProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
-          Delete
+          ลบ
         </button>
       </div>
     </div>
     
     <!-- Global Controls -->
     <div class="bg-blue-50 p-4 rounded-lg mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">Global Settings</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าทั่วไป</h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Bet Amount -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Bet Amount (applies to all games)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนเงินแทง (ใช้กับทุกหวย)</label>
           <input
             v-model.number="betAmount"
             type="number"
             min="1"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter bet amount"
+            placeholder="กรอกจำนวนเงินแทง"
           />
         </div>
         
         <!-- Pattern Selection -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Selected Patterns (applies to all games)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่เลือก (ใช้กับทุกหวย)</label>
           <div class="space-y-2">
             <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center">
               <input
@@ -70,13 +60,13 @@
     
     <!-- Game Management -->
     <div class="mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Game Management</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
       <div class="flex gap-3 mb-4">
         <select
           v-model="selectedGameId"
           class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Select a game to add</option>
+          <option value="">เลือกหวยที่จะเพิ่ม</option>
           <option v-for="game in availableGames" :key="game.id" :value="game.id">
             {{ game.game_name }}
           </option>
@@ -86,7 +76,7 @@
           :disabled="!selectedGameId"
           class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          Add Game
+          เพิ่มหวย
         </button>
       </div>
       
@@ -96,12 +86,12 @@
           <thead class="bg-gray-100">
             <tr>
               <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
-                Actions
+                จัดการ
               </th>
               <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
-                Cal
+                คิด
               </th>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">Game</th>
+              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">หวย</th>
               <th v-for="date in baseTableData.dates" :key="date.raw" class="px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300">
                 {{ date.formatted }}
               </th>
@@ -145,18 +135,18 @@
     
     <!-- Selected Games Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">Selected Games Analysis</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">การวิเคราะห์หวยที่เลือก</h3>
       <div class="overflow-x-auto">
         <table class="min-w-full bg-white border border-gray-200 rounded">
           <thead class="bg-gray-50">
             <tr>
               <!-- <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calculate</th> -->
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Game</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Total Results</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pattern Matches</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Win Amount</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Loss Amount</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Net</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">หวย</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลทั้งหมด</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">รูปแบบตรง</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
@@ -197,26 +187,26 @@
     <div v-if="selectedGames.some(g => g.calculate)" class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Total Statistics -->
       <div class="bg-gray-50 p-4 rounded">
-        <h3 class="text-lg font-semibold text-gray-800 mb-3">Total Statistics</h3>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรวม</h3>
         <div class="space-y-2">
           <div class="flex justify-between">
-            <span>Total Games:</span>
+            <span>หวยทั้งหมด:</span>
             <span class="font-medium">{{ totalStats.games }}</span>
           </div>
           <div class="flex justify-between">
-            <span>Total Results:</span>
+            <span>ผลทั้งหมด:</span>
             <span class="font-medium">{{ totalStats.results }}</span>
           </div>
           <div class="flex justify-between">
-            <span>Pattern Matches:</span>
+            <span>รูปแบบตรง:</span>
             <span class="font-medium text-green-600">{{ totalStats.wins }}</span>
           </div>
           <div class="flex justify-between">
-            <span>No Matches:</span>
+            <span>ไม่ตรง:</span>
             <span class="font-medium text-red-600">{{ totalStats.losses }}</span>
           </div>
           <div class="flex justify-between border-t pt-2">
-            <span class="font-semibold">Net Amount:</span>
+            <span class="font-semibold">ผลรวม:</span>
             <span class="font-bold" :class="getNetClass(totalStats.netAmount)">
               {{ formatCurrency(totalStats.netAmount) }}
             </span>
@@ -226,16 +216,16 @@
       
       <!-- Monthly Statistics -->
       <div class="bg-gray-50 p-4 rounded">
-        <h3 class="text-lg font-semibold text-gray-800 mb-3">Monthly Breakdown</h3>
+        <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรายเดือน</h3>
         <div class="max-h-64 overflow-y-auto">
           <div v-for="month in monthlyStats" :key="month.month" class="mb-3 p-2 bg-white rounded">
             <div class="font-medium text-sm text-gray-700 mb-1">{{ month.month }}</div>
             <div class="grid grid-cols-2 gap-2 text-xs">
-              <div>Wins: <span class="text-green-600 font-medium">{{ month.wins }}</span></div>
-              <div>Losses: <span class="text-red-600 font-medium">{{ month.losses }}</span></div>
+              <div>ถูก: <span class="text-green-600 font-medium">{{ month.wins }}</span></div>
+              <div>ผิด: <span class="text-red-600 font-medium">{{ month.losses }}</span></div>
             </div>
             <div class="text-xs mt-1">
-              Net: <span class="font-medium" :class="getNetClass(month.netAmount)">{{ formatCurrency(month.netAmount) }}</span>
+              รวม: <span class="font-medium" :class="getNetClass(month.netAmount)">{{ formatCurrency(month.netAmount) }}</span>
             </div>
           </div>
         </div>
@@ -245,18 +235,18 @@
     <!-- Save Profile Modal -->
     <div v-if="showSaveProfileForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold mb-4">Save Profile</h3>
+        <h3 class="text-xl font-bold mb-4">บันทึกโปรไฟล์</h3>
         <form @submit.prevent="saveProfile">
           <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Profile Name</label>
-            <input v-model="newProfileName" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter profile name">
+            <label class="block text-sm font-medium text-gray-700 mb-2">ชื่อโปรไฟล์</label>
+            <input v-model="newProfileName" type="text" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="กรอกชื่อโปรไฟล์">
           </div>
           <div class="flex gap-3">
             <button type="submit" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-              Save
+              บันทึก
             </button>
             <button type="button" @click="showSaveProfileForm = false" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-              Cancel
+              ยกเลิก
             </button>
           </div>
         </form>
@@ -290,10 +280,10 @@ const newProfileName = ref('')
 
 // Pattern definitions with count information
 const availablePatterns = [
-  { key: 'all_same', label: 'All Same:ตอง (111, 222, 333...) - 10 numbers', count: 10 },
-  { key: 'first_two', label: 'First 2 Same:หน้า (113, 225, 882...) - 90 numbers', count: 90 },
-  { key: 'first_third', label: 'First & Last Same:หาม (040, 747, 202...) - 90 numbers', count: 90 },
-  { key: 'last_two', label: 'Last 2 Same:หลัง (200, 877, 399...) - 90 numbers', count: 90 }
+  // { key: 'all_same', label: 'All Same:ตอง (111, 222, 333...) - 10 numbers', count: 10 },
+  { key: 'first_two', label: 'เบิ้ลหน้า', count: 90 },
+  { key: 'first_third', label: 'หาม', count: 90 },
+  { key: 'last_two', label: 'เบิ้ลหลัง', count: 90 }
 ]
 
 interface GameAnalysis {
