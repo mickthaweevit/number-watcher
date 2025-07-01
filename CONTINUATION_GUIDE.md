@@ -16,7 +16,8 @@
 - ✅ **Phase 5**: Pattern analysis dashboard with betting simulation complete
 - ✅ **Phase 6**: Authentication, profiles, admin system complete
 - ✅ **Phase 7**: V2 API integration, Thai interface, mobile responsive, advanced UX complete
-- ⏳ **Next**: Phase 8 production deployment and analytics
+- ✅ **Phase 8**: Source-aware profiles, missing dates display, database migration complete
+- ⏳ **Next**: Phase 9 production deployment and analytics
 
 ### **Immediate Commands to Resume**
 ```bash
@@ -321,7 +322,14 @@ docker exec -it numwatch_backend python create_admin.py
 # Dashboard: / (pattern analysis with Thai interface)
 ```
 
-### **Step 13: Next Phase 8 Features**
+### **Step 13: Phase 8 Features - COMPLETED** ✅
+- ✅ **Source-Aware Profiles**: Profiles filtered by API source (V1/V2)
+- ✅ **Missing Date Display**: Complete date range in preview table
+- ✅ **Database Migration**: Added api_source field to profiles
+- ✅ **Profile Separation**: V1 and V2 profiles completely separate
+- ✅ **Enhanced Timeline**: Shows all dates with "-" for missing data
+
+### **Step 14: Next Phase 9 Features**
 - Data visualization with charts
 - Statistical analysis and patterns  
 - Export functionality (CSV/Excel)
@@ -405,6 +413,31 @@ curl -X POST http://localhost:8000/import-sample-data
 - **SCSS Styling**: Variables and nested styles for maintainable CSS
 
 ## **Latest Updates**
+
+### **Phase 8 - Source-Aware Profiles & Timeline Enhancement - COMPLETED** ✅
+
+#### **Source-Aware Profile Management - COMPLETED**
+- ✅ **Database Schema**: Added api_source field to DashboardProfile model
+- ✅ **Profile Filtering**: Profiles filtered by selected API source (V1/V2)
+- ✅ **Unique Constraints**: Updated to allow same profile name for different sources
+- ✅ **API Endpoints**: Updated profile CRUD with source parameter
+- ✅ **Migration Script**: Database migration for existing profiles
+- ✅ **Profile Separation**: Complete isolation between V1 and V2 profiles
+
+#### **Timeline Enhancement - COMPLETED**
+- ✅ **Missing Date Display**: Preview table shows complete date range
+- ✅ **Date Range Generation**: Fills gaps between first and last result dates
+- ✅ **Performance Optimized**: Uses efficient array[0] and array[length-1] approach
+- ✅ **Visual Clarity**: Shows "-" for missing data, better timeline view
+- ✅ **Pattern Recognition**: Easier to spot data gaps and patterns
+
+#### **Database Migration - COMPLETED**
+```sql
+-- Add api_source column to existing profiles
+ALTER TABLE user_profiles ADD COLUMN api_source VARCHAR(20) NOT NULL DEFAULT 'old';
+-- Update unique constraint to include api_source
+ALTER TABLE user_profiles ADD CONSTRAINT unique_user_profile_source UNIQUE (user_id, profile_name, api_source);
+```
 
 ### **Phase 7 - Advanced Features & UX Improvements - COMPLETED** ✅
 

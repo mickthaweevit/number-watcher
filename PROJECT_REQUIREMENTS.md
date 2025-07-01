@@ -283,7 +283,9 @@ number-watcher/
 - ✅ **Phase 4**: Real-time API, scheduling, enhanced UI complete
 - ✅ **Phase 5**: Dashboard and analytics complete
 - ✅ **Phase 6**: User profiles, authentication, and admin system complete
-- ⏳ **Phase 7**: Advanced features and production deployment
+- ✅ **Phase 7**: V2 API integration, Thai interface, mobile responsive, advanced UX complete
+- ✅ **Phase 8**: Source-aware profiles, missing dates display, database migration complete
+- ⏳ **Phase 9**: Production deployment and analytics
 
 ### **Frontend Migration & Implementation Completed**
 - ✅ **React → Vue 3**: Complete framework migration
@@ -484,7 +486,24 @@ Database (PostgreSQL)
 └── Admin Management
 ```
 
-### **Next Steps - Phase 8 Production & Analytics**
+### **Phase 8 - Source-Aware Profiles & Timeline Enhancement - COMPLETED** ✅
+
+#### **Source-Aware Profile Management - COMPLETED**
+- ✅ **Database Schema**: Added api_source field to DashboardProfile model
+- ✅ **Profile Filtering**: Profiles filtered by selected API source (V1/V2)
+- ✅ **Unique Constraints**: Updated to allow same profile name for different sources
+- ✅ **API Endpoints**: Updated profile CRUD with source parameter
+- ✅ **Migration Script**: Database migration for existing profiles
+- ✅ **Profile Separation**: Complete isolation between V1 and V2 profiles
+
+#### **Timeline Enhancement - COMPLETED**
+- ✅ **Missing Date Display**: Preview table shows complete date range
+- ✅ **Date Range Generation**: Fills gaps between first and last result dates
+- ✅ **Performance Optimized**: Uses efficient array[0] and array[length-1] approach
+- ✅ **Visual Clarity**: Shows "-" for missing data, better timeline view
+- ✅ **Pattern Recognition**: Easier to spot data gaps and patterns
+
+### **Next Steps - Phase 9 Production & Analytics**
 1. **Data Visualization**: Charts showing win patterns and statistics
 2. **Export Features**: CSV/Excel download functionality  
 3. **Advanced Filtering**: Date range picker, search functionality
