@@ -685,7 +685,7 @@ const baseTableData = computed(() => {
   
   const formattedDates = dates.map(date => ({
     raw: date,
-    formatted: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    formatted: new Date(date).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' })
   }))
   
   const cells: { [key: string]: { result: string | null, baseClass: string } } = {}
