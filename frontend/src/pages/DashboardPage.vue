@@ -677,11 +677,23 @@ const baseTableData = computed(() => {
   if (selectedGames.value.length === 0) return { dates: [], games: [], cells: {} }
   
   const gameIds = selectedGames.value.map(g => g.game.id)
-  const dates = Array.from(new Set(
+  const resultDates = Array.from(new Set(
     allResults.value
       .filter(r => gameIds.includes(r.game_id))
       .map(r => r.result_date)
   )).sort()
+  
+  // Generate complete date range if we have results
+  let dates = resultDates
+  if (resultDates.length > 1) {
+    const startDate = new Date(resultDates[0])
+    const endDate = new Date(resultDates[resultDates.length - 1])
+    dates = []
+    
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      dates.push(d.toISOString().split('T')[0])
+    }
+  }
   
   const formattedDates = dates.map(date => ({
     raw: date,
