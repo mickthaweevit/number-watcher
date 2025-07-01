@@ -1,5 +1,5 @@
 <template>
-  <div class="p-2 md:p-5">
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-lg md:text-xl font-semibold mb-4">ตารางผลหวย</h2>
     
     <!-- Loading State -->
@@ -118,8 +118,7 @@ let abortController: AbortController | null = null
 // Tab configuration
 const resultTabs = [
   { key: 'result_2down', label: 'ล่าง 2 ตัว' },
-  { key: 'result_3up', label: 'บน 3 ตัว' },
-  { key: 'result_4up', label: 'บน 4 ตัว' }
+  { key: 'result_3up', label: 'บน 3 ตัว' }
 ]
 
 // Format date for compact display

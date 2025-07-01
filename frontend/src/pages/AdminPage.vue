@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-bold text-gray-800 mb-6">Admin Panel</h2>
     
     <!-- Invite Codes Section -->

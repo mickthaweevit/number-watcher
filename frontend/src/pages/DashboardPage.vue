@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
     <!-- Loading Overlay -->
@@ -228,7 +228,8 @@
         <div class="max-h-64 overflow-y-auto">
           <div v-for="month in monthlyStats" :key="month.month" class="mb-3 p-2 bg-white rounded">
             <div class="font-medium text-sm text-gray-700 mb-1">{{ month.month }}</div>
-            <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="grid grid-cols-3 gap-2 text-xs">
+              <div>ทั้งหมด: <span class="font-medium">{{ month.wins + month.losses }}</span></div>
               <div>ถูก: <span class="text-green-600 font-medium">{{ month.wins }}</span></div>
               <div>ผิด: <span class="text-red-600 font-medium">{{ month.losses }}</span></div>
             </div>
