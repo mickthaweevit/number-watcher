@@ -1,24 +1,32 @@
 <template>
-  <div class="bg-white rounded-lg shadow-md p-6">
+  <div class="bg-white rounded-lg shadow-md p-6 relative">
+    <!-- Loading Overlay for Source Changes -->
+    <div v-if="sourceLoading" class="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-10 rounded-lg">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+        <p class="text-gray-600">กำลังโหลดข้อมูลจากแหล่งใหม่...</p>
+      </div>
+    </div>
+    
     <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
     <!-- Profile Management -->
     <div class="bg-green-50 p-4 rounded-lg mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการโปรไฟล์</h3>
       <div class="flex flex-wrap gap-3 mb-3">
-        <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded" :class="{ 'border-orange-400': hasUnsavedChanges }">
+        <select v-model="selectedProfileId" :disabled="loading || sourceLoading" class="flex-1 px-3 py-2 border border-gray-300 rounded" :class="{ 'border-orange-400': hasUnsavedChanges }">
           <option :value="null">เลือกโปรไฟล์ที่บันทึก...</option>
           <option v-for="profile in profiles" :key="profile.id" :value="profile.id">
             {{ profile.profile_name }} {{ hasUnsavedChanges && selectedProfileId === profile.id ? '*' : '' }}
           </option>
         </select>
-        <button @click="saveCurrentProfile" :disabled="!canSaveCurrent" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
+        <button @click="saveCurrentProfile" :disabled="!canSaveCurrent || sourceLoading" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400">
           บันทึก
         </button>
-        <button @click="showSaveAsNewForm = true" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+        <button @click="showSaveAsNewForm = true" :disabled="sourceLoading" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400">
           บันทึกโปรไฟล์ใหม่
         </button>
-        <button @click="deleteProfile" :disabled="!selectedProfileId" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
+        <button @click="deleteProfile" :disabled="!selectedProfileId || sourceLoading" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 disabled:bg-gray-400">
           ลบ
         </button>
       </div>
@@ -269,6 +277,8 @@ const selectedGames = ref<GameAnalysis[]>([])
 const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
+const sourceLoading = ref(false)
+const currentApiSource = ref('old')
 
 // User state (always logged in now)
 const user = ref<User | null>(null)
@@ -284,6 +294,7 @@ const hasUnsavedChanges = ref(false)
 
 // Request cancellation
 let loadProfileAbortController: AbortController | null = null
+let dataAbortController: AbortController | null = null
 
 // Pattern definitions with count information
 const availablePatterns = [
@@ -346,19 +357,44 @@ const monthlyStats = computed(() => {
 })
 
 // Methods
-const fetchData = async () => {
+const fetchData = async (showSourceLoading = false) => {
   try {
-    loading.value = true
+    if (showSourceLoading) {
+      sourceLoading.value = true
+    } else {
+      loading.value = true
+    }
+    
+    // Cancel previous request
+    if (dataAbortController) {
+      dataAbortController.abort()
+    }
+    dataAbortController = new AbortController()
+    
     const [games, results] = await Promise.all([
-      gameApi.getAllGames(),
-      gameApi.getAllResults()
+      gameApi.getAllGames(dataAbortController.signal),
+      gameApi.getAllResults(dataAbortController.signal)
     ])
+    
     allGames.value = games
     allResults.value = results
+    
+    // Clear selected games when source changes
+    if (showSourceLoading) {
+      selectedGames.value = []
+      selectedProfileId.value = null
+      loadedProfileState.value = null
+      hasUnsavedChanges.value = false
+    }
+    
   } catch (error) {
-    console.error('Failed to fetch data:', error)
+    if (error.name !== 'AbortError') {
+      console.error('Failed to fetch data:', error)
+    }
   } finally {
     loading.value = false
+    sourceLoading.value = false
+    dataAbortController = null
   }
 }
 
@@ -528,12 +564,36 @@ const getCurrentUser = async () => {
   }
 }
 
+// Watch for API source changes
+const watchApiSource = () => {
+  const savedSource = localStorage.getItem('selectedApiSource') || 'old'
+  if (currentApiSource.value !== savedSource) {
+    currentApiSource.value = savedSource
+    // Refresh data when source changes
+    fetchData(true) // Show source loading
+    fetchProfiles()
+  }
+}
+
+// Check for source changes periodically
+let sourceCheckInterval: number | null = null
+
 // Profile methods
 const fetchProfiles = async () => {
   try {
-    profiles.value = await profileApi.getProfiles()
+    // Cancel previous request
+    if (loadProfileAbortController) {
+      loadProfileAbortController.abort()
+    }
+    loadProfileAbortController = new AbortController()
+    
+    profiles.value = await profileApi.getProfiles(loadProfileAbortController.signal)
   } catch (error) {
-    console.error('Failed to fetch profiles:', error)
+    if (error.name !== 'AbortError') {
+      console.error('Failed to fetch profiles:', error)
+    }
+  } finally {
+    loadProfileAbortController = null
   }
 }
 
@@ -756,8 +816,13 @@ onBeforeRouteLeave((to, from, next) => {
 
 // Lifecycle
 onMounted(async () => {
+  currentApiSource.value = localStorage.getItem('selectedApiSource') || 'old'
+  
   await getCurrentUser()
   await fetchData()
+  
+  // Watch for API source changes
+  sourceCheckInterval = setInterval(watchApiSource, 1000)
   
   // 2. Browser beforeunload (catches external navigation)
   const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -772,6 +837,15 @@ onMounted(async () => {
   // Cleanup on unmount
   onUnmounted(() => {
     window.removeEventListener('beforeunload', handleBeforeUnload)
+    if (sourceCheckInterval) {
+      clearInterval(sourceCheckInterval)
+    }
+    if (dataAbortController) {
+      dataAbortController.abort()
+    }
+    if (loadProfileAbortController) {
+      loadProfileAbortController.abort()
+    }
   })
 })
 </script>

@@ -121,8 +121,13 @@ class LotteryScheduler:
                 from ..database import get_db
                 db = next(get_db())
                 
-                async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
-                    results["v2"] = await api_service.import_data_for_date(api_date, db)
+                try:
+                    async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
+                        results["v2"] = await api_service.import_data_for_date(api_date, db)
+                finally:
+                    # Ensure database connection is closed
+                    if db:
+                        db.close()
             except Exception as e:
                 results["v2"] = {
                     "success": False,
@@ -265,22 +270,70 @@ class LotteryScheduler:
         }
     
     async def _async_import_for_date(self, date_str: str) -> Dict[str, Any]:
-        """Async import method for specific date"""
-        try:
-            # Convert to previous day at 17:00 UTC
-            date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
-            api_date = (date - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
-            
-            async with ExternalAPIService(base_url=self.external_api_url) as api_service:
-                return await api_service.import_live_data(api_date)
-        except Exception as e:
-            return {
-                "success": False,
-                "message": f"Import error for {date_str}: {str(e)}",
-                "games_created": 0,
-                "results_updated": 0,
-                "total_records": 0
-            }
+        """Async import method for specific date - imports from both APIs"""
+        results = {"v1": None, "v2": None}
+        
+        # Import from V1 API if configured
+        if self.external_api_url:
+            try:
+                # Convert to previous day at 17:00 UTC
+                date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                api_date = (date - timedelta(days=1)).strftime('%Y-%m-%dT17:00:00.000Z')
+                
+                async with ExternalAPIService(base_url=self.external_api_url) as api_service:
+                    results["v1"] = await api_service.import_live_data(api_date)
+            except Exception as e:
+                results["v1"] = {
+                    "success": False,
+                    "message": f"V1 import error for {date_str}: {str(e)}"
+                }
+        
+        # Import from V2 API if configured
+        if self.external_api_url_v2:
+            try:
+                date = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                api_date = date.strftime('%Y%m%d')
+                
+                from ..database import get_db
+                db = next(get_db())
+                
+                try:
+                    async with ExternalAPIServiceV2(base_url=self.external_api_url_v2) as api_service:
+                        results["v2"] = await api_service.import_data_for_date(api_date, db)
+                finally:
+                    if db:
+                        db.close()
+            except Exception as e:
+                results["v2"] = {
+                    "success": False,
+                    "message": f"V2 import error for {date_str}: {str(e)}"
+                }
+        
+        # Combine results
+        v1_success = results["v1"] and results["v1"].get("success", False)
+        v2_success = results["v2"] and results["v2"].get("success", False)
+        
+        # Calculate totals from both APIs
+        total_games_created = 0
+        total_results_updated = 0
+        
+        if v1_success:
+            total_games_created += results["v1"].get("games_created", 0)
+            total_results_updated += results["v1"].get("results_updated", 0)
+        
+        if v2_success:
+            total_games_created += results["v2"].get("games_created", 0)
+            total_results_updated += results["v2"].get("results_updated", 0)
+        
+        return {
+            "success": v1_success or v2_success,
+            "message": f"V1: {'✅' if v1_success else '❌'}, V2: {'✅' if v2_success else '❌'}",
+            "games_created": total_games_created,
+            "results_updated": total_results_updated,
+            "total_records": total_games_created + total_results_updated,
+            "v1_result": results["v1"],
+            "v2_result": results["v2"]
+        }
 
 # Global scheduler instance
 lottery_scheduler = LotteryScheduler()

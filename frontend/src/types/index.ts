@@ -65,6 +65,7 @@ export interface DashboardProfile {
   bet_amount: number;
   selected_patterns: string[];
   selected_game_ids: number[];
+  api_source: string;
   created_at: string;
   updated_at: string;
 }

@@ -16,6 +16,7 @@ export interface DashboardProfile {
   bet_amount: number;
   selected_patterns: string[];
   selected_game_ids: number[];
+  api_source: string;
   created_at: string;
   updated_at: string;
 }
@@ -201,18 +202,21 @@ export const authApi = {
 };
 
 export const profileApi = {
-  getProfiles: async (): Promise<DashboardProfile[]> => {
-    const response = await api.get('/profiles');
+  getProfiles: async (signal?: AbortSignal): Promise<DashboardProfile[]> => {
+    const source = getCurrentSource()
+    const response = await api.get(`/profiles?source=${source}`, { signal });
     return response.data;
   },
 
-  createProfile: async (profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<DashboardProfile> => {
-    const response = await api.post('/profiles', profileData);
+  createProfile: async (profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'api_source'>): Promise<DashboardProfile> => {
+    const source = getCurrentSource()
+    const response = await api.post('/profiles', { ...profileData, api_source: source });
     return response.data;
   },
 
-  updateProfile: async (profileId: number, profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<DashboardProfile> => {
-    const response = await api.put(`/profiles/${profileId}`, profileData);
+  updateProfile: async (profileId: number, profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'api_source'>): Promise<DashboardProfile> => {
+    const source = getCurrentSource()
+    const response = await api.put(`/profiles/${profileId}`, { ...profileData, api_source: source });
     return response.data;
   },
 

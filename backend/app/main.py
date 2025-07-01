@@ -661,29 +661,38 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 
 # Profile endpoints
 @app.get("/profiles", response_model=List[DashboardProfileResponse])
-async def get_user_profiles(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    """Get all dashboard profiles for current user"""
-    profiles = db.query(DashboardProfile).filter(DashboardProfile.user_id == current_user.id).all()
+async def get_user_profiles(
+    source: str = Query("old", description="API source: old or new"),
+    current_user: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    """Get dashboard profiles for current user filtered by API source"""
+    profiles = db.query(DashboardProfile).filter(
+        DashboardProfile.user_id == current_user.id,
+        DashboardProfile.api_source == source
+    ).all()
     return profiles
 
 @app.post("/profiles", response_model=DashboardProfileResponse)
 async def create_profile(profile_data: DashboardProfileCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """Create a new dashboard profile for current user"""
-    # Check if profile name already exists for this user
+    # Check if profile name already exists for this user and source
     existing_profile = db.query(DashboardProfile).filter(
         DashboardProfile.user_id == current_user.id,
-        DashboardProfile.profile_name == profile_data.profile_name
+        DashboardProfile.profile_name == profile_data.profile_name,
+        DashboardProfile.api_source == profile_data.api_source
     ).first()
     
     if existing_profile:
-        raise HTTPException(status_code=400, detail="Profile name already exists")
+        raise HTTPException(status_code=400, detail="Profile name already exists for this API source")
     
     db_profile = DashboardProfile(
         user_id=current_user.id,
         profile_name=profile_data.profile_name,
         bet_amount=profile_data.bet_amount,
         selected_patterns=profile_data.selected_patterns,
-        selected_game_ids=profile_data.selected_game_ids
+        selected_game_ids=profile_data.selected_game_ids,
+        api_source=profile_data.api_source
     )
     db.add(db_profile)
     db.commit()
@@ -707,6 +716,7 @@ async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, 
     profile.bet_amount = profile_data.bet_amount
     profile.selected_patterns = profile_data.selected_patterns
     profile.selected_game_ids = profile_data.selected_game_ids
+    profile.api_source = profile_data.api_source
     profile.updated_at = datetime.now()
     
     db.commit()

@@ -12,11 +12,12 @@ class DashboardProfile(Base):
     bet_amount = Column(Integer, nullable=False)
     selected_patterns = Column(JSON, nullable=False)
     selected_game_ids = Column(JSON, nullable=False)
+    api_source = Column(String(20), nullable=False, default='old')
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
     # Relationship
     user = relationship("User", back_populates="dashboard_profiles")
     
-    # Unique constraint
-    __table_args__ = (UniqueConstraint('user_id', 'profile_name', name='unique_user_profile'),)
+    # Unique constraint - include api_source to allow same profile name for different sources
+    __table_args__ = (UniqueConstraint('user_id', 'profile_name', 'api_source', name='unique_user_profile_source'),)
