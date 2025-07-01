@@ -2,11 +2,19 @@
   <div class="bg-white rounded-lg shadow-md p-6">
     <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
+    <!-- Loading Overlay -->
+    <div v-if="loading || profilesLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg flex items-center space-x-3">
+        <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        <span>Loading...</span>
+      </div>
+    </div>
+
     <!-- Profile Management -->
     <div class="bg-green-50 p-4 rounded-lg mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการโปรไฟล์ {{ loading ? 'loading: true': 'loading: false' }}</h3>
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการโปรไฟล์</h3>
       <div class="flex flex-wrap gap-3 mb-3">
-        <select v-model="selectedProfileId" :disabled="loading" class="flex-1 px-3 py-2 border border-gray-300 rounded" :class="{ 'border-orange-400': hasUnsavedChanges }">
+        <select v-model="selectedProfileId" class="flex-1 px-3 py-2 border border-gray-300 rounded" :class="{ 'border-orange-400': hasUnsavedChanges }">
           <option :value="null">เลือกโปรไฟล์ที่บันทึก...</option>
           <option v-for="profile in profiles" :key="profile.id" :value="profile.id">
             {{ profile.profile_name }} {{ hasUnsavedChanges && selectedProfileId === profile.id ? '*' : '' }}
@@ -269,6 +277,7 @@ const selectedGames = ref<GameAnalysis[]>([])
 const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
+const profilesLoading = ref(false)
 
 // User state (always logged in now)
 const user = ref<User | null>(null)
@@ -530,10 +539,13 @@ const getCurrentUser = async () => {
 
 // Profile methods
 const fetchProfiles = async () => {
+  profilesLoading.value = true
   try {
     profiles.value = await profileApi.getProfiles()
   } catch (error) {
     console.error('Failed to fetch profiles:', error)
+  } finally {
+    profilesLoading.value = false
   }
 }
 
@@ -775,3 +787,12 @@ onMounted(async () => {
   })
 })
 </script>
+
+<style lang="scss" scoped>
+select:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+</style>
