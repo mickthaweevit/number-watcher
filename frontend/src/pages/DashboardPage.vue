@@ -624,17 +624,32 @@ const loadProfile = async () => {
     betAmount.value = profile.bet_amount
     selectedPatterns.value = [...profile.selected_patterns]
     
-    // Load games
-    selectedGames.value = []
-    for (const gameId of profile.selected_game_ids) {
-      if (loadProfileAbortController.signal.aborted) return // Check cancellation
-      
-      const game = allGames.value.find(g => g.id === gameId)
-      if (game) {
-        const gameResults = allResults.value.filter(r => r.game_id === game.id && r.result_3up)
-        selectedGames.value.push(analyzeGame(game, gameResults))
+    // Pre-compute maps for O(1) lookups
+    const gameMap = new Map(allGames.value.map(g => [g.id, g]))
+    const resultsByGame = new Map()
+    
+    // Group results by game_id once - O(n)
+    allResults.value.forEach(r => {
+      if (r.result_3up) {
+        if (!resultsByGame.has(r.game_id)) {
+          resultsByGame.set(r.game_id, [])
+        }
+        resultsByGame.get(r.game_id).push(r)
       }
-    }
+    })
+    
+    // Load games with O(1) lookups
+    selectedGames.value = profile.selected_game_ids
+      .map(gameId => {
+        if (loadProfileAbortController.signal.aborted) return null
+        
+        const game = gameMap.get(gameId)
+        if (!game) return null
+        
+        const gameResults = resultsByGame.get(gameId) || []
+        return analyzeGame(game, gameResults)
+      })
+      .filter(Boolean)
     
     // Store loaded state for comparison
     loadedProfileState.value = {
