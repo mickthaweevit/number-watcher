@@ -3,10 +3,10 @@
     <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
     <!-- Loading Overlay -->
-    <div v-if="loading || profilesLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="loading || profilesLoading || profileDataLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-lg flex items-center space-x-3">
         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-        <span>Loading...</span>
+        <span>{{ profileDataLoading ? 'Processing data...' : 'Loading...' }}</span>
       </div>
     </div>
 
@@ -279,6 +279,7 @@ const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
 const profilesLoading = ref(false)
+const profileDataLoading = ref(false)
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -496,30 +497,22 @@ const getNetClass = (amount: number): string => {
   return 'text-gray-600'
 }
 
-// Debounced recalculation to prevent excessive updates
-let recalculateTimeout: NodeJS.Timeout | null = null
+// Watch for changes in global settings
 const recalculateAllGames = () => {
-  if (recalculateTimeout) clearTimeout(recalculateTimeout)
-  recalculateTimeout = setTimeout(async () => {
-    if (!resultsByGame) return
-    
-    // Process in chunks to avoid blocking UI
-    const chunkSize = 5
-    for (let i = 0; i < selectedGames.value.length; i += chunkSize) {
-      const chunk = selectedGames.value.slice(i, i + chunkSize)
-      chunk.forEach(gameAnalysis => {
-        if (gameAnalysis.calculate) {
-          const gameResults = resultsByGame.get(gameAnalysis.game.id) || []
-          const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
-          Object.assign(gameAnalysis, newAnalysis)
-        }
-      })
-      // Yield control back to browser
-      if (i + chunkSize < selectedGames.value.length) {
-        await new Promise(resolve => setTimeout(resolve, 0))
+  if (!resultsByGame) return
+  
+  profileDataLoading.value = true
+  
+  setTimeout(() => {
+    selectedGames.value.forEach(gameAnalysis => {
+      if (gameAnalysis.calculate) {
+        const gameResults = resultsByGame.get(gameAnalysis.game.id) || []
+        const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
+        Object.assign(gameAnalysis, newAnalysis)
       }
-    }
-  }, 100)
+    })
+    profileDataLoading.value = false
+  }, 0)
 }
 
 // Helper function to check for unsaved changes
@@ -642,6 +635,8 @@ const loadProfile = async () => {
   }
   loadProfileAbortController = new AbortController()
   
+  profileDataLoading.value = true
+  
   try {
     const profile = profiles.value.find(p => p.id === selectedProfileId.value)
     if (!profile || loadProfileAbortController.signal.aborted) return
@@ -650,29 +645,16 @@ const loadProfile = async () => {
     betAmount.value = profile.bet_amount
     selectedPatterns.value = [...profile.selected_patterns]
     
-    // Load games asynchronously in chunks
-    selectedGames.value = []
-    const gameIds = profile.selected_game_ids
-    const chunkSize = 10
+    // Use setTimeout to allow UI to update with loading state
+    await new Promise(resolve => setTimeout(resolve, 0))
     
-    for (let i = 0; i < gameIds.length; i += chunkSize) {
-      if (loadProfileAbortController.signal.aborted) break
-      
-      const chunk = gameIds.slice(i, i + chunkSize)
-      const chunkGames = chunk
-        .map(gameId => {
-          const game = gameMap.get(gameId)
-          return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
-        })
-        .filter(Boolean)
-      
-      selectedGames.value.push(...chunkGames)
-      
-      // Yield control to prevent UI blocking
-      if (i + chunkSize < gameIds.length) {
-        await new Promise(resolve => setTimeout(resolve, 0))
-      }
-    }
+    // Batch load games using cached maps
+    selectedGames.value = profile.selected_game_ids
+      .map(gameId => {
+        const game = gameMap.get(gameId)
+        return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
+      })
+      .filter(Boolean)
     
     // Store state
     loadedProfileState.value = {
@@ -688,6 +670,7 @@ const loadProfile = async () => {
       console.error('Profile load error:', error)
     }
   } finally {
+    profileDataLoading.value = false
     loadProfileAbortController = null
   }
 }
