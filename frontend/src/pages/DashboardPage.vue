@@ -535,6 +535,10 @@ watch(selectedProfileId, (newProfileId) => {
   if (newProfileId) {
     loadProfile()
   } else {
+    // Clear everything when no profile selected
+    selectedGames.value = []
+    betAmount.value = 10
+    selectedPatterns.value = []
     loadedProfileState.value = null
     hasUnsavedChanges.value = false
   }
