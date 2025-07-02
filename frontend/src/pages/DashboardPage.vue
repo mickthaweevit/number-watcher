@@ -3,10 +3,10 @@
     <h2 class="text-xl font-bold text-gray-800 mb-6">รายงาน</h2>
     
     <!-- Loading Overlay -->
-    <div v-if="loading || profilesLoading || profileDataLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div v-if="loading || profilesLoading || profileLoading || gameOperationLoading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-lg flex items-center space-x-3">
         <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-        <span>{{ profileDataLoading ? 'Processing data...' : 'Loading...' }}</span>
+        <span>{{ profileLoading ? 'กำลังโหลดโปรไฟล์...' : gameOperationLoading ? 'กำลังประมวลผล...' : 'Loading...' }}</span>
       </div>
     </div>
 
@@ -279,11 +279,14 @@ const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
 const profilesLoading = ref(false)
+const gameOperationLoading = ref(false)
 const profileDataLoading = ref(false)
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
 let resultsByGame: Map<number, Result[]> | null = null
+let validResultsByGame: Map<number, Result[]> | null = null // Pre-filtered valid results
+let analysisCache: Map<string, GameAnalysis> = new Map()
 
 // User state (always logged in now)
 const user = ref<User | null>(null)
@@ -374,14 +377,27 @@ const fetchData = async () => {
     // Pre-compute maps once for O(1) lookups
     gameMap = new Map(games.map(g => [g.id, g]))
     resultsByGame = new Map()
+    validResultsByGame = new Map()
+    
     results.forEach(r => {
       if (r.result_3up) {
         if (!resultsByGame.has(r.game_id)) {
           resultsByGame.set(r.game_id, [])
         }
         resultsByGame.get(r.game_id).push(r)
+        
+        // Pre-filter valid results for analysis
+        if (r.status === 'completed') {
+          if (!validResultsByGame.has(r.game_id)) {
+            validResultsByGame.set(r.game_id, [])
+          }
+          validResultsByGame.get(r.game_id).push(r)
+        }
       }
     })
+    
+    // Clear analysis cache when data changes
+    analysisCache.clear()
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
@@ -389,22 +405,118 @@ const fetchData = async () => {
   }
 }
 
-const addGame = () => {
-  if (!gameMap || !resultsByGame) return
+const addGame = async () => {
+  if (!gameMap || !validResultsByGame) return
   
   const gameId = parseInt(selectedGameId.value)
   const game = gameMap.get(gameId)
   if (!game) return
   
-  const gameResults = resultsByGame.get(gameId) || []
-  const analysis = analyzeGame(game, gameResults)
+  gameOperationLoading.value = true
   
-  selectedGames.value.push(analysis)
-  selectedGameId.value = ''
+  try {
+    // Show placeholder immediately
+    const placeholder = {
+      game,
+      calculate: true,
+      totalResults: 0,
+      patternMatches: 0,
+      winAmount: 0,
+      lossAmount: 0,
+      netAmount: 0,
+      monthlyBreakdown: {}
+    }
+    selectedGames.value.push(placeholder)
+    selectedGameId.value = ''
+    
+    // Allow UI to update
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
+    // Fast calculation with pre-filtered results
+    const gameResults = validResultsByGame.get(gameId) || []
+    const analysis = analyzeGameOptimized(game, gameResults)
+    
+    // Replace placeholder with real data
+    selectedGames.value[selectedGames.value.length - 1] = analysis
+    
+  } finally {
+    gameOperationLoading.value = false
+  }
 }
 
-const removeGame = (gameId: number) => {
-  selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
+const removeGame = async (gameId: number) => {
+  gameOperationLoading.value = true
+  
+  try {
+    selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
+    // Allow UI to update
+    await new Promise(resolve => setTimeout(resolve, 0))
+  } finally {
+    gameOperationLoading.value = false
+  }
+}
+
+const analyzeGameOptimized = (game: Game, results: Result[]): GameAnalysis => {
+  // Create cache key
+  const cacheKey = `${game.id}-${selectedPatterns.value.sort().join(',')}-${betAmount.value}`
+  
+  // Return cached result
+  if (analysisCache.has(cacheKey)) {
+    return { ...analysisCache.get(cacheKey)! }
+  }
+  
+  // Early return for empty patterns
+  if (selectedPatterns.value.length === 0) {
+    const analysis = {
+      game, calculate: true, totalResults: 0, patternMatches: 0,
+      winAmount: 0, lossAmount: 0, netAmount: 0, monthlyBreakdown: {}
+    }
+    analysisCache.set(cacheKey, analysis)
+    return analysis
+  }
+  
+  // Pre-calculate constants
+  const totalBetNumbers = selectedPatterns.value.reduce((total, pattern) => {
+    const patternInfo = availablePatterns.find(p => p.key === pattern)
+    return total + (patternInfo?.count || 0)
+  }, 0)
+  const dailyBetAmount = totalBetNumbers * betAmount.value
+  
+  let patternMatches = 0
+  let totalResults = results.length // Already pre-filtered
+  const monthlyBreakdown: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
+  
+  // Single optimized loop
+  for (const result of results) {
+    const isMatch = checkPatternMatch(result.result_3up!)
+    const month = result.result_date.slice(0, 7) // Faster than new Date()
+    
+    if (!monthlyBreakdown[month]) {
+      monthlyBreakdown[month] = { wins: 0, losses: 0, netAmount: 0 }
+    }
+    
+    if (isMatch) {
+      patternMatches++
+      monthlyBreakdown[month].wins++
+      monthlyBreakdown[month].netAmount += (betAmount.value * 1000) - dailyBetAmount
+    } else {
+      monthlyBreakdown[month].losses++
+      monthlyBreakdown[month].netAmount -= dailyBetAmount
+    }
+  }
+  
+  const winAmount = patternMatches * betAmount.value * 1000
+  const totalBetAmount = totalResults * dailyBetAmount
+  const netAmount = winAmount - totalBetAmount
+  
+  const analysis = {
+    game, calculate: true, totalResults, patternMatches,
+    winAmount, lossAmount: Math.max(0, totalBetAmount),
+    netAmount, monthlyBreakdown
+  }
+  
+  analysisCache.set(cacheKey, analysis)
+  return analysis
 }
 
 const analyzeGame = (game: Game, results: Result[]): GameAnalysis => {
@@ -546,6 +658,7 @@ watch(selectedProfileId, (newProfileId) => {
 
 // Watch for changes in bet amount or patterns with debouncing
 watch([betAmount, selectedPatterns], () => {
+  analysisCache.clear() // Clear cache when settings change
   recalculateAllGames()
 }, { deep: true })
 
@@ -652,11 +765,11 @@ const loadProfile = async () => {
     // Use setTimeout to allow UI to update with loading state
     await new Promise(resolve => setTimeout(resolve, 0))
     
-    // Batch load games using cached maps
+    // Batch load games using cached maps and pre-filtered results
     selectedGames.value = profile.selected_game_ids
       .map(gameId => {
         const game = gameMap.get(gameId)
-        return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
+        return game ? analyzeGameOptimized(game, validResultsByGame.get(gameId) || []) : null
       })
       .filter(Boolean)
     
