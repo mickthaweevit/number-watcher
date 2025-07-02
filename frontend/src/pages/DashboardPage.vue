@@ -280,7 +280,7 @@ const allResults = ref<Result[]>([])
 const loading = ref(false)
 const profilesLoading = ref(false)
 const gameOperationLoading = ref(false)
-const profileDataLoading = ref(false)
+const profileLoading = ref(false)
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -412,15 +412,25 @@ const addGame = () => {
   const game = gameMap.get(gameId)
   if (!game) return
   
-  const gameResults = validResultsByGame.get(gameId) || []
-  const analysis = analyzeGameOptimized(game, gameResults)
+  gameOperationLoading.value = true
   
-  selectedGames.value.push(analysis)
-  selectedGameId.value = ''
+  setTimeout(() => {
+    const gameResults = validResultsByGame.get(gameId) || []
+    const analysis = analyzeGameOptimized(game, gameResults)
+    
+    selectedGames.value.push(analysis)
+    selectedGameId.value = ''
+    gameOperationLoading.value = false
+  }, 0)
 }
 
 const removeGame = (gameId: number) => {
-  selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
+  gameOperationLoading.value = true
+  
+  setTimeout(() => {
+    selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
+    gameOperationLoading.value = false
+  }, 0)
 }
 
 const analyzeGameOptimized = (game: Game, results: Result[]): GameAnalysis => {
@@ -580,7 +590,7 @@ const getNetClass = (amount: number): string => {
 const recalculateAllGames = () => {
   if (!resultsByGame) return
   
-  profileDataLoading.value = true
+  gameOperationLoading.value = true
   
   setTimeout(() => {
     selectedGames.value.forEach(gameAnalysis => {
@@ -590,7 +600,7 @@ const recalculateAllGames = () => {
         Object.assign(gameAnalysis, newAnalysis)
       }
     })
-    profileDataLoading.value = false
+    gameOperationLoading.value = false
   }, 0)
 }
 
@@ -711,7 +721,7 @@ const saveAsNewProfile = async () => {
 }
 
 const loadProfile = async () => {
-  if (!selectedProfileId.value || !gameMap || !resultsByGame) return
+  if (!selectedProfileId.value || !gameMap || !validResultsByGame) return
   
   // Cancel previous request
   if (loadProfileAbortController) {
@@ -719,7 +729,7 @@ const loadProfile = async () => {
   }
   loadProfileAbortController = new AbortController()
   
-  profileDataLoading.value = true
+  profileLoading.value = true
   
   try {
     const profile = profiles.value.find(p => p.id === selectedProfileId.value)
@@ -754,7 +764,7 @@ const loadProfile = async () => {
       console.error('Profile load error:', error)
     }
   } finally {
-    profileDataLoading.value = false
+    profileLoading.value = false
     loadProfileAbortController = null
   }
 }
