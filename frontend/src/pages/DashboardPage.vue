@@ -280,6 +280,10 @@ const allResults = ref<Result[]>([])
 const loading = ref(false)
 const profilesLoading = ref(false)
 
+// Cached maps for performance
+let gameMap: Map<number, Game> | null = null
+let resultsByGame: Map<number, Result[]> | null = null
+
 // User state (always logged in now)
 const user = ref<User | null>(null)
 
@@ -356,7 +360,7 @@ const monthlyStats = computed(() => {
 })
 
 // Methods
-const fetchData = async () => { // mark
+const fetchData = async () => {
   try {
     loading.value = true
     const [games, results] = await Promise.all([
@@ -365,6 +369,18 @@ const fetchData = async () => { // mark
     ])
     allGames.value = games
     allResults.value = results
+    
+    // Pre-compute maps once for O(1) lookups
+    gameMap = new Map(games.map(g => [g.id, g]))
+    resultsByGame = new Map()
+    results.forEach(r => {
+      if (r.result_3up) {
+        if (!resultsByGame.has(r.game_id)) {
+          resultsByGame.set(r.game_id, [])
+        }
+        resultsByGame.get(r.game_id).push(r)
+      }
+    })
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
@@ -373,17 +389,17 @@ const fetchData = async () => { // mark
 }
 
 const addGame = () => {
-  const game = allGames.value.find(g => g.id === parseInt(selectedGameId.value))
+  if (!gameMap || !resultsByGame) return
+  
+  const gameId = parseInt(selectedGameId.value)
+  const game = gameMap.get(gameId)
   if (!game) return
   
-  const gameResults = allResults.value.filter(r => r.game_id === game.id && r.result_3up)
+  const gameResults = resultsByGame.get(gameId) || []
   const analysis = analyzeGame(game, gameResults)
   
   selectedGames.value.push(analysis)
   selectedGameId.value = ''
-  
-  // Recalculate all games when new game is added
-  recalculateAllGames()
 }
 
 const removeGame = (gameId: number) => {
@@ -482,9 +498,11 @@ const getNetClass = (amount: number): string => {
 
 // Watch for changes in global settings
 const recalculateAllGames = () => {
+  if (!resultsByGame) return
+  
   selectedGames.value.forEach(gameAnalysis => {
     if (gameAnalysis.calculate) {
-      const gameResults = allResults.value.filter(r => r.game_id === gameAnalysis.game.id && r.result_3up)
+      const gameResults = resultsByGame.get(gameAnalysis.game.id) || []
       const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
       Object.assign(gameAnalysis, newAnalysis)
     }
@@ -603,55 +621,31 @@ const saveAsNewProfile = async () => {
 }
 
 const loadProfile = async () => {
-  if (!selectedProfileId.value) return
+  if (!selectedProfileId.value || !gameMap || !resultsByGame) return
   
-  // Cancel previous request if still running
+  // Cancel previous request
   if (loadProfileAbortController) {
     loadProfileAbortController.abort()
   }
-  
-  // Create new abort controller
   loadProfileAbortController = new AbortController()
   
   try {
     const profile = profiles.value.find(p => p.id === selectedProfileId.value)
-    if (!profile) return
+    if (!profile || loadProfileAbortController.signal.aborted) return
     
-    // Check if request was cancelled
-    if (loadProfileAbortController.signal.aborted) return
-    
-    // Apply profile settings
+    // Apply settings immediately
     betAmount.value = profile.bet_amount
     selectedPatterns.value = [...profile.selected_patterns]
     
-    // Pre-compute maps for O(1) lookups
-    const gameMap = new Map(allGames.value.map(g => [g.id, g]))
-    const resultsByGame = new Map()
-    
-    // Group results by game_id once - O(n)
-    allResults.value.forEach(r => {
-      if (r.result_3up) {
-        if (!resultsByGame.has(r.game_id)) {
-          resultsByGame.set(r.game_id, [])
-        }
-        resultsByGame.get(r.game_id).push(r)
-      }
-    })
-    
-    // Load games with O(1) lookups
+    // Batch load games using cached maps
     selectedGames.value = profile.selected_game_ids
       .map(gameId => {
-        if (loadProfileAbortController.signal.aborted) return null
-        
         const game = gameMap.get(gameId)
-        if (!game) return null
-        
-        const gameResults = resultsByGame.get(gameId) || []
-        return analyzeGame(game, gameResults)
+        return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
       })
       .filter(Boolean)
     
-    // Store loaded state for comparison
+    // Store state
     loadedProfileState.value = {
       betAmount: profile.bet_amount,
       selectedPatterns: [...profile.selected_patterns],
