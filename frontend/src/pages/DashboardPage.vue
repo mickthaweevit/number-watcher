@@ -405,55 +405,22 @@ const fetchData = async () => {
   }
 }
 
-const addGame = async () => {
+const addGame = () => {
   if (!gameMap || !validResultsByGame) return
   
   const gameId = parseInt(selectedGameId.value)
   const game = gameMap.get(gameId)
   if (!game) return
   
-  gameOperationLoading.value = true
+  const gameResults = validResultsByGame.get(gameId) || []
+  const analysis = analyzeGameOptimized(game, gameResults)
   
-  try {
-    // Show placeholder immediately
-    const placeholder = {
-      game,
-      calculate: true,
-      totalResults: 0,
-      patternMatches: 0,
-      winAmount: 0,
-      lossAmount: 0,
-      netAmount: 0,
-      monthlyBreakdown: {}
-    }
-    selectedGames.value.push(placeholder)
-    selectedGameId.value = ''
-    
-    // Allow UI to update
-    await new Promise(resolve => setTimeout(resolve, 0))
-    
-    // Fast calculation with pre-filtered results
-    const gameResults = validResultsByGame.get(gameId) || []
-    const analysis = analyzeGameOptimized(game, gameResults)
-    
-    // Replace placeholder with real data
-    selectedGames.value[selectedGames.value.length - 1] = analysis
-    
-  } finally {
-    gameOperationLoading.value = false
-  }
+  selectedGames.value.push(analysis)
+  selectedGameId.value = ''
 }
 
-const removeGame = async (gameId: number) => {
-  gameOperationLoading.value = true
-  
-  try {
-    selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
-    // Allow UI to update
-    await new Promise(resolve => setTimeout(resolve, 0))
-  } finally {
-    gameOperationLoading.value = false
-  }
+const removeGame = (gameId: number) => {
+  selectedGames.value = selectedGames.value.filter(g => g.game.id !== gameId)
 }
 
 const analyzeGameOptimized = (game: Game, results: Result[]): GameAnalysis => {
