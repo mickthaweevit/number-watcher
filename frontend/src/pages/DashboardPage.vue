@@ -496,17 +496,30 @@ const getNetClass = (amount: number): string => {
   return 'text-gray-600'
 }
 
-// Watch for changes in global settings
+// Debounced recalculation to prevent excessive updates
+let recalculateTimeout: NodeJS.Timeout | null = null
 const recalculateAllGames = () => {
-  if (!resultsByGame) return
-  
-  selectedGames.value.forEach(gameAnalysis => {
-    if (gameAnalysis.calculate) {
-      const gameResults = resultsByGame.get(gameAnalysis.game.id) || []
-      const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
-      Object.assign(gameAnalysis, newAnalysis)
+  if (recalculateTimeout) clearTimeout(recalculateTimeout)
+  recalculateTimeout = setTimeout(async () => {
+    if (!resultsByGame) return
+    
+    // Process in chunks to avoid blocking UI
+    const chunkSize = 5
+    for (let i = 0; i < selectedGames.value.length; i += chunkSize) {
+      const chunk = selectedGames.value.slice(i, i + chunkSize)
+      chunk.forEach(gameAnalysis => {
+        if (gameAnalysis.calculate) {
+          const gameResults = resultsByGame.get(gameAnalysis.game.id) || []
+          const newAnalysis = analyzeGame(gameAnalysis.game, gameResults)
+          Object.assign(gameAnalysis, newAnalysis)
+        }
+      })
+      // Yield control back to browser
+      if (i + chunkSize < selectedGames.value.length) {
+        await new Promise(resolve => setTimeout(resolve, 0))
+      }
     }
-  })
+  }, 100)
 }
 
 // Helper function to check for unsaved changes
@@ -534,7 +547,7 @@ watch(selectedProfileId, (newProfileId) => {
   }
 })
 
-// Watch for changes in bet amount or patterns
+// Watch for changes in bet amount or patterns with debouncing
 watch([betAmount, selectedPatterns], () => {
   recalculateAllGames()
 }, { deep: true })
@@ -637,13 +650,29 @@ const loadProfile = async () => {
     betAmount.value = profile.bet_amount
     selectedPatterns.value = [...profile.selected_patterns]
     
-    // Batch load games using cached maps
-    selectedGames.value = profile.selected_game_ids
-      .map(gameId => {
-        const game = gameMap.get(gameId)
-        return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
-      })
-      .filter(Boolean)
+    // Load games asynchronously in chunks
+    selectedGames.value = []
+    const gameIds = profile.selected_game_ids
+    const chunkSize = 10
+    
+    for (let i = 0; i < gameIds.length; i += chunkSize) {
+      if (loadProfileAbortController.signal.aborted) break
+      
+      const chunk = gameIds.slice(i, i + chunkSize)
+      const chunkGames = chunk
+        .map(gameId => {
+          const game = gameMap.get(gameId)
+          return game ? analyzeGame(game, resultsByGame.get(gameId) || []) : null
+        })
+        .filter(Boolean)
+      
+      selectedGames.value.push(...chunkGames)
+      
+      // Yield control to prevent UI blocking
+      if (i + chunkSize < gameIds.length) {
+        await new Promise(resolve => setTimeout(resolve, 0))
+      }
+    }
     
     // Store state
     loadedProfileState.value = {
