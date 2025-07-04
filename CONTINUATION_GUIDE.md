@@ -17,7 +17,8 @@
 - ✅ **Phase 6**: Authentication, profiles, admin system complete
 - ✅ **Phase 7**: V2 API integration, Thai interface, mobile responsive, advanced UX complete
 - ✅ **Phase 8**: Source-aware profiles, missing dates display, database migration complete
-- ⏳ **Next**: Phase 9 production deployment and analytics
+- ✅ **Phase 9A**: Expandable statistics table with monthly breakdown complete
+- ⏳ **Next**: Phase 9B production deployment and data visualization
 
 ### **Immediate Commands to Resume**
 ```bash
@@ -329,7 +330,16 @@ docker exec -it numwatch_backend python create_admin.py
 - ✅ **Profile Separation**: V1 and V2 profiles completely separate
 - ✅ **Enhanced Timeline**: Shows all dates with "-" for missing data
 
-### **Step 14: Next Phase 9 Features**
+### **Step 14: Phase 9A Features - COMPLETED** ✅
+- ✅ **Expandable Statistics Table**: Click chevron to expand/collapse monthly breakdown
+- ✅ **Monthly Breakdown Display**: Detailed month-by-month statistics for each game
+- ✅ **Performance Optimized**: Uses existing monthlyBreakdown data with efficient rendering
+- ✅ **Thai Localization**: All labels in Thai (เดือน, ถูก, รวม, ผลรวม)
+- ✅ **Interactive UI**: Smooth chevron rotation animation and hover effects
+- ✅ **Win Rate Calculation**: Automatic percentage calculation for each month
+- ✅ **Color Coding**: Green for wins, conditional colors for net amounts
+
+### **Step 15: Next Phase 9B Features**
 - Data visualization with charts
 - Statistical analysis and patterns  
 - Export functionality (CSV/Excel)
@@ -379,6 +389,13 @@ curl -X POST http://localhost:8000/import-sample-data
 - Date range import functionality
 - MDI icon integration
 - Tab-based result type separation
+
+### **Recently Completed** ✅
+- Expandable statistics table with monthly breakdown
+- Performance-optimized row expansion with smooth animations
+- Thai-localized monthly data display
+- Interactive chevron buttons with rotation effects
+- Win rate percentage calculations
 
 ### **Planned** ⏳
 - Data visualization and charts
@@ -530,6 +547,46 @@ ALTER TABLE user_profiles ADD CONSTRAINT unique_user_profile_source UNIQUE (user
 - **MDI Icons**: Timer-sand for waiting, cancel for cancelled results
 - **Compact Design**: Minimal table layout with better data density
 
+### **Phase 9A - Expandable Statistics Table - COMPLETED** ✅
+
+#### **Interactive Statistics Enhancement - COMPLETED**
+- ✅ **Expandable Rows**: Click chevron icon to expand/collapse monthly breakdown
+- ✅ **Monthly Data Display**: Shows wins, total results, net amount, win rate % per month
+- ✅ **Performance Optimized**: Uses existing `monthlyBreakdown` data without additional calculations
+- ✅ **Smooth Animation**: CSS transition for chevron rotation (0° → 180°)
+- ✅ **Thai Month Names**: Localized month display (ม.ค., ก.พ., มี.ค., etc.)
+- ✅ **Template Scope Fix**: Resolved JavaScript error with proper v-for template structure
+
+#### **UI/UX Features - COMPLETED**
+- ✅ **Clickable Chevron**: Hover effects and visual feedback
+- ✅ **Nested Table Layout**: Clean monthly breakdown table within expanded rows
+- ✅ **Color Coding**: Green for wins, conditional colors for net amounts
+- ✅ **Responsive Design**: Horizontal scroll for monthly breakdown table
+- ✅ **Compact Display**: Removed redundant "ผิด" column for cleaner layout
+
+#### **Technical Implementation**
+```typescript
+// State management
+const expandedRows = ref<Set<number>>(new Set())
+
+// Toggle function
+const toggleRowExpansion = (gameId: number) => {
+  if (expandedRows.value.has(gameId)) {
+    expandedRows.value.delete(gameId)
+  } else {
+    expandedRows.value.add(gameId)
+  }
+}
+
+// Data processing
+const getMonthlyData = (gameId: number) => {
+  const game = selectedGames.value.find(g => g.game.id === gameId)
+  return Object.entries(game.monthlyBreakdown)
+    .map(([month, data]) => ({ month, ...data }))
+    .sort((a, b) => a.month.localeCompare(b.month))
+}
+```
+
 ### **Environment Variables**
 ```bash
 # Required for live API integration
@@ -544,4 +601,4 @@ VITE_API_URL=http://localhost:8000
 
 ---
 
-**This guide documents a complete, production-ready full-stack application with advanced scheduling, real-time data integration, and professional UI design.**
+**This guide documents a complete, production-ready full-stack application with advanced scheduling, real-time data integration, expandable statistics, and professional UI design.**
