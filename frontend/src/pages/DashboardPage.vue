@@ -52,6 +52,13 @@
         >
           เพิ่มหวย
         </button>
+        <button
+          @click="openReorderDialog"
+          :disabled="selectedGames.length < 2"
+          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          จัดเรียง
+        </button>
       </div>
       
       <!-- Game Results Preview -->
@@ -318,6 +325,38 @@
         </form>
       </div>
     </div>
+
+    <!-- Reorder Games Modal -->
+    <div v-if="showReorderDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+        <h3 class="text-xl font-bold mb-4">จัดเรียงลำดับหวย</h3>
+        <div class="max-h-96 overflow-y-auto mb-4">
+          <div v-for="(game, index) in reorderGames" :key="game.game.id" class="flex items-center justify-between p-3 border border-gray-200 rounded mb-2">
+            <span class="flex-1 text-sm truncate">{{ game.game.game_name }}</span>
+            <div class="flex gap-1">
+              <button @click="moveGameUp(index)" :disabled="index === 0" class="p-1 text-blue-600 hover:text-blue-800 disabled:text-gray-400">
+                <svg class="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                </svg>
+              </button>
+              <button @click="moveGameDown(index)" :disabled="index === reorderGames.length - 1" class="p-1 text-blue-600 hover:text-blue-800 disabled:text-gray-400">
+                <svg class="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button @click="saveReorder" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            บันทึก
+          </button>
+          <button @click="cancelReorder" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -342,11 +381,9 @@ const profileLoading = ref(false)
 // Expandable rows state
 const expandedRows = ref<Set<number>>(new Set())
 
-// Drag and drop state
-const draggedIndex = ref<number | null>(null)
-const dragOverIndex = ref<number | null>(null)
-const touchStartY = ref<number | null>(null)
-const isTouchDragging = ref(false)
+// Reorder dialog state
+const showReorderDialog = ref(false)
+const reorderGames = ref<GameAnalysis[]>([])
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -975,89 +1012,41 @@ const getWinRate = (wins: number, losses: number) => {
   return total > 0 ? Math.round((wins / total) * 100) : 0
 }
 
-// Drag and drop methods
-const handleDragStart = (event: DragEvent, index: number) => {
-  draggedIndex.value = index
-  event.dataTransfer!.effectAllowed = 'move'
+// Reorder dialog methods
+const openReorderDialog = () => {
+  reorderGames.value = [...selectedGames.value]
+  showReorderDialog.value = true
 }
 
-const handleDragOver = (event: DragEvent) => {
-  event.preventDefault()
-  event.dataTransfer!.dropEffect = 'move'
+const moveGameUp = (index: number) => {
+  if (index > 0) {
+    const game = reorderGames.value[index]
+    reorderGames.value.splice(index, 1)
+    reorderGames.value.splice(index - 1, 0, game)
+  }
 }
 
-const handleDrop = (event: DragEvent, dropIndex: number) => {
-  event.preventDefault()
-  
-  if (draggedIndex.value === null || draggedIndex.value === dropIndex) return
-  
+const moveGameDown = (index: number) => {
+  if (index < reorderGames.value.length - 1) {
+    const game = reorderGames.value[index]
+    reorderGames.value.splice(index, 1)
+    reorderGames.value.splice(index + 1, 0, game)
+  }
+}
+
+const saveReorder = () => {
   gameOperationLoading.value = true
-
-  // Reorder the selectedGames array
-  const draggedGame = selectedGames.value[draggedIndex.value]
-  selectedGames.value.splice(draggedIndex.value, 1)
-  selectedGames.value.splice(dropIndex, 0, draggedGame)
   
-  // Reset drag state
-  gameOperationLoading.value = false
-  draggedIndex.value = null
-  dragOverIndex.value = null
+  setTimeout(() => {
+    selectedGames.value = [...reorderGames.value]
+    showReorderDialog.value = false
+    gameOperationLoading.value = false
+  }, 0)
 }
 
-const handleDragEnd = () => {
-  draggedIndex.value = null
-  dragOverIndex.value = null
-}
-
-// Touch event methods for mobile
-const handleTouchStart = (event: TouchEvent, index: number) => {
-  touchStartY.value = event.touches[0].clientY
-  draggedIndex.value = index
-  isTouchDragging.value = false
-}
-
-const handleTouchMove = (event: TouchEvent) => {
-  if (draggedIndex.value === null || !touchStartY.value) return
-  
-  const currentY = event.touches[0].clientY
-  const deltaY = Math.abs(currentY - touchStartY.value)
-  
-  if (deltaY > 10) {
-    isTouchDragging.value = true
-    event.preventDefault()
-    
-    // Find element under touch point
-    const elementBelow = document.elementFromPoint(
-      event.touches[0].clientX,
-      event.touches[0].clientY
-    )
-    
-    const row = elementBelow?.closest('tr')
-    if (row) {
-      const allRows = Array.from(row.parentElement?.children || [])
-      const targetIndex = allRows.indexOf(row)
-      if (targetIndex >= 0) {
-        dragOverIndex.value = targetIndex
-      }
-    }
-  }
-}
-
-const handleTouchEnd = (event: TouchEvent, index: number) => {
-  if (isTouchDragging.value && draggedIndex.value !== null && dragOverIndex.value !== null) {
-    // Perform the reorder
-    gameOperationLoading.value = true
-    const draggedGame = selectedGames.value[draggedIndex.value]
-    selectedGames.value.splice(draggedIndex.value, 1)
-    selectedGames.value.splice(dragOverIndex.value, 0, draggedGame)
-  }
-  
-  // Reset state
-  gameOperationLoading.value = false
-  draggedIndex.value = null
-  dragOverIndex.value = null
-  touchStartY.value = null
-  isTouchDragging.value = false
+const cancelReorder = () => {
+  showReorderDialog.value = false
+  reorderGames.value = []
 }
 
 // Navigation guards and lifecycle
