@@ -205,7 +205,7 @@
                         <tr class="bg-gray-100">
                           <th class="px-2 py-1 text-left font-medium text-gray-600">เดือน</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600">ถูก</th>
-                          <th class="px-2 py-1 text-center font-medium text-gray-600">ผิด</th>
+                          <!-- <th class="px-2 py-1 text-center font-medium text-gray-600">ผิด</th> -->
                           <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
                           <th class="px-2 py-1 text-right font-medium text-gray-600">ผลรวม</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600">%</th>
@@ -215,7 +215,7 @@
                         <tr v-for="monthData in getMonthlyData(gameAnalysis.game.id)" :key="monthData.month" class="border-b border-gray-200">
                           <td class="px-2 py-1 text-gray-700">{{ formatMonth(monthData.month) }}</td>
                           <td class="px-2 py-1 text-center text-green-600">{{ monthData.wins }}</td>
-                          <td class="px-2 py-1 text-center text-red-600">{{ monthData.losses }}</td>
+                          <!-- <td class="px-2 py-1 text-center text-red-600">{{ monthData.losses }}</td> -->
                           <td class="px-2 py-1 text-center text-gray-600">{{ monthData.wins + monthData.losses }}</td>
                           <td class="px-2 py-1 text-right font-medium" :class="getNetClass(monthData.netAmount)">{{ formatCurrency(monthData.netAmount) }}</td>
                           <td class="px-2 py-1 text-center text-gray-600">{{ getWinRate(monthData.wins, monthData.losses) }}%</td>
