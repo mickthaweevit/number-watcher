@@ -93,13 +93,13 @@
         <table class="min-w-full text-xs">
           <thead class="bg-gray-100">
             <tr>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+              <th class="sticky-col-1 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
                 จัดการ
               </th>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">
+              <th class="sticky-col-2 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
                 คิด
               </th>
-              <th class="px-2 py-1 text-left font-medium text-gray-600 border-r border-gray-300">หวย</th>
+              <th class="sticky-col-3 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">หวย</th>
               <th v-for="date in baseTableData.dates" :key="date.raw" class="px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300">
                 {{ date.formatted }}
               </th>
@@ -107,7 +107,7 @@
           </thead>
           <tbody class="bg-white">
             <tr v-for="gameAnalysis in baseTableData.games" :key="gameAnalysis.game.id" class="border-b border-gray-200">
-              <td class="px-2 py-1 text-center border-r border-gray-200">
+              <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
                 <button
                   @click="removeGame(gameAnalysis.game.id)"
                   class="text-red-600 hover:text-red-800 p-1"
@@ -117,14 +117,14 @@
                   </svg>
                 </button>
               </td>
-              <td class="px-2 py-1 text-center border-r border-gray-200">
+              <td class="sticky-col-2 bg-white px-2 py-1 text-center border-r border-gray-200">
                 <input
                   v-model="gameAnalysis.calculate"
                   type="checkbox"
                   class="rounded"
                 />
               </td>
-              <td class="px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
+              <td class="sticky-col-3 bg-white px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
                 {{ gameAnalysis.game.game_name }}
               </td>
               <template v-for="date in baseTableData.dates" :key="date.raw">
@@ -922,5 +922,40 @@ select:disabled {
   color: #9ca3af;
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+// Sticky columns for horizontal scroll
+.sticky-col-1 {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  min-width: 49px;
+  max-width: 49px;
+  border: 0;
+}
+
+.sticky-col-2 {
+  position: sticky;
+  left: 49px;
+  z-index: 10;
+  min-width: 32px;
+  max-width: 32px;
+  border: 0;
+}
+
+.sticky-col-3 {
+  position: sticky;
+  left: 81px;
+  z-index: 10;
+  min-width: 80px;
+  max-width: 80px;
+  border: 0;
+}
+
+@media (min-width: 768px) {
+  .sticky-col-3 {
+    min-width: 120px;
+    max-width: 120px;
+  }
 }
 </style>
