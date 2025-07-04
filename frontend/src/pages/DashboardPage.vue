@@ -83,29 +83,16 @@
               v-for="(gameAnalysis, index) in baseTableData.games" 
               :key="gameAnalysis.game.id" 
               class="border-b border-gray-200"
-              draggable="true"
-              @dragstart="handleDragStart($event, index)"
-              @dragover="handleDragOver($event)"
-              @dragenter="dragOverIndex = index"
-              @dragleave="dragOverIndex = null"
-              @drop="handleDrop($event, index)"
-              @dragend="handleDragEnd"
-              @touchstart="handleTouchStart($event, index)"
-              @touchmove="handleTouchMove($event)"
-              @touchend="handleTouchEnd($event, index)"
-              :class="{ 'opacity-50': draggedIndex === index, 'bg-blue-50': dragOverIndex === index }"
             >
-              <td class="sticky-col-1 bg-white px-2 py-1 border-r border-gray-200">
-                <div class="flex items-center justify-center gap-1">
-                  <button
-                    @click="removeGame(gameAnalysis.game.id)"
-                    class="text-red-600 hover:text-red-800 p-1"
-                  >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24">
-                      <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
-                    </svg>
-                  </button>
-                </div>
+              <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
+                <button
+                  @click="removeGame(gameAnalysis.game.id)"
+                  class="text-red-600 hover:text-red-800 p-1"
+                >
+                  <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+                  </svg>
+                </button>
               </td>
               <td class="sticky-col-2 bg-white px-2 py-1 text-center border-r border-gray-200">
                 <input
