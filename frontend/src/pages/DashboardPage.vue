@@ -141,7 +141,7 @@
       </div>
     </div>
     
-    <!-- Selected Games Table -->
+    <!-- Statistic Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">การวิเคราะห์หวยที่เลือก</h3>
       <div class="overflow-x-auto">
@@ -155,37 +155,77 @@
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">-</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            <tr v-for="gameAnalysis in selectedGames" :key="gameAnalysis.game.id" class="hover:bg-gray-50">
-              <!-- <td class="px-3 py-2">
-                <input
-                  v-model="gameAnalysis.calculate"
-                  type="checkbox"
-                  class="rounded"
-                />
-              </td> -->
-              <td class="px-3 py-2 text-sm text-gray-900">{{ gameAnalysis.game.game_name }}</td>
-              <td class="px-3 py-2 text-sm text-gray-600">
-                {{ gameAnalysis.calculate ? gameAnalysis.totalResults : '-' }}
-              </td>
-              <td class="px-3 py-2 text-sm">
-                <span v-if="gameAnalysis.calculate" :class="getMatchClass(gameAnalysis.patternMatches)">
-                  {{ gameAnalysis.patternMatches }}
-                </span>
-                <span v-else class="text-gray-400">-</span>
-              </td>
-              <td class="px-3 py-2 text-sm text-green-600 font-medium">
-                {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.winAmount) : '-' }}
-              </td>
-              <td class="px-3 py-2 text-sm text-red-600 font-medium">
-                {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.lossAmount) : '-' }}
-              </td>
-              <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(gameAnalysis.netAmount)">
-                {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.netAmount) : '-' }}
-              </td>
-            </tr>
+            <template v-for="gameAnalysis in selectedGames" :key="gameAnalysis.game.id">
+              <tr class="hover:bg-gray-50">
+                <!-- <td class="px-3 py-2">
+                  <input
+                    v-model="gameAnalysis.calculate"
+                    type="checkbox"
+                    class="rounded"
+                  />
+                </td> -->
+                <td class="px-3 py-2 text-sm text-gray-900">{{ gameAnalysis.game.game_name }}</td>
+                <td class="px-3 py-2 text-sm text-gray-600">
+                  {{ gameAnalysis.calculate ? gameAnalysis.totalResults : '-' }}
+                </td>
+                <td class="px-3 py-2 text-sm">
+                  <span v-if="gameAnalysis.calculate" :class="getMatchClass(gameAnalysis.patternMatches)">
+                    {{ gameAnalysis.patternMatches }}
+                  </span>
+                  <span v-else class="text-gray-400">-</span>
+                </td>
+                <td class="px-3 py-2 text-sm text-green-600 font-medium">
+                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.winAmount) : '-' }}
+                </td>
+                <td class="px-3 py-2 text-sm text-red-600 font-medium">
+                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.lossAmount) : '-' }}
+                </td>
+                <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(gameAnalysis.netAmount)">
+                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.netAmount) : '-' }}
+                </td>
+                <td class="px-3 py-2 text-sm font-medium">
+                  <button @click="toggleRowExpansion(gameAnalysis.game.id)" class="p-1 hover:bg-gray-100 rounded">
+                    <svg class="w-4 h-4 transition-transform" :class="{ 'rotate-180': expandedRows.has(gameAnalysis.game.id) }" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+              <!-- Expandable row -->
+              <tr v-if="expandedRows.has(gameAnalysis.game.id)" class="bg-gray-50">
+                <td colspan="7" class="px-3 py-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">รายละเอียดรายเดือน</div>
+                  <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                      <thead>
+                        <tr class="bg-gray-100">
+                          <th class="px-2 py-1 text-left font-medium text-gray-600">เดือน</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">ถูก</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">ผิด</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
+                          <th class="px-2 py-1 text-right font-medium text-gray-600">ผลรวม</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">%</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="monthData in getMonthlyData(gameAnalysis.game.id)" :key="monthData.month" class="border-b border-gray-200">
+                          <td class="px-2 py-1 text-gray-700">{{ formatMonth(monthData.month) }}</td>
+                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.wins }}</td>
+                          <td class="px-2 py-1 text-center text-red-600">{{ monthData.losses }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.wins + monthData.losses }}</td>
+                          <td class="px-2 py-1 text-right font-medium" :class="getNetClass(monthData.netAmount)">{{ formatCurrency(monthData.netAmount) }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ getWinRate(monthData.wins, monthData.losses) }}%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -281,6 +321,9 @@ const loading = ref(false)
 const profilesLoading = ref(false)
 const gameOperationLoading = ref(false)
 const profileLoading = ref(false)
+
+// Expandable rows state
+const expandedRows = ref<Set<number>>(new Set())
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -878,6 +921,35 @@ const getCellData = (gameId: number, date: string) => {
     result: baseCell.result,
     cssClass: patternClass ? `${baseCell.baseClass} ${patternClass}` : baseCell.baseClass
   }
+}
+
+// Expandable rows functions
+const toggleRowExpansion = (gameId: number) => {
+  if (expandedRows.value.has(gameId)) {
+    expandedRows.value.delete(gameId)
+  } else {
+    expandedRows.value.add(gameId)
+  }
+}
+
+const getMonthlyData = (gameId: number) => {
+  const game = selectedGames.value.find(g => g.game.id === gameId)
+  if (!game) return []
+  
+  return Object.entries(game.monthlyBreakdown)
+    .map(([month, data]) => ({ month, ...data }))
+    .sort((a, b) => a.month.localeCompare(b.month))
+}
+
+const formatMonth = (month: string) => {
+  const [year, monthNum] = month.split('-')
+  const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+  return `${monthNames[parseInt(monthNum) - 1]} ${year}`
+}
+
+const getWinRate = (wins: number, losses: number) => {
+  const total = wins + losses
+  return total > 0 ? Math.round((wins / total) * 100) : 0
 }
 
 // Navigation guards and lifecycle
