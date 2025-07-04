@@ -32,40 +32,6 @@
       </div>
     </div>
     
-    <!-- Global Controls -->
-    <div class="bg-blue-50 p-4 rounded-lg mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าทั่วไป</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Bet Amount -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนเงินแทง (ใช้กับทุกหวย)</label>
-          <input
-            v-model.number="betAmount"
-            type="number"
-            min="1"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="กรอกจำนวนเงินแทง"
-          />
-        </div>
-        
-        <!-- Pattern Selection -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่เลือก (ใช้กับทุกหวย)</label>
-          <div class="space-y-2">
-            <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center">
-              <input
-                v-model="selectedPatterns"
-                :value="pattern.key"
-                type="checkbox"
-                class="mr-2"
-              />
-              <span class="text-sm">{{ pattern.label }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-    
     <!-- Game Management -->
     <div class="mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
@@ -141,6 +107,40 @@
       </div>
     </div>
     
+    <!-- Global Controls -->
+    <div class="p-4 rounded-lg mb-6">
+      <!-- <h3 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าทั่วไป</h3> -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Bet Amount -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนเงินแทง (ใช้กับทุกหวย)</label>
+          <input
+            v-model.number="betAmount"
+            type="number"
+            min="1"
+            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="กรอกจำนวนเงินแทง"
+          />
+        </div>
+        
+        <!-- Pattern Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่เลือก (ใช้กับทุกหวย)</label>
+          <div class="space-y-2">
+            <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center border border-gray-300 m-2 p-2 rounded" :class="pattern.colorClass">
+              <input
+                v-model="selectedPatterns"
+                :value="pattern.key"
+                type="checkbox"
+                class="mr-2"
+              />
+              <span class="text-sm">{{ pattern.label }}</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <!-- Statistic Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">การวิเคราะห์หวยที่เลือก</h3>
@@ -155,7 +155,7 @@
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">-</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase"> </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
@@ -349,9 +349,9 @@ let loadProfileAbortController: AbortController | null = null
 // Pattern definitions with count information
 const availablePatterns = [
   // { key: 'all_same', label: 'All Same:ตอง (111, 222, 333...) - 10 numbers', count: 10 },
-  { key: 'first_two', label: 'เบิ้ลหน้า', count: 90 },
-  { key: 'first_third', label: 'หาม', count: 90 },
-  { key: 'last_two', label: 'เบิ้ลหลัง', count: 90 }
+  { key: 'first_two', label: 'เบิ้ลหน้า', colorClass: 'bg-blue-100', count: 90 },
+  { key: 'first_third', label: 'หาม', colorClass: 'bg-green-100', count: 90 },
+  { key: 'last_two', label: 'เบิ้ลหลัง', colorClass: 'bg-yellow-100', count: 90 }
 ]
 
 interface GameAnalysis {
