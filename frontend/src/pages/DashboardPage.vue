@@ -72,16 +72,33 @@
             </tr>
           </thead>
           <tbody class="bg-white">
-            <tr v-for="gameAnalysis in baseTableData.games" :key="gameAnalysis.game.id" class="border-b border-gray-200">
-              <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
-                <button
-                  @click="removeGame(gameAnalysis.game.id)"
-                  class="text-red-600 hover:text-red-800 p-1"
-                >
-                  <svg class="w-4 h-4" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
-                  </svg>
-                </button>
+            <tr 
+              v-for="(gameAnalysis, index) in baseTableData.games" 
+              :key="gameAnalysis.game.id" 
+              class="border-b border-gray-200"
+              draggable="true"
+              @dragstart="handleDragStart($event, index)"
+              @dragover="handleDragOver($event)"
+              @dragenter="dragOverIndex = index"
+              @dragleave="dragOverIndex = null"
+              @drop="handleDrop($event, index)"
+              @dragend="handleDragEnd"
+              @touchstart="handleTouchStart($event, index)"
+              @touchmove="handleTouchMove($event)"
+              @touchend="handleTouchEnd($event, index)"
+              :class="{ 'opacity-50': draggedIndex === index, 'bg-blue-50': dragOverIndex === index }"
+            >
+              <td class="sticky-col-1 bg-white px-2 py-1 border-r border-gray-200">
+                <div class="flex items-center justify-center gap-1">
+                  <button
+                    @click="removeGame(gameAnalysis.game.id)"
+                    class="text-red-600 hover:text-red-800 p-1"
+                  >
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                      <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+                    </svg>
+                  </button>
+                </div>
               </td>
               <td class="sticky-col-2 bg-white px-2 py-1 text-center border-r border-gray-200">
                 <input
@@ -324,6 +341,12 @@ const profileLoading = ref(false)
 
 // Expandable rows state
 const expandedRows = ref<Set<number>>(new Set())
+
+// Drag and drop state
+const draggedIndex = ref<number | null>(null)
+const dragOverIndex = ref<number | null>(null)
+const touchStartY = ref<number | null>(null)
+const isTouchDragging = ref(false)
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -952,6 +975,86 @@ const getWinRate = (wins: number, losses: number) => {
   return total > 0 ? Math.round((wins / total) * 100) : 0
 }
 
+// Drag and drop methods
+const handleDragStart = (event: DragEvent, index: number) => {
+  draggedIndex.value = index
+  event.dataTransfer!.effectAllowed = 'move'
+}
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  event.dataTransfer!.dropEffect = 'move'
+}
+
+const handleDrop = (event: DragEvent, dropIndex: number) => {
+  event.preventDefault()
+  
+  if (draggedIndex.value === null || draggedIndex.value === dropIndex) return
+  
+  // Reorder the selectedGames array
+  const draggedGame = selectedGames.value[draggedIndex.value]
+  selectedGames.value.splice(draggedIndex.value, 1)
+  selectedGames.value.splice(dropIndex, 0, draggedGame)
+  
+  // Reset drag state
+  draggedIndex.value = null
+  dragOverIndex.value = null
+}
+
+const handleDragEnd = () => {
+  draggedIndex.value = null
+  dragOverIndex.value = null
+}
+
+// Touch event methods for mobile
+const handleTouchStart = (event: TouchEvent, index: number) => {
+  touchStartY.value = event.touches[0].clientY
+  draggedIndex.value = index
+  isTouchDragging.value = false
+}
+
+const handleTouchMove = (event: TouchEvent) => {
+  if (draggedIndex.value === null || !touchStartY.value) return
+  
+  const currentY = event.touches[0].clientY
+  const deltaY = Math.abs(currentY - touchStartY.value)
+  
+  if (deltaY > 10) {
+    isTouchDragging.value = true
+    event.preventDefault()
+    
+    // Find element under touch point
+    const elementBelow = document.elementFromPoint(
+      event.touches[0].clientX,
+      event.touches[0].clientY
+    )
+    
+    const row = elementBelow?.closest('tr')
+    if (row) {
+      const allRows = Array.from(row.parentElement?.children || [])
+      const targetIndex = allRows.indexOf(row)
+      if (targetIndex >= 0) {
+        dragOverIndex.value = targetIndex
+      }
+    }
+  }
+}
+
+const handleTouchEnd = (event: TouchEvent, index: number) => {
+  if (isTouchDragging.value && draggedIndex.value !== null && dragOverIndex.value !== null) {
+    // Perform the reorder
+    const draggedGame = selectedGames.value[draggedIndex.value]
+    selectedGames.value.splice(draggedIndex.value, 1)
+    selectedGames.value.splice(dragOverIndex.value, 0, draggedGame)
+  }
+  
+  // Reset state
+  draggedIndex.value = null
+  dragOverIndex.value = null
+  touchStartY.value = null
+  isTouchDragging.value = false
+}
+
 // Navigation guards and lifecycle
 // 1. Vue Router guard (catches internal navigation)
 onBeforeRouteLeave((to, from, next) => {
@@ -1001,6 +1104,7 @@ select:disabled {
   position: sticky;
   left: 0;
   z-index: 10;
+  width: 49px;
   min-width: 49px;
   max-width: 49px;
   border: 0;
@@ -1010,6 +1114,7 @@ select:disabled {
   position: sticky;
   left: 49px;
   z-index: 10;
+  width: 32px;
   min-width: 32px;
   max-width: 32px;
   border: 0;
@@ -1019,6 +1124,7 @@ select:disabled {
   position: sticky;
   left: 81px;
   z-index: 10;
+  width: 80px;
   min-width: 80px;
   max-width: 80px;
   border: 0;
