@@ -315,19 +315,19 @@
 
     <!-- Reorder Games Modal -->
     <div v-if="showReorderDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg max-w-md w-full mx-4">
+      <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4">
         <h3 class="text-xl font-bold mb-4">จัดเรียงลำดับหวย</h3>
         <div class="max-h-96 overflow-y-auto mb-4">
           <div v-for="(game, index) in reorderGames" :key="game.game.id" class="flex items-center justify-between p-3 border border-gray-200 rounded mb-2">
-            <span class="flex-1 text-sm truncate">{{ game.game.game_name }}</span>
-            <div class="flex gap-1">
-              <button @click="moveGameUp(index)" :disabled="index === 0" class="p-1 text-blue-600 hover:text-blue-800 disabled:text-gray-400">
-                <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <span class="flex-1 text-base truncate">{{ game.game.game_name }}</span>
+            <div class="flex gap-2">
+              <button @click="moveGameUp(index)" :disabled="index === 0" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M7 14l5-5 5 5z"/>
                 </svg>
               </button>
-              <button @click="moveGameDown(index)" :disabled="index === reorderGames.length - 1" class="p-1 text-blue-600 hover:text-blue-800 disabled:text-gray-400">
-                <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <button @click="moveGameDown(index)" :disabled="index === reorderGames.length - 1" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
                   <path fill="currentColor" d="M7 10l5 5 5-5z"/>
                 </svg>
               </button>
