@@ -991,12 +991,15 @@ const handleDrop = (event: DragEvent, dropIndex: number) => {
   
   if (draggedIndex.value === null || draggedIndex.value === dropIndex) return
   
+  gameOperationLoading.value = true
+
   // Reorder the selectedGames array
   const draggedGame = selectedGames.value[draggedIndex.value]
   selectedGames.value.splice(draggedIndex.value, 1)
   selectedGames.value.splice(dropIndex, 0, draggedGame)
   
   // Reset drag state
+  gameOperationLoading.value = false
   draggedIndex.value = null
   dragOverIndex.value = null
 }
@@ -1043,12 +1046,14 @@ const handleTouchMove = (event: TouchEvent) => {
 const handleTouchEnd = (event: TouchEvent, index: number) => {
   if (isTouchDragging.value && draggedIndex.value !== null && dragOverIndex.value !== null) {
     // Perform the reorder
+    gameOperationLoading.value = true
     const draggedGame = selectedGames.value[draggedIndex.value]
     selectedGames.value.splice(draggedIndex.value, 1)
     selectedGames.value.splice(dragOverIndex.value, 0, draggedGame)
   }
   
   // Reset state
+  gameOperationLoading.value = false
   draggedIndex.value = null
   dragOverIndex.value = null
   touchStartY.value = null
