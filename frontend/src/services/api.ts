@@ -164,12 +164,14 @@ export const gameApi = {
 
   // Backup endpoints
   exportData: async () => {
-    const response = await api.get('/export-data');
+    const source = getCurrentSource()
+    const response = await api.get(`/export-data?source=${source}`);
     return response.data;
   },
 
   importBackup: async (backupData: any) => {
-    const response = await api.post('/import-backup', backupData);
+    const source = getCurrentSource()
+    const response = await api.post(`/import-backup?source=${source}`, backupData);
     return response.data;
   },
 

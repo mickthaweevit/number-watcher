@@ -432,41 +432,78 @@ async def clear_import_logs(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Clear logs failed: {str(e)}")
 
 @app.get("/export-data")
-async def export_data(db: Session = Depends(get_db)):
+async def export_data(
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
     """Export all data as JSON backup"""
     try:
-        # Get all games with their results
-        games = db.query(Game).all()
-        results = db.query(Result).all()
+        if source == "new":
+            # Export V2 data
+            games = db.query(GameV2).all()
+            results = db.query(ResultV2).all()
+        else:
+            # Export V1 data
+            games = db.query(Game).all()
+            results = db.query(Result).all()
         
-        # Convert to dictionaries
+        # Convert to dictionaries based on source
         games_data = []
-        for game in games:
-            games_data.append({
-                "id": game.id,
-                "base_game_id": game.base_game_id,
-                "game_name": game.game_name,
-                "is_active": game.is_active,
-                "created_at": game.created_at.isoformat() if game.created_at else None
-            })
-        
         results_data = []
-        for result in results:
-            results_data.append({
-                "id": result.id,
-                "game_id": result.game_id,
-                "full_game_code": result.full_game_code,
-                "result_date": result.result_date.isoformat() if result.result_date else None,
-                "result_3up": result.result_3up,
-                "result_2down": result.result_2down,
-                "result_4up": result.result_4up,
-                "status": result.status,
-                "created_at": result.created_at.isoformat() if result.created_at else None
-            })
+        
+        if source == "new":
+            # V2 format
+            for game in games:
+                games_data.append({
+                    "id": game.id,
+                    "product_id": game.product_id,
+                    "product_name_th": game.product_name_th,
+                    "product_code": game.product_code,
+                    "is_active": game.is_active,
+                    "created_at": game.created_at.isoformat() if game.created_at else None
+                })
+            
+            for result in results:
+                results_data.append({
+                    "id": result.id,
+                    "game_id": result.game_id,
+                    "period_id": result.period_id,
+                    "award1": result.award1,
+                    "award2": result.award2,
+                    "award3": result.award3,
+                    "result_date": result.result_date.isoformat() if result.result_date else None,
+                    "status": result.status,
+                    "yk_round": result.yk_round,
+                    "created_at": result.created_at.isoformat() if result.created_at else None
+                })
+        else:
+            # V1 format
+            for game in games:
+                games_data.append({
+                    "id": game.id,
+                    "base_game_id": game.base_game_id,
+                    "game_name": game.game_name,
+                    "is_active": game.is_active,
+                    "created_at": game.created_at.isoformat() if game.created_at else None
+                })
+            
+            for result in results:
+                results_data.append({
+                    "id": result.id,
+                    "game_id": result.game_id,
+                    "full_game_code": result.full_game_code,
+                    "result_date": result.result_date.isoformat() if result.result_date else None,
+                    "result_3up": result.result_3up,
+                    "result_2down": result.result_2down,
+                    "result_4up": result.result_4up,
+                    "status": result.status,
+                    "created_at": result.created_at.isoformat() if result.created_at else None
+                })
         
         backup_data = {
             "export_date": datetime.now().isoformat(),
             "version": "1.0",
+            "source": source,
             "games": games_data,
             "results": results_data,
             "stats": {
@@ -481,7 +518,11 @@ async def export_data(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
 
 @app.post("/import-backup")
-async def import_backup(backup_data: dict, db: Session = Depends(get_db)):
+async def import_backup(
+    backup_data: dict,
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
     """Import data from JSON backup"""
     # Extract metadata if provided
     metadata = backup_data.get("_metadata", {})
