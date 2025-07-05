@@ -547,45 +547,89 @@ async def import_backup(
         games_created = 0
         results_created = 0
         
-        # Import games first
-        for game_data in backup_data["games"]:
-            existing_game = db.query(Game).filter(Game.base_game_id == game_data["base_game_id"]).first()
-            if not existing_game:
-                new_game = Game(
-                    base_game_id=game_data["base_game_id"],
-                    game_name=game_data["game_name"],
-                    is_active=game_data.get("is_active", True)
-                )
-                db.add(new_game)
-                games_created += 1
-        
-        db.flush()  # Flush to get game IDs
-        
-        # Import results
-        for result_data in backup_data["results"]:
-            # Find the game by base_game_id (since IDs might be different)
-            game = db.query(Game).filter(Game.base_game_id.in_(
-                [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
-            )).first()
-            
-            if game:
-                existing_result = db.query(Result).filter(
-                    Result.game_id == game.id,
-                    Result.result_date == result_data["result_date"]
-                ).first()
-                
-                if not existing_result:
-                    new_result = Result(
-                        game_id=game.id,
-                        full_game_code=result_data["full_game_code"],
-                        result_date=result_data["result_date"],
-                        result_3up=result_data["result_3up"],
-                        result_2down=result_data["result_2down"],
-                        result_4up=result_data["result_4up"],
-                        status=result_data["status"]
+        if source == "new":
+            # Import V2 games
+            for game_data in backup_data["games"]:
+                existing_game = db.query(GameV2).filter(GameV2.product_id == game_data["product_id"]).first()
+                if not existing_game:
+                    new_game = GameV2(
+                        product_id=game_data["product_id"],
+                        product_name_th=game_data["product_name_th"],
+                        product_code=game_data.get("product_code", ""),
+                        is_active=game_data.get("is_active", True)
                     )
-                    db.add(new_result)
-                    results_created += 1
+                    db.add(new_game)
+                    games_created += 1
+            
+            db.flush()  # Flush to get game IDs
+            
+            # Import V2 results
+            for result_data in backup_data["results"]:
+                # Find the game by product_id
+                game = db.query(GameV2).filter(GameV2.product_id.in_(
+                    [g["product_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
+                )).first()
+                
+                if game:
+                    existing_result = db.query(ResultV2).filter(
+                        ResultV2.game_id == game.id,
+                        ResultV2.result_date == result_data["result_date"],
+                        ResultV2.yk_round == result_data.get("yk_round", 1)
+                    ).first()
+                    
+                    if not existing_result:
+                        new_result = ResultV2(
+                            game_id=game.id,
+                            period_id=result_data.get("period_id", ""),
+                            award1=result_data.get("award1"),
+                            award2=result_data.get("award2"),
+                            award3=result_data.get("award3"),
+                            result_date=result_data["result_date"],
+                            status=result_data["status"],
+                            yk_round=result_data.get("yk_round", 1)
+                        )
+                        db.add(new_result)
+                        results_created += 1
+        else:
+            # Import V1 games
+            for game_data in backup_data["games"]:
+                existing_game = db.query(Game).filter(Game.base_game_id == game_data["base_game_id"]).first()
+                if not existing_game:
+                    new_game = Game(
+                        base_game_id=game_data["base_game_id"],
+                        game_name=game_data["game_name"],
+                        is_active=game_data.get("is_active", True)
+                    )
+                    db.add(new_game)
+                    games_created += 1
+            
+            db.flush()  # Flush to get game IDs
+            
+            # Import V1 results
+            for result_data in backup_data["results"]:
+                # Find the game by base_game_id
+                game = db.query(Game).filter(Game.base_game_id.in_(
+                    [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
+                )).first()
+                
+                if game:
+                    existing_result = db.query(Result).filter(
+                        Result.game_id == game.id,
+                        Result.result_date == result_data["result_date"]
+                    ).first()
+                    
+                    if not existing_result:
+                        new_result = Result(
+                            game_id=game.id,
+                            full_game_code=result_data["full_game_code"],
+                            result_date=result_data["result_date"],
+                            result_3up=result_data["result_3up"],
+                            result_2down=result_data["result_2down"],
+                            result_4up=result_data["result_4up"],
+                            status=result_data["status"]
+                        )
+                        db.add(new_result)
+                        results_created += 1
         
         db.commit()
         
