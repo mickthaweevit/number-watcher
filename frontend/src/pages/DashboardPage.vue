@@ -477,9 +477,9 @@ const totalStats = computed(() => {
   return {
     games: calculatedGames.length,
     results: calculatedGames.reduce((sum, g) => sum + g.totalResults, 0),
-    wins: calculatedGames.reduce((sum, g) => sum + g.patternMatches, 0),
-    losses: calculatedGames.reduce((sum, g) => sum + (g.totalResults - g.patternMatches), 0),
-    netAmount: calculatedGames.reduce((sum, g) => sum + g.netAmount, 0)
+    wins: calculatedGames.reduce((sum, g) => sum + getTotalWins(g), 0),
+    losses: calculatedGames.reduce((sum, g) => sum + (g.totalResults - getTotalWins(g)), 0),
+    netAmount: calculatedGames.reduce((sum, g) => sum + getTotalNetAmount(g), 0)
   }
 })
 
@@ -487,13 +487,26 @@ const monthlyStats = computed(() => {
   const monthlyData: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
   
   selectedGames.value.filter(g => g.calculate).forEach(game => {
-    Object.entries(game.monthlyBreakdown).forEach(([month, data]) => {
-      if (!monthlyData[month]) {
-        monthlyData[month] = { wins: 0, losses: 0, netAmount: 0 }
+    // Get monthly data from each game using the same logic as expandable rows
+    const gameMonthlyData = getMonthlyData(game.game.id)
+    
+    gameMonthlyData.forEach(monthInfo => {
+      if (!monthlyData[monthInfo.month]) {
+        monthlyData[monthInfo.month] = { wins: 0, losses: 0, netAmount: 0 }
       }
-      monthlyData[month].wins += data.wins
-      monthlyData[month].losses += data.losses
-      monthlyData[month].netAmount += data.netAmount
+      
+      // Sum wins from patterns with betAmount > 0
+      const monthWins = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.wins : 0) +
+                       (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.wins : 0) +
+                       (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.wins : 0)
+      
+      const monthLosses = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.losses : 0) +
+                         (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.losses : 0) +
+                         (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.losses : 0)
+      
+      monthlyData[monthInfo.month].wins += monthWins
+      monthlyData[monthInfo.month].losses += monthLosses
+      monthlyData[monthInfo.month].netAmount += monthInfo.netAmount
     })
   })
   
