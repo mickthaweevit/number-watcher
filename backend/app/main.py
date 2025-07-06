@@ -777,7 +777,8 @@ async def create_profile(profile_data: DashboardProfileCreate, current_user: Use
         bet_amount=profile_data.bet_amount,
         selected_patterns=profile_data.selected_patterns,
         selected_game_ids=profile_data.selected_game_ids,
-        api_source=profile_data.api_source
+        api_source=profile_data.api_source,
+        game_pattern_bets=profile_data.game_pattern_bets
     )
     db.add(db_profile)
     db.commit()
@@ -802,6 +803,7 @@ async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, 
     profile.selected_patterns = profile_data.selected_patterns
     profile.selected_game_ids = profile_data.selected_game_ids
     profile.api_source = profile_data.api_source
+    profile.game_pattern_bets = profile_data.game_pattern_bets
     profile.updated_at = datetime.now()
     
     db.commit()

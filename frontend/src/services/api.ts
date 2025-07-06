@@ -17,6 +17,7 @@ export interface DashboardProfile {
   selected_patterns: string[];
   selected_game_ids: number[];
   api_source: string;
+  game_pattern_bets?: Record<number, { first_two: number; first_third: number; last_two: number }>;
   created_at: string;
   updated_at: string;
 }

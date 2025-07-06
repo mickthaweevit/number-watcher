@@ -13,6 +13,7 @@ class DashboardProfile(Base):
     selected_patterns = Column(JSON, nullable=False)
     selected_game_ids = Column(JSON, nullable=False)
     api_source = Column(String(20), nullable=False, default='old')
+    game_pattern_bets = Column(JSON, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
     
