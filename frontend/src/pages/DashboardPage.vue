@@ -241,54 +241,12 @@
     </div>
     
     <!-- Statistics Summary -->
-    <div v-if="selectedGames.some(g => g.calculate)" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Total Statistics -->
-      <div class="bg-gray-50 p-4 rounded">
-        <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรวม</h3>
-        <div class="space-y-2">
-          <div class="flex justify-between">
-            <span>หวยทั้งหมด:</span>
-            <span class="font-medium">{{ totalStats.games }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>ผลทั้งหมด:</span>
-            <span class="font-medium">{{ totalStats.results }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>รูปแบบตรง:</span>
-            <span class="font-medium text-green-600">{{ totalStats.wins }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span>ไม่ตรง:</span>
-            <span class="font-medium text-red-600">{{ totalStats.losses }}</span>
-          </div>
-          <div class="flex justify-between border-t pt-2">
-            <span class="font-semibold">ผลรวม:</span>
-            <span class="font-bold" :class="getNetClass(totalStats.netAmount)">
-              {{ formatCurrency(totalStats.netAmount) }}
-            </span>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Monthly Statistics -->
-      <div class="bg-gray-50 p-4 rounded">
-        <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรายเดือน</h3>
-        <div class="max-h-64 overflow-y-auto">
-          <div v-for="month in monthlyStats" :key="month.month" class="mb-3 p-2 bg-white rounded">
-            <div class="font-medium text-sm text-gray-700 mb-1">{{ month.month }}</div>
-            <div class="grid grid-cols-3 gap-2 text-xs">
-              <div>ทั้งหมด: <span class="font-medium">{{ month.wins + month.losses }}</span></div>
-              <div>ถูก: <span class="text-green-600 font-medium">{{ month.wins }}</span></div>
-              <div>ผิด: <span class="text-red-600 font-medium">{{ month.losses }}</span></div>
-            </div>
-            <div class="text-xs mt-1">
-              รวม: <span class="font-medium" :class="getNetClass(month.netAmount)">{{ formatCurrency(month.netAmount) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <StatisticsPanel 
+      :totalStats="totalStats"
+      :monthlyStats="monthlyStats"
+      :formatCurrency="formatCurrency"
+      :getNetClass="getNetClass"
+    />
 
     <!-- Save as New Profile Modal -->
     <div v-if="showSaveAsNewForm" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -324,6 +282,7 @@ import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalys
 import { useProfileManagement } from '../composables/useProfileManagement'
 import PatternSelector from '../components/PatternSelector.vue'
 import GameManager from '../components/GameManager.vue'
+import StatisticsPanel from '../components/StatisticsPanel.vue'
 
 // Reactive state
 const betAmount = ref(10) // Default bet amount
