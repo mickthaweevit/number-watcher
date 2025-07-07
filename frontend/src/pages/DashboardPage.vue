@@ -895,9 +895,9 @@ const saveCurrentProfile = async () => {
       selected_game_ids: selectedGames.value.map(g => g.game.id),
       game_pattern_bets: selectedGames.value.reduce((acc, game) => {
         acc[game.game.id] = {
-          first_two: game.patterns.first_two.betAmount,
-          first_third: game.patterns.first_third.betAmount,
-          last_two: game.patterns.last_two.betAmount
+          first_two: game.patterns.first_two.betAmount || 0,
+          first_third: game.patterns.first_third.betAmount || 0,
+          last_two: game.patterns.last_two.betAmount || 0
         }
         return acc
       }, {} as Record<number, any>)
@@ -941,9 +941,9 @@ const saveAsNewProfile = async () => {
       selected_game_ids: selectedGames.value.map(g => g.game.id),
       game_pattern_bets: selectedGames.value.reduce((acc, game) => {
         acc[game.game.id] = {
-          first_two: game.patterns.first_two.betAmount,
-          first_third: game.patterns.first_third.betAmount,
-          last_two: game.patterns.last_two.betAmount
+          first_two: game.patterns.first_two.betAmount || 0,
+          first_third: game.patterns.first_third.betAmount || 0,
+          last_two: game.patterns.last_two.betAmount || 0
         }
         return acc
       }, {} as Record<number, any>)
