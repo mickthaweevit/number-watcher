@@ -33,89 +33,67 @@
     </div>
     
     <!-- Game Management -->
-    <div class="mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
-      <div class="flex gap-3 mb-4">
-        <select
-          v-model="selectedGameId"
-          class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">เลือกหวยที่จะเพิ่ม</option>
-          <option v-for="game in availableGames" :key="game.id" :value="game.id">
-            {{ game.game_name }}
-          </option>
-        </select>
-        <button
-          @click="addGame"
-          :disabled="!selectedGameId"
-          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          เพิ่มหวย
-        </button>
-        <button
-          @click="openReorderDialog"
-          :disabled="selectedGames.length < 2"
-          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-        >
-          จัดเรียง
-        </button>
-      </div>
+    <GameManager 
+      :availableGames="availableGames" 
+      :selectedGames="selectedGames"
+      @addGame="handleAddGame"
+      @reorderGames="handleReorderGames"
+    />
       
       <!-- Game Results Preview -->
-      <div v-if="selectedGames.length > 0" class="overflow-x-auto">
-        <table class="min-w-full text-xs">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="sticky-col-1 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
-                จัดการ
-              </th>
-              <th class="sticky-col-2 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
-                คิด
-              </th>
-              <th class="sticky-col-3 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">หวย</th>
-              <th v-for="date in baseTableData.dates" :key="date.raw" class="px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300">
-                {{ date.formatted }}
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white">
-            <tr 
-              v-for="(gameAnalysis, index) in baseTableData.games" 
-              :key="gameAnalysis.game.id" 
-              class="border-b border-gray-200"
-            >
-              <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
-                <button
-                  @click="removeGame(gameAnalysis.game.id)"
-                  class="text-red-600 hover:text-red-800 p-1"
-                >
-                  <svg class="w-4 h-4" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
-                  </svg>
-                </button>
+    <div v-if="selectedGames.length > 0" class="overflow-x-auto">
+      <table class="min-w-full text-xs">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="sticky-col-1 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
+              จัดการ
+            </th>
+            <th class="sticky-col-2 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">
+              คิด
+            </th>
+            <th class="sticky-col-3 bg-gray-100 px-2 py-1 text-left font-medium text-gray-600">หวย</th>
+            <th v-for="date in baseTableData.dates" :key="date.raw" class="px-2 py-1 text-center font-medium text-gray-600 border-r border-gray-300">
+              {{ date.formatted }}
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white">
+          <tr 
+            v-for="(gameAnalysis, index) in baseTableData.games" 
+            :key="gameAnalysis.game.id" 
+            class="border-b border-gray-200"
+          >
+            <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
+              <button
+                @click="removeGame(gameAnalysis.game.id)"
+                class="text-red-600 hover:text-red-800 p-1"
+              >
+                <svg class="w-4 h-4" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z" />
+                </svg>
+              </button>
+            </td>
+            <td class="sticky-col-2 bg-white px-2 py-1 text-center border-r border-gray-200">
+              <input
+                v-model="gameAnalysis.calculate"
+                type="checkbox"
+                class="rounded"
+              />
+            </td>
+            <td class="sticky-col-3 bg-white px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
+              {{ gameAnalysis.game.game_name }}
+            </td>
+            <template v-for="date in baseTableData.dates" :key="date.raw">
+              <td v-if="gameAnalysis.calculate" class="px-2 py-1 text-center border-r border-gray-200" :class="getCellData(gameAnalysis.game.id, date.raw).cssClass">
+                {{ getCellData(gameAnalysis.game.id, date.raw).result || '-' }}
               </td>
-              <td class="sticky-col-2 bg-white px-2 py-1 text-center border-r border-gray-200">
-                <input
-                  v-model="gameAnalysis.calculate"
-                  type="checkbox"
-                  class="rounded"
-                />
+              <td v-else class="px-2 py-1 text-center border-r border-gray-200">
+                <span class="text-gray-400">-</span>
               </td>
-              <td class="sticky-col-3 bg-white px-2 py-1 text-gray-900 border-r border-gray-200 truncate max-w-32">
-                {{ gameAnalysis.game.game_name }}
-              </td>
-              <template v-for="date in baseTableData.dates" :key="date.raw">
-                <td v-if="gameAnalysis.calculate" class="px-2 py-1 text-center border-r border-gray-200" :class="getCellData(gameAnalysis.game.id, date.raw).cssClass">
-                  {{ getCellData(gameAnalysis.game.id, date.raw).result || '-' }}
-                </td>
-                <td v-else class="px-2 py-1 text-center border-r border-gray-200">
-                  <span class="text-gray-400">-</span>
-                </td>
-              </template>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            </template>
+          </tr>
+        </tbody>
+      </table>
     </div>
     
     <!-- Pattern Highlighting Controls -->
@@ -333,37 +311,7 @@
       </div>
     </div>
 
-    <!-- Reorder Games Modal -->
-    <div v-if="showReorderDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4">
-        <h3 class="text-xl font-bold mb-4">จัดเรียงลำดับหวย</h3>
-        <div class="max-h-96 overflow-y-auto mb-4">
-          <div v-for="(game, index) in reorderGames" :key="game.game.id" class="flex items-center justify-between p-3 border border-gray-200 rounded mb-2">
-            <span class="flex-1 text-base truncate">{{ game.game.game_name }}</span>
-            <div class="flex gap-2">
-              <button @click="moveGameUp(index)" :disabled="index === 0" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M7 14l5-5 5 5z"/>
-                </svg>
-              </button>
-              <button @click="moveGameDown(index)" :disabled="index === reorderGames.length - 1" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
-                  <path fill="currentColor" d="M7 10l5 5 5-5z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        <div class="flex gap-3">
-          <button @click="saveReorder" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-            บันทึก
-          </button>
-          <button @click="cancelReorder" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-            ยกเลิก
-          </button>
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -375,11 +323,11 @@ import type { Game, Result, User, DashboardProfile } from '../types'
 import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalysis'
 import { useProfileManagement } from '../composables/useProfileManagement'
 import PatternSelector from '../components/PatternSelector.vue'
+import GameManager from '../components/GameManager.vue'
 
 // Reactive state
 const betAmount = ref(10) // Default bet amount
 const selectedPatterns = ref<string[]>([])
-const selectedGameId = ref('')
 const selectedGames = ref<GameAnalysis[]>([])
 const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
@@ -388,10 +336,6 @@ const gameOperationLoading = ref(false)
 
 // Expandable rows state
 const expandedRows = ref<Set<number>>(new Set())
-
-// Reorder dialog state
-const showReorderDialog = ref(false)
-const reorderGames = ref<GameAnalysis[]>([])
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -529,10 +473,10 @@ const fetchData = async () => {
   }
 }
 
-const addGame = () => {
+// Game management event handlers
+const handleAddGame = (gameId: number) => {
   if (!gameMap || !validResultsByGame) return
   
-  const gameId = parseInt(selectedGameId.value)
   const game = gameMap.get(gameId)
   if (!game) return
   
@@ -543,7 +487,15 @@ const addGame = () => {
     const analysis = analyzeGameOptimized(game, gameResults)
     
     selectedGames.value.push(analysis)
-    selectedGameId.value = ''
+    gameOperationLoading.value = false
+  }, 0)
+}
+
+const handleReorderGames = (games: GameAnalysis[]) => {
+  gameOperationLoading.value = true
+  
+  setTimeout(() => {
+    selectedGames.value = [...games]
     gameOperationLoading.value = false
   }, 0)
 }
@@ -889,42 +841,7 @@ const getWinRate = (wins: number, losses: number) => {
   return total > 0 ? Math.round((wins / total) * 100) : 0
 }
 
-// Reorder dialog methods
-const openReorderDialog = () => {
-  reorderGames.value = [...selectedGames.value]
-  showReorderDialog.value = true
-}
-
-const moveGameUp = (index: number) => {
-  if (index > 0) {
-    const game = reorderGames.value[index]
-    reorderGames.value.splice(index, 1)
-    reorderGames.value.splice(index - 1, 0, game)
-  }
-}
-
-const moveGameDown = (index: number) => {
-  if (index < reorderGames.value.length - 1) {
-    const game = reorderGames.value[index]
-    reorderGames.value.splice(index, 1)
-    reorderGames.value.splice(index + 1, 0, game)
-  }
-}
-
-const saveReorder = () => {
-  gameOperationLoading.value = true
-  
-  setTimeout(() => {
-    selectedGames.value = [...reorderGames.value]
-    showReorderDialog.value = false
-    gameOperationLoading.value = false
-  }, 0)
-}
-
-const cancelReorder = () => {
-  showReorderDialog.value = false
-  reorderGames.value = []
-}
+// Reorder functionality now handled by GameManager component
 
 // Navigation guards and lifecycle
 // 1. Vue Router guard (catches internal navigation)
