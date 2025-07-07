@@ -385,6 +385,7 @@ import { onBeforeRouteLeave } from 'vue-router'
 import { gameApi, authApi, profileApi } from '../services/api'
 import type { Game, Result, User, DashboardProfile } from '../types'
 import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalysis'
+import { useProfileManagement } from '../composables/useProfileManagement'
 
 // Reactive state
 const betAmount = ref(10) // Default bet amount
@@ -394,9 +395,7 @@ const selectedGames = ref<GameAnalysis[]>([])
 const allGames = ref<Game[]>([])
 const allResults = ref<Result[]>([])
 const loading = ref(false)
-const profilesLoading = ref(false)
 const gameOperationLoading = ref(false)
-const profileLoading = ref(false)
 
 // Expandable rows state
 const expandedRows = ref<Set<number>>(new Set())
@@ -413,17 +412,9 @@ let validResultsByGame: Map<number, Result[]> | null = null // Pre-filtered vali
 // User state (always logged in now)
 const user = ref<User | null>(null)
 
-// Profile state
-const profiles = ref<DashboardProfile[]>([])
-const selectedProfileId = ref<number | null>(null)
-const showSaveProfileForm = ref(false)
+// Profile UI state
 const showSaveAsNewForm = ref(false)
 const newProfileName = ref('')
-const loadedProfileState = ref<any>(null)
-const hasUnsavedChanges = ref(false)
-
-// Request cancellation
-let loadProfileAbortController: AbortController | null = null
 
 // Pattern definitions with count information
 const availablePatterns = [
@@ -433,7 +424,7 @@ const availablePatterns = [
   { key: 'last_two', label: 'เบิ้ลหลัง', colorClass: 'bg-yellow-100', count: 90 }
 ]
 
-// Use composable for game analysis
+// Use composables
 const {
   analysisCache,
   analyzeGameOptimized,
@@ -445,6 +436,26 @@ const {
   getMonthlyData
 } = useGameAnalysis()
 
+const {
+  profiles,
+  selectedProfileId,
+  profilesLoading,
+  profileLoading,
+  hasUnsavedChanges,
+  canSaveCurrent,
+  fetchProfiles,
+  saveCurrentProfile: saveCurrentProfileComposable,
+  saveAsNewProfile: saveAsNewProfileComposable,
+  deleteProfile: deleteProfileComposable,
+  updateLoadedState,
+  checkForUnsavedChanges,
+  clearProfile,
+  cancelProfileLoad,
+  loadedProfileState,
+  setLoadProfileAbortController,
+  setProfileLoading
+} = useProfileManagement()
+
 // Computed properties
 const availableGames = computed(() => {
   return allGames.value.filter(game => 
@@ -452,9 +463,7 @@ const availableGames = computed(() => {
   )
 })
 
-const canSaveCurrent = computed(() => {
-  return selectedProfileId.value !== null && hasUnsavedChanges.value
-})
+// canSaveCurrent now provided by composable
 
 const totalStats = computed(() => {
   const calculatedGames = selectedGames.value.filter(g => g.calculate)
@@ -669,32 +678,9 @@ const recalculateAllGames = () => {
   }, 0)
 }
 
-// Helper function to check for unsaved changes
-const checkForUnsavedChanges = () => {
-  if (!loadedProfileState.value) return false
-  
-  const arraysEqual = (a: any[], b: any[]) => {
-    return a.length === b.length && a.every((val, i) => val === b[i])
-  }
-  
-  // Check if game pattern bets changed
-  const currentGameBets = selectedGames.value.reduce((acc, game) => {
-    acc[game.game.id] = {
-      first_two: game.patterns.first_two.betAmount,
-      first_third: game.patterns.first_third.betAmount,
-      last_two: game.patterns.last_two.betAmount
-    }
-    return acc
-  }, {} as Record<number, any>)
-  
-  const savedGameBets = loadedProfileState.value.gamePatternBets || {}
-  const gameBetsChanged = JSON.stringify(currentGameBets) !== JSON.stringify(savedGameBets)
-  
-  return (
-    !arraysEqual(selectedPatterns.value, loadedProfileState.value.selectedPatterns) ||
-    !arraysEqual(selectedGames.value.map(g => g.game.id), loadedProfileState.value.selectedGameIds) ||
-    gameBetsChanged
-  )
+// Helper function using composable
+const updateUnsavedChanges = () => {
+  hasUnsavedChanges.value = checkForUnsavedChanges(selectedPatterns.value, selectedGames.value)
 }
 
 // Watch for profile selection changes - auto load
@@ -702,12 +688,10 @@ watch(selectedProfileId, (newProfileId) => {
   if (newProfileId) {
     loadProfile()
   } else {
-    // Clear everything when no profile selected
     selectedGames.value = []
     betAmount.value = 10
     selectedPatterns.value = []
-    loadedProfileState.value = null
-    hasUnsavedChanges.value = false
+    clearProfile()
   }
 })
 
@@ -720,7 +704,7 @@ watch([betAmount, selectedPatterns], () => {
 // Track unsaved changes
 watch([betAmount, selectedPatterns, selectedGames], () => {
   if (selectedProfileId.value && loadedProfileState.value) {
-    hasUnsavedChanges.value = checkForUnsavedChanges()
+    updateUnsavedChanges()
   }
 }, { deep: true })
 
@@ -734,115 +718,38 @@ const getCurrentUser = async () => {
   }
 }
 
-// Profile methods
-const fetchProfiles = async () => {
-  profilesLoading.value = true
-  try {
-    profiles.value = await profileApi.getProfiles()
-  } catch (error) {
-    console.error('Failed to fetch profiles:', error)
-  } finally {
-    profilesLoading.value = false
-  }
-}
-
+// Profile methods using composable
 const saveCurrentProfile = async () => {
-  if (!selectedProfileId.value) return
-  
-  try {
-    const profileData = {
-      profile_name: profiles.value.find(p => p.id === selectedProfileId.value)?.profile_name || '',
-      bet_amount: 0, // Legacy field, not used anymore
-      selected_patterns: selectedPatterns.value,
-      selected_game_ids: selectedGames.value.map(g => g.game.id),
-      game_pattern_bets: selectedGames.value.reduce((acc, game) => {
-        acc[game.game.id] = {
-          first_two: game.patterns.first_two.betAmount || 0,
-          first_third: game.patterns.first_third.betAmount || 0,
-          last_two: game.patterns.last_two.betAmount || 0
-        }
-        return acc
-      }, {} as Record<number, any>)
-    }
-    
-    await profileApi.updateProfile(selectedProfileId.value, profileData)
-    await fetchProfiles()
-    
-    // Update loaded state
-    loadedProfileState.value = {
-      selectedPatterns: [...selectedPatterns.value],
-      selectedGameIds: [...selectedGames.value.map(g => g.game.id)],
-      gamePatternBets: selectedGames.value.reduce((acc, game) => {
-        acc[game.game.id] = {
-          first_two: game.patterns.first_two.betAmount,
-          first_third: game.patterns.first_third.betAmount,
-          last_two: game.patterns.last_two.betAmount
-        }
-        return acc
-      }, {} as Record<number, any>)
-    }
-    
-    hasUnsavedChanges.value = false
-    alert('บันทึกโปรไฟล์สำเร็จแล้ว!')
-  } catch (error) {
-    alert('บันทึกโปรไฟล์ล้มเหลว')
-  }
+  await saveCurrentProfileComposable(selectedPatterns.value, selectedGames.value)
 }
 
 const saveAsNewProfile = async () => {
-  if (!newProfileName.value.trim()) {
-    alert('กรุณากรอกชื่อโปรไฟล์')
-    return
-  }
-  
-  try {
-    const profileData = {
-      profile_name: newProfileName.value,
-      bet_amount: 0, // Legacy field, not used anymore
-      selected_patterns: selectedPatterns.value,
-      selected_game_ids: selectedGames.value.map(g => g.game.id),
-      game_pattern_bets: selectedGames.value.reduce((acc, game) => {
-        acc[game.game.id] = {
-          first_two: game.patterns.first_two.betAmount || 0,
-          first_third: game.patterns.first_third.betAmount || 0,
-          last_two: game.patterns.last_two.betAmount || 0
-        }
-        return acc
-      }, {} as Record<number, any>)
-    }
-    
-    await profileApi.createProfile(profileData)
-    await fetchProfiles()
+  const success = await saveAsNewProfileComposable(newProfileName.value, selectedPatterns.value, selectedGames.value)
+  if (success) {
     showSaveAsNewForm.value = false
     newProfileName.value = ''
-    alert('สร้างโปรไฟล์ใหม่สำเร็จแล้ว!')
-  } catch (error) {
-    alert('สร้างโปรไฟล์ล้มเหลว ชื่ออาจถูกใช้แล้ว')
   }
+}
+
+const deleteProfile = async () => {
+  await deleteProfileComposable()
 }
 
 const loadProfile = async () => {
   if (!selectedProfileId.value || !gameMap || !validResultsByGame) return
   
-  // Cancel previous request
-  if (loadProfileAbortController) {
-    loadProfileAbortController.abort()
-  }
-  loadProfileAbortController = new AbortController()
-  
-  profileLoading.value = true
+  cancelProfileLoad()
+  const abortController = new AbortController()
+  setLoadProfileAbortController(abortController)
+  setProfileLoading(true)
   
   try {
     const profile = profiles.value.find(p => p.id === selectedProfileId.value)
-    if (!profile || loadProfileAbortController.signal.aborted) return
+    if (!profile || abortController.signal.aborted) return
     
-    // Apply settings immediately
     selectedPatterns.value = [...profile.selected_patterns]
-    
-    // Use setTimeout to allow UI to update with loading state
     await new Promise(resolve => setTimeout(resolve, 0))
     
-    // Batch load games using cached maps and pre-filtered results
     selectedGames.value = profile.selected_game_ids
       .map(gameId => {
         const game = gameMap.get(gameId)
@@ -850,7 +757,6 @@ const loadProfile = async () => {
         
         const analysis = analyzeGameOptimized(game, validResultsByGame.get(gameId) || [])
         
-        // Restore per-game pattern bet amounts
         const savedBets = (profile as any).game_pattern_bets?.[gameId]
         if (savedBets) {
           analysis.patterns.first_two.betAmount = savedBets.first_two || 0
@@ -863,40 +769,15 @@ const loadProfile = async () => {
       })
       .filter(Boolean)
     
-    // Store state
-    loadedProfileState.value = {
-      selectedPatterns: [...profile.selected_patterns],
-      selectedGameIds: [...profile.selected_game_ids],
-      gamePatternBets: (profile as any).game_pattern_bets || {}
-    }
-    
-    hasUnsavedChanges.value = false
+    updateLoadedState(selectedPatterns.value, selectedGames.value)
     
   } catch (error) {
     if (error.name !== 'AbortError') {
       console.error('Profile load error:', error)
     }
   } finally {
-    profileLoading.value = false
-    loadProfileAbortController = null
-  }
-}
-
-const deleteProfile = async () => {
-  if (!selectedProfileId.value) return
-  
-  const profile = profiles.value.find(p => p.id === selectedProfileId.value)
-  if (!profile) return
-  
-  if (confirm(`Delete profile "${profile.profile_name}"?`)) {
-    try {
-      await profileApi.deleteProfile(selectedProfileId.value)
-      await fetchProfiles()
-      selectedProfileId.value = null
-      alert('Profile deleted successfully!')
-    } catch (error) {
-      alert('Failed to delete profile')
-    }
+    setProfileLoading(false)
+    setLoadProfileAbortController(null)
   }
 }
 
