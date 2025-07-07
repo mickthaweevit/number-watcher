@@ -240,13 +240,12 @@
                           <th class="px-2 py-1 text-center font-medium text-gray-600 bg-green-100">รวม</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600 bg-yellow-100">ถูก</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600 bg-yellow-100">รวม</th>
-                          <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600">ถูก</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="monthData in getMonthlyData(gameAnalysis.game.id)" :key="monthData.month" class="border-b border-gray-200">
+                        <tr v-for="monthData in getGameMonthlyData(gameAnalysis.game.id)" :key="monthData.month" class="border-b border-gray-200">
                           <!-- <td colspan="5">{{ monthData }}</td> -->
                           <td class="px-2 py-1 text-gray-700">{{ formatMonth(monthData.month) }}</td>
 
@@ -385,6 +384,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { onBeforeRouteLeave } from 'vue-router'
 import { gameApi, authApi, profileApi } from '../services/api'
 import type { Game, Result, User, DashboardProfile } from '../types'
+import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalysis'
 
 // Reactive state
 const betAmount = ref(10) // Default bet amount
@@ -409,7 +409,6 @@ const reorderGames = ref<GameAnalysis[]>([])
 let gameMap: Map<number, Game> | null = null
 let resultsByGame: Map<number, Result[]> | null = null
 let validResultsByGame: Map<number, Result[]> | null = null // Pre-filtered valid results
-let analysisCache: Map<string, GameAnalysis> = new Map()
 
 // User state (always logged in now)
 const user = ref<User | null>(null)
@@ -434,32 +433,17 @@ const availablePatterns = [
   { key: 'last_two', label: 'เบิ้ลหลัง', colorClass: 'bg-yellow-100', count: 90 }
 ]
 
-interface PatternAnalysis {
-  betAmount: number
-  wins: number
-  losses: number
-  winAmount: number
-  lossAmount: number
-  netAmount: number
-  monthlyBreakdown: { [month: string]: { wins: number, losses: number, netAmount: number } }
-}
-
-interface GameAnalysis {
-  game: Game
-  calculate: boolean
-  totalResults: number
-  patterns: {
-    first_two: PatternAnalysis
-    first_third: PatternAnalysis
-    last_two: PatternAnalysis
-  }
-  // Legacy fields for compatibility
-  patternMatches: number
-  winAmount: number
-  lossAmount: number
-  netAmount: number
-  monthlyBreakdown: { [month: string]: { wins: number, losses: number, netAmount: number } }
-}
+// Use composable for game analysis
+const {
+  analysisCache,
+  analyzeGameOptimized,
+  recalculateGame,
+  getTotalWins,
+  getTotalWinAmount,
+  getTotalLossAmount,
+  getTotalNetAmount,
+  getMonthlyData
+} = useGameAnalysis()
 
 // Computed properties
 const availableGames = computed(() => {
@@ -487,25 +471,15 @@ const monthlyStats = computed(() => {
   const monthlyData: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
   
   selectedGames.value.filter(g => g.calculate).forEach(game => {
-    // Get monthly data from each game using the same logic as expandable rows
-    const gameMonthlyData = getMonthlyData(game.game.id)
+    const gameMonthlyData = getMonthlyData(game)
     
     gameMonthlyData.forEach(monthInfo => {
       if (!monthlyData[monthInfo.month]) {
         monthlyData[monthInfo.month] = { wins: 0, losses: 0, netAmount: 0 }
       }
       
-      // Sum wins from patterns with betAmount > 0
-      const monthWins = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.wins : 0) +
-                       (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.wins : 0) +
-                       (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.wins : 0)
-      
-      const monthLosses = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.losses : 0) +
-                         (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.losses : 0) +
-                         (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.losses : 0)
-      
-      monthlyData[monthInfo.month].wins += monthWins
-      monthlyData[monthInfo.month].losses += monthLosses
+      monthlyData[monthInfo.month].wins += monthInfo.allWins
+      monthlyData[monthInfo.month].losses += monthInfo.allLosses
       monthlyData[monthInfo.month].netAmount += monthInfo.netAmount
     })
   })
@@ -585,119 +559,7 @@ const removeGame = (gameId: number) => {
   }, 0)
 }
 
-const analyzeGameOptimized = (game: Game, results: Result[]): GameAnalysis => {
-  const totalResults = results.length
-  
-  // Initialize pattern analysis
-  const patterns = {
-    first_two: createEmptyPatternAnalysis(),
-    first_third: createEmptyPatternAnalysis(), 
-    last_two: createEmptyPatternAnalysis()
-  }
-  
-  // Analyze each result for all patterns
-  for (const result of results) {
-    if (!result.result_3up || result.result_3up.length !== 3) continue
-    
-    const [d1, d2, d3] = result.result_3up.split('')
-    const month = result.result_date.slice(0, 7)
-    
-    // Check each pattern
-    if (d1 === d2 && d2 !== d3) {
-      updatePatternAnalysis(patterns.first_two, month, true)
-    } else {
-      updatePatternAnalysis(patterns.first_two, month, false)
-    }
-    
-    if (d1 === d3 && d1 !== d2) {
-      updatePatternAnalysis(patterns.first_third, month, true)
-    } else {
-      updatePatternAnalysis(patterns.first_third, month, false)
-    }
-    
-    if (d2 === d3 && d1 !== d2) {
-      updatePatternAnalysis(patterns.last_two, month, true)
-    } else {
-      updatePatternAnalysis(patterns.last_two, month, false)
-    }
-  }
-  
-  return {
-    game,
-    calculate: true,
-    totalResults,
-    patterns,
-    // Legacy fields for compatibility
-    patternMatches: 0,
-    winAmount: 0,
-    lossAmount: 0,
-    netAmount: 0,
-    monthlyBreakdown: {}
-  }
-}
-
-const createEmptyPatternAnalysis = (): PatternAnalysis => ({
-  betAmount: 0,
-  wins: 0,
-  losses: 0,
-  winAmount: 0,
-  lossAmount: 0,
-  netAmount: 0,
-  monthlyBreakdown: {}
-})
-
-const updatePatternAnalysis = (pattern: PatternAnalysis, month: string, isWin: boolean) => {
-  if (!pattern.monthlyBreakdown[month]) {
-    pattern.monthlyBreakdown[month] = { wins: 0, losses: 0, netAmount: 0 }
-  }
-  
-  if (isWin) {
-    pattern.wins++
-    pattern.monthlyBreakdown[month].wins++
-  } else {
-    pattern.losses++
-    pattern.monthlyBreakdown[month].losses++
-  }
-}
-
-const recalculateGame = (gameAnalysis: GameAnalysis) => {
-  // Recalculate financial data for each pattern
-  Object.values(gameAnalysis.patterns).forEach(pattern => {
-    const dailyBetAmount = 90 * pattern.betAmount // 90 numbers per pattern
-    pattern.winAmount = pattern.wins * pattern.betAmount * 1000
-    pattern.lossAmount = gameAnalysis.totalResults * dailyBetAmount
-    pattern.netAmount = pattern.winAmount - pattern.lossAmount
-    
-    // Update monthly breakdown
-    Object.values(pattern.monthlyBreakdown).forEach(monthData => {
-      monthData.netAmount = (monthData.wins * pattern.betAmount * 1000) - ((monthData.wins + monthData.losses) * dailyBetAmount)
-    })
-  })
-}
-
-const getTotalWins = (gameAnalysis: GameAnalysis): number => {
-  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
-    return sum + (pattern.betAmount > 0 ? pattern.wins : 0)
-  }, 0)
-}
-
-const getTotalWinAmount = (gameAnalysis: GameAnalysis): number => {
-  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
-    return sum + (pattern.betAmount > 0 ? pattern.winAmount : 0)
-  }, 0)
-}
-
-const getTotalLossAmount = (gameAnalysis: GameAnalysis): number => {
-  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
-    return sum + (pattern.betAmount > 0 ? pattern.lossAmount : 0)
-  }, 0)
-}
-
-const getTotalNetAmount = (gameAnalysis: GameAnalysis): number => {
-  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
-    return sum + (pattern.betAmount > 0 ? pattern.netAmount : 0)
-  }, 0)
-}
+// Game analysis functions now handled by composable
 
 const analyzeGame = (game: Game, results: Result[]): GameAnalysis => {
   let patternMatches = 0
@@ -1140,49 +1002,10 @@ const toggleRowExpansion = (gameId: number) => {
   }
 }
 
-const getMonthlyData = (gameId: number) => {
+// Helper function to get monthly data for a specific game
+const getGameMonthlyData = (gameId: number) => {
   const game = selectedGames.value.find(g => g.game.id === gameId)
-  if (!game) return []
-  
-  // Get months only from patterns with betAmount > 0
-  const allMonths = new Set<string>()
-  Object.values(game.patterns).forEach(pattern => {
-    if (pattern.betAmount > 0) {
-      Object.keys(pattern.monthlyBreakdown).forEach(month => allMonths.add(month))
-    }
-  })
-  
-  return Array.from(allMonths).map(month => {
-    const firstTwo = game.patterns.first_two.betAmount > 0 ? {
-      wins: game.patterns.first_two.monthlyBreakdown[month]?.wins || 0,
-      losses: game.patterns.first_two.monthlyBreakdown[month]?.losses || 0
-    } : { wins: 0, losses: 0 }
-    
-    const firstThird = game.patterns.first_third.betAmount > 0 ? {
-      wins: game.patterns.first_third.monthlyBreakdown[month]?.wins || 0,
-      losses: game.patterns.first_third.monthlyBreakdown[month]?.losses || 0
-    } : { wins: 0, losses: 0 }
-    
-    const lastTwo = game.patterns.last_two.betAmount > 0 ? {
-      wins: game.patterns.last_two.monthlyBreakdown[month]?.wins || 0,
-      losses: game.patterns.last_two.monthlyBreakdown[month]?.losses || 0
-    } : { wins: 0, losses: 0 }
-    
-    let netAmount = 0
-    if (game.patterns.first_two.betAmount > 0) netAmount += game.patterns.first_two.monthlyBreakdown[month]?.netAmount || 0
-    if (game.patterns.first_third.betAmount > 0) netAmount += game.patterns.first_third.monthlyBreakdown[month]?.netAmount || 0
-    if (game.patterns.last_two.betAmount > 0) netAmount += game.patterns.last_two.monthlyBreakdown[month]?.netAmount || 0
-    
-    return {
-      month,
-      firstTwo,
-      firstThird, 
-      lastTwo,
-      allWins: firstTwo.wins + firstThird.wins + lastTwo.wins,
-      allLosses: firstTwo.losses + firstThird.losses + lastTwo.losses,
-      netAmount
-    }
-  }).sort((a, b) => a.month.localeCompare(b.month))
+  return game ? getMonthlyData(game) : []
 }
 
 const formatMonth = (month: string) => {
