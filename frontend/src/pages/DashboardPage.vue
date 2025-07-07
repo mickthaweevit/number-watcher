@@ -119,22 +119,10 @@
     </div>
     
     <!-- Pattern Highlighting Controls -->
-    <div class="p-4 rounded-lg mb-6">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่แสดงในตาราง (เฉพาะการแสดงผล)</label>
-        <div class="flex flex-wrap gap-2">
-          <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center border border-gray-300 px-3 py-2 rounded" :class="pattern.colorClass">
-            <input
-              v-model="selectedPatterns"
-              :value="pattern.key"
-              type="checkbox"
-              class="mr-2"
-            />
-            <span class="text-sm">{{ pattern.label }}</span>
-          </label>
-        </div>
-      </div>
-    </div>
+    <PatternSelector 
+      v-model:selectedPatterns="selectedPatterns" 
+      :availablePatterns="availablePatterns" 
+    />
     
     <!-- Statistic Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
@@ -386,6 +374,7 @@ import { gameApi, authApi, profileApi } from '../services/api'
 import type { Game, Result, User, DashboardProfile } from '../types'
 import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalysis'
 import { useProfileManagement } from '../composables/useProfileManagement'
+import PatternSelector from '../components/PatternSelector.vue'
 
 // Reactive state
 const betAmount = ref(10) // Default bet amount
