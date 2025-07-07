@@ -17,6 +17,7 @@ export interface DashboardProfile {
   selected_patterns: string[];
   selected_game_ids: number[];
   api_source: string;
+  game_pattern_bets?: Record<number, { first_two: number; first_third: number; last_two: number }>;
   created_at: string;
   updated_at: string;
 }
@@ -164,12 +165,14 @@ export const gameApi = {
 
   // Backup endpoints
   exportData: async () => {
-    const response = await api.get('/export-data');
+    const source = getCurrentSource()
+    const response = await api.get(`/export-data?source=${source}`);
     return response.data;
   },
 
   importBackup: async (backupData: any) => {
-    const response = await api.post('/import-backup', backupData);
+    const source = getCurrentSource()
+    const response = await api.post(`/import-backup?source=${source}`, backupData);
     return response.data;
   },
 

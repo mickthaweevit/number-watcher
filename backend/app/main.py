@@ -432,41 +432,78 @@ async def clear_import_logs(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Clear logs failed: {str(e)}")
 
 @app.get("/export-data")
-async def export_data(db: Session = Depends(get_db)):
+async def export_data(
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
     """Export all data as JSON backup"""
     try:
-        # Get all games with their results
-        games = db.query(Game).all()
-        results = db.query(Result).all()
+        if source == "new":
+            # Export V2 data
+            games = db.query(GameV2).all()
+            results = db.query(ResultV2).all()
+        else:
+            # Export V1 data
+            games = db.query(Game).all()
+            results = db.query(Result).all()
         
-        # Convert to dictionaries
+        # Convert to dictionaries based on source
         games_data = []
-        for game in games:
-            games_data.append({
-                "id": game.id,
-                "base_game_id": game.base_game_id,
-                "game_name": game.game_name,
-                "is_active": game.is_active,
-                "created_at": game.created_at.isoformat() if game.created_at else None
-            })
-        
         results_data = []
-        for result in results:
-            results_data.append({
-                "id": result.id,
-                "game_id": result.game_id,
-                "full_game_code": result.full_game_code,
-                "result_date": result.result_date.isoformat() if result.result_date else None,
-                "result_3up": result.result_3up,
-                "result_2down": result.result_2down,
-                "result_4up": result.result_4up,
-                "status": result.status,
-                "created_at": result.created_at.isoformat() if result.created_at else None
-            })
+        
+        if source == "new":
+            # V2 format
+            for game in games:
+                games_data.append({
+                    "id": game.id,
+                    "product_id": game.product_id,
+                    "product_name_th": game.product_name_th,
+                    "product_code": game.product_code,
+                    "is_active": game.is_active,
+                    "created_at": game.created_at.isoformat() if game.created_at else None
+                })
+            
+            for result in results:
+                results_data.append({
+                    "id": result.id,
+                    "game_id": result.game_id,
+                    "period_id": result.period_id,
+                    "award1": result.award1,
+                    "award2": result.award2,
+                    "award3": result.award3,
+                    "result_date": result.result_date.isoformat() if result.result_date else None,
+                    "status": result.status,
+                    "yk_round": result.yk_round,
+                    "created_at": result.created_at.isoformat() if result.created_at else None
+                })
+        else:
+            # V1 format
+            for game in games:
+                games_data.append({
+                    "id": game.id,
+                    "base_game_id": game.base_game_id,
+                    "game_name": game.game_name,
+                    "is_active": game.is_active,
+                    "created_at": game.created_at.isoformat() if game.created_at else None
+                })
+            
+            for result in results:
+                results_data.append({
+                    "id": result.id,
+                    "game_id": result.game_id,
+                    "full_game_code": result.full_game_code,
+                    "result_date": result.result_date.isoformat() if result.result_date else None,
+                    "result_3up": result.result_3up,
+                    "result_2down": result.result_2down,
+                    "result_4up": result.result_4up,
+                    "status": result.status,
+                    "created_at": result.created_at.isoformat() if result.created_at else None
+                })
         
         backup_data = {
             "export_date": datetime.now().isoformat(),
             "version": "1.0",
+            "source": source,
             "games": games_data,
             "results": results_data,
             "stats": {
@@ -481,7 +518,11 @@ async def export_data(db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail=f"Export failed: {str(e)}")
 
 @app.post("/import-backup")
-async def import_backup(backup_data: dict, db: Session = Depends(get_db)):
+async def import_backup(
+    backup_data: dict,
+    source: str = Query("old", description="API source: old or new"),
+    db: Session = Depends(get_db)
+):
     """Import data from JSON backup"""
     # Extract metadata if provided
     metadata = backup_data.get("_metadata", {})
@@ -506,45 +547,89 @@ async def import_backup(backup_data: dict, db: Session = Depends(get_db)):
         games_created = 0
         results_created = 0
         
-        # Import games first
-        for game_data in backup_data["games"]:
-            existing_game = db.query(Game).filter(Game.base_game_id == game_data["base_game_id"]).first()
-            if not existing_game:
-                new_game = Game(
-                    base_game_id=game_data["base_game_id"],
-                    game_name=game_data["game_name"],
-                    is_active=game_data.get("is_active", True)
-                )
-                db.add(new_game)
-                games_created += 1
-        
-        db.flush()  # Flush to get game IDs
-        
-        # Import results
-        for result_data in backup_data["results"]:
-            # Find the game by base_game_id (since IDs might be different)
-            game = db.query(Game).filter(Game.base_game_id.in_(
-                [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
-            )).first()
-            
-            if game:
-                existing_result = db.query(Result).filter(
-                    Result.game_id == game.id,
-                    Result.result_date == result_data["result_date"]
-                ).first()
-                
-                if not existing_result:
-                    new_result = Result(
-                        game_id=game.id,
-                        full_game_code=result_data["full_game_code"],
-                        result_date=result_data["result_date"],
-                        result_3up=result_data["result_3up"],
-                        result_2down=result_data["result_2down"],
-                        result_4up=result_data["result_4up"],
-                        status=result_data["status"]
+        if source == "new":
+            # Import V2 games
+            for game_data in backup_data["games"]:
+                existing_game = db.query(GameV2).filter(GameV2.product_id == game_data["product_id"]).first()
+                if not existing_game:
+                    new_game = GameV2(
+                        product_id=game_data["product_id"],
+                        product_name_th=game_data["product_name_th"],
+                        product_code=game_data.get("product_code", ""),
+                        is_active=game_data.get("is_active", True)
                     )
-                    db.add(new_result)
-                    results_created += 1
+                    db.add(new_game)
+                    games_created += 1
+            
+            db.flush()  # Flush to get game IDs
+            
+            # Import V2 results
+            for result_data in backup_data["results"]:
+                # Find the game by product_id
+                game = db.query(GameV2).filter(GameV2.product_id.in_(
+                    [g["product_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
+                )).first()
+                
+                if game:
+                    existing_result = db.query(ResultV2).filter(
+                        ResultV2.game_id == game.id,
+                        ResultV2.result_date == result_data["result_date"],
+                        ResultV2.yk_round == result_data.get("yk_round", 1)
+                    ).first()
+                    
+                    if not existing_result:
+                        new_result = ResultV2(
+                            game_id=game.id,
+                            period_id=result_data.get("period_id", ""),
+                            award1=result_data.get("award1"),
+                            award2=result_data.get("award2"),
+                            award3=result_data.get("award3"),
+                            result_date=result_data["result_date"],
+                            status=result_data["status"],
+                            yk_round=result_data.get("yk_round", 1)
+                        )
+                        db.add(new_result)
+                        results_created += 1
+        else:
+            # Import V1 games
+            for game_data in backup_data["games"]:
+                existing_game = db.query(Game).filter(Game.base_game_id == game_data["base_game_id"]).first()
+                if not existing_game:
+                    new_game = Game(
+                        base_game_id=game_data["base_game_id"],
+                        game_name=game_data["game_name"],
+                        is_active=game_data.get("is_active", True)
+                    )
+                    db.add(new_game)
+                    games_created += 1
+            
+            db.flush()  # Flush to get game IDs
+            
+            # Import V1 results
+            for result_data in backup_data["results"]:
+                # Find the game by base_game_id
+                game = db.query(Game).filter(Game.base_game_id.in_(
+                    [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
+                )).first()
+                
+                if game:
+                    existing_result = db.query(Result).filter(
+                        Result.game_id == game.id,
+                        Result.result_date == result_data["result_date"]
+                    ).first()
+                    
+                    if not existing_result:
+                        new_result = Result(
+                            game_id=game.id,
+                            full_game_code=result_data["full_game_code"],
+                            result_date=result_data["result_date"],
+                            result_3up=result_data["result_3up"],
+                            result_2down=result_data["result_2down"],
+                            result_4up=result_data["result_4up"],
+                            status=result_data["status"]
+                        )
+                        db.add(new_result)
+                        results_created += 1
         
         db.commit()
         
@@ -692,7 +777,8 @@ async def create_profile(profile_data: DashboardProfileCreate, current_user: Use
         bet_amount=profile_data.bet_amount,
         selected_patterns=profile_data.selected_patterns,
         selected_game_ids=profile_data.selected_game_ids,
-        api_source=profile_data.api_source
+        api_source=profile_data.api_source,
+        game_pattern_bets=profile_data.game_pattern_bets
     )
     db.add(db_profile)
     db.commit()
@@ -717,6 +803,7 @@ async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, 
     profile.selected_patterns = profile_data.selected_patterns
     profile.selected_game_ids = profile_data.selected_game_ids
     profile.api_source = profile_data.api_source
+    profile.game_pattern_bets = profile_data.game_pattern_bets
     profile.updated_at = datetime.now()
     
     db.commit()

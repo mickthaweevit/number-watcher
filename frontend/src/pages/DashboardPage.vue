@@ -32,40 +32,6 @@
       </div>
     </div>
     
-    <!-- Global Controls -->
-    <div class="bg-blue-50 p-4 rounded-lg mb-6">
-      <h3 class="text-lg font-semibold text-gray-800 mb-4">การตั้งค่าทั่วไป</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Bet Amount -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">จำนวนเงินแทง (ใช้กับทุกหวย)</label>
-          <input
-            v-model.number="betAmount"
-            type="number"
-            min="1"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="กรอกจำนวนเงินแทง"
-          />
-        </div>
-        
-        <!-- Pattern Selection -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่เลือก (ใช้กับทุกหวย)</label>
-          <div class="space-y-2">
-            <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center">
-              <input
-                v-model="selectedPatterns"
-                :value="pattern.key"
-                type="checkbox"
-                class="mr-2"
-              />
-              <span class="text-sm">{{ pattern.label }}</span>
-            </label>
-          </div>
-        </div>
-      </div>
-    </div>
-    
     <!-- Game Management -->
     <div class="mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
@@ -85,6 +51,13 @@
           class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           เพิ่มหวย
+        </button>
+        <button
+          @click="openReorderDialog"
+          :disabled="selectedGames.length < 2"
+          class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          จัดเรียง
         </button>
       </div>
       
@@ -106,7 +79,11 @@
             </tr>
           </thead>
           <tbody class="bg-white">
-            <tr v-for="gameAnalysis in baseTableData.games" :key="gameAnalysis.game.id" class="border-b border-gray-200">
+            <tr 
+              v-for="(gameAnalysis, index) in baseTableData.games" 
+              :key="gameAnalysis.game.id" 
+              class="border-b border-gray-200"
+            >
               <td class="sticky-col-1 bg-white px-2 py-1 text-center border-r border-gray-200">
                 <button
                   @click="removeGame(gameAnalysis.game.id)"
@@ -141,6 +118,24 @@
       </div>
     </div>
     
+    <!-- Pattern Highlighting Controls -->
+    <div class="p-4 rounded-lg mb-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">รูปแบบที่แสดงในตาราง (เฉพาะการแสดงผล)</label>
+        <div class="flex flex-wrap gap-2">
+          <label v-for="pattern in availablePatterns" :key="pattern.key" class="flex items-center border border-gray-300 px-3 py-2 rounded" :class="pattern.colorClass">
+            <input
+              v-model="selectedPatterns"
+              :value="pattern.key"
+              type="checkbox"
+              class="mr-2"
+            />
+            <span class="text-sm">{{ pattern.label }}</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
     <!-- Statistic Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
       <h3 class="text-lg font-semibold text-gray-800 mb-3">การวิเคราะห์หวยที่เลือก</h3>
@@ -148,44 +143,69 @@
         <table class="min-w-full bg-white border border-gray-200 rounded">
           <thead class="bg-gray-50">
             <tr>
-              <!-- <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Calculate</th> -->
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">หวย</th>
+              <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">เบิ้ลหน้า</th>
+              <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">หาม</th>
+              <th class="px-1 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">เบิ้ลหลัง</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลทั้งหมด</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">รูปแบบตรง</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
-              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">-</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase"> </th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <template v-for="gameAnalysis in selectedGames" :key="gameAnalysis.game.id">
-              <tr class="hover:bg-gray-50">
-                <!-- <td class="px-3 py-2">
-                  <input
-                    v-model="gameAnalysis.calculate"
-                    type="checkbox"
-                    class="rounded"
-                  />
-                </td> -->
+              <tr class="hover:bg-gray-100">
                 <td class="px-3 py-2 text-sm text-gray-900">{{ gameAnalysis.game.game_name }}</td>
+                <td class="px-1 py-2 text-sm text-gray-900 bg-blue-100">
+                  <input 
+                    v-model.number="gameAnalysis.patterns.first_two.betAmount" 
+                    type="number" 
+                    min="0" 
+                    placeholder="0"
+                    class="w-12 px-1 py-1 text-xs border rounded"
+                    @input="recalculateGame(gameAnalysis)"
+                  >
+                </td>
+                <td class="px-1 py-2 text-sm text-gray-900 bg-green-100">
+                  <input 
+                    v-model.number="gameAnalysis.patterns.first_third.betAmount" 
+                    type="number" 
+                    min="0" 
+                    placeholder="0"
+                    class="w-12 px-1 py-1 text-xs border rounded"
+                    @input="recalculateGame(gameAnalysis)"
+                  >
+                </td>
+                <td class="px-1 py-2 text-sm text-gray-900 bg-yellow-100">
+                  <input 
+                    v-model.number="gameAnalysis.patterns.last_two.betAmount" 
+                    type="number" 
+                    min="0" 
+                    placeholder="0"
+                    class="w-12 px-1 py-1 text-xs border rounded"
+                    @input="recalculateGame(gameAnalysis)"
+                  >
+                </td>
                 <td class="px-3 py-2 text-sm text-gray-600">
                   {{ gameAnalysis.calculate ? gameAnalysis.totalResults : '-' }}
                 </td>
                 <td class="px-3 py-2 text-sm">
-                  <span v-if="gameAnalysis.calculate" :class="getMatchClass(gameAnalysis.patternMatches)">
-                    {{ gameAnalysis.patternMatches }}
+                  <span v-if="gameAnalysis.calculate" :class="getMatchClass(getTotalWins(gameAnalysis))">
+                    {{ getTotalWins(gameAnalysis) }}
                   </span>
                   <span v-else class="text-gray-400">-</span>
                 </td>
                 <td class="px-3 py-2 text-sm text-green-600 font-medium">
-                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.winAmount) : '-' }}
+                  {{ gameAnalysis.calculate ? formatCurrency(getTotalWinAmount(gameAnalysis)) : '-' }}
                 </td>
                 <td class="px-3 py-2 text-sm text-red-600 font-medium">
-                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.lossAmount) : '-' }}
+                  {{ gameAnalysis.calculate ? formatCurrency(getTotalLossAmount(gameAnalysis)) : '-' }}
                 </td>
-                <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(gameAnalysis.netAmount)">
-                  {{ gameAnalysis.calculate ? formatCurrency(gameAnalysis.netAmount) : '-' }}
+                <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(getTotalNetAmount(gameAnalysis))">
+                  {{ gameAnalysis.calculate ? formatCurrency(getTotalNetAmount(gameAnalysis)) : '-' }}
                 </td>
                 <td class="px-3 py-2 text-sm font-medium">
                   <button @click="toggleRowExpansion(gameAnalysis.game.id)" class="p-1 hover:bg-gray-100 rounded">
@@ -197,28 +217,52 @@
               </tr>
               <!-- Expandable row -->
               <tr v-if="expandedRows.has(gameAnalysis.game.id)" class="bg-gray-50">
-                <td colspan="7" class="px-3 py-4">
-                  <div class="text-sm font-medium text-gray-700 mb-2">รายละเอียดรายเดือน</div>
+                <td colspan="10" class="px-3 py-4">
+                  <div class="text-sm font-medium text-gray-700 mb-2">
+                    รายละเอียดรายเดือน
+                  </div>
                   <div class="overflow-x-auto">
                     <table class="min-w-full text-xs">
                       <thead>
                         <tr class="bg-gray-100">
-                          <th class="px-2 py-1 text-left font-medium text-gray-600">เดือน</th>
-                          <th class="px-2 py-1 text-center font-medium text-gray-600">ถูก</th>
-                          <!-- <th class="px-2 py-1 text-center font-medium text-gray-600">ผิด</th> -->
+                          <th rowspan="2" class="px-2 py-1 text-left font-medium text-gray-600">เดือน</th>
+                          <th colspan="2" class="px-2 py-1 text-center font-medium text-gray-600 bg-blue-100">เบิ้ลหน้า</th>
+                          <th colspan="2" class="px-2 py-1 text-center font-medium text-gray-600 bg-green-100">หาม</th>
+                          <th colspan="2" class="px-2 py-1 text-center font-medium text-gray-600 bg-yellow-100">เบิ้ลหลัง</th>
+                          <th colspan="2" class="px-2 py-1 text-center font-medium text-gray-600">ทั้งหมด</th>
+                          <th rowspan="2" class="px-2 py-1 text-right font-medium text-gray-600">ผลรวม</th>
+                          <th rowspan="2" class="px-2 py-1 text-center font-medium text-gray-600">%</th>
+                        </tr>
+                        <tr class="bg-gray-100">
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-blue-100">ถูก</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-blue-100">รวม</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-green-100">ถูก</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-green-100">รวม</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-yellow-100">ถูก</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600 bg-yellow-100">รวม</th>
                           <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
-                          <th class="px-2 py-1 text-right font-medium text-gray-600">ผลรวม</th>
-                          <th class="px-2 py-1 text-center font-medium text-gray-600">%</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">ถูก</th>
+                          <th class="px-2 py-1 text-center font-medium text-gray-600">รวม</th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr v-for="monthData in getMonthlyData(gameAnalysis.game.id)" :key="monthData.month" class="border-b border-gray-200">
+                          <!-- <td colspan="5">{{ monthData }}</td> -->
                           <td class="px-2 py-1 text-gray-700">{{ formatMonth(monthData.month) }}</td>
-                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.wins }}</td>
-                          <!-- <td class="px-2 py-1 text-center text-red-600">{{ monthData.losses }}</td> -->
-                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.wins + monthData.losses }}</td>
+
+                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.firstTwo.wins }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.firstTwo.wins + monthData.firstTwo.losses }}</td>
+
+                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.firstThird.wins }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.firstThird.wins + monthData.firstThird.losses }}</td>
+
+                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.lastTwo.wins }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.lastTwo.wins + monthData.lastTwo.losses }}</td>
+
+                          <td class="px-2 py-1 text-center text-green-600">{{ monthData.allWins }}</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ monthData.allWins + monthData.allLosses }}</td>
                           <td class="px-2 py-1 text-right font-medium" :class="getNetClass(monthData.netAmount)">{{ formatCurrency(monthData.netAmount) }}</td>
-                          <td class="px-2 py-1 text-center text-gray-600">{{ getWinRate(monthData.wins, monthData.losses) }}%</td>
+                          <td class="px-2 py-1 text-center text-gray-600">{{ getWinRate(monthData.allWins, monthData.allLosses) }}%</td>
                         </tr>
                       </tbody>
                     </table>
@@ -301,6 +345,38 @@
         </form>
       </div>
     </div>
+
+    <!-- Reorder Games Modal -->
+    <div v-if="showReorderDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4">
+        <h3 class="text-xl font-bold mb-4">จัดเรียงลำดับหวย</h3>
+        <div class="max-h-96 overflow-y-auto mb-4">
+          <div v-for="(game, index) in reorderGames" :key="game.game.id" class="flex items-center justify-between p-3 border border-gray-200 rounded mb-2">
+            <span class="flex-1 text-base truncate">{{ game.game.game_name }}</span>
+            <div class="flex gap-2">
+              <button @click="moveGameUp(index)" :disabled="index === 0" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M7 14l5-5 5 5z"/>
+                </svg>
+              </button>
+              <button @click="moveGameDown(index)" :disabled="index === reorderGames.length - 1" class="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 hover:bg-blue-50 rounded">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="currentColor" d="M7 10l5 5 5-5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="flex gap-3">
+          <button @click="saveReorder" class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            บันทึก
+          </button>
+          <button @click="cancelReorder" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            ยกเลิก
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -324,6 +400,10 @@ const profileLoading = ref(false)
 
 // Expandable rows state
 const expandedRows = ref<Set<number>>(new Set())
+
+// Reorder dialog state
+const showReorderDialog = ref(false)
+const reorderGames = ref<GameAnalysis[]>([])
 
 // Cached maps for performance
 let gameMap: Map<number, Game> | null = null
@@ -349,15 +429,31 @@ let loadProfileAbortController: AbortController | null = null
 // Pattern definitions with count information
 const availablePatterns = [
   // { key: 'all_same', label: 'All Same:ตอง (111, 222, 333...) - 10 numbers', count: 10 },
-  { key: 'first_two', label: 'เบิ้ลหน้า', count: 90 },
-  { key: 'first_third', label: 'หาม', count: 90 },
-  { key: 'last_two', label: 'เบิ้ลหลัง', count: 90 }
+  { key: 'first_two', label: 'เบิ้ลหน้า', colorClass: 'bg-blue-100', count: 90 },
+  { key: 'first_third', label: 'หาม', colorClass: 'bg-green-100', count: 90 },
+  { key: 'last_two', label: 'เบิ้ลหลัง', colorClass: 'bg-yellow-100', count: 90 }
 ]
+
+interface PatternAnalysis {
+  betAmount: number
+  wins: number
+  losses: number
+  winAmount: number
+  lossAmount: number
+  netAmount: number
+  monthlyBreakdown: { [month: string]: { wins: number, losses: number, netAmount: number } }
+}
 
 interface GameAnalysis {
   game: Game
   calculate: boolean
   totalResults: number
+  patterns: {
+    first_two: PatternAnalysis
+    first_third: PatternAnalysis
+    last_two: PatternAnalysis
+  }
+  // Legacy fields for compatibility
   patternMatches: number
   winAmount: number
   lossAmount: number
@@ -381,9 +477,9 @@ const totalStats = computed(() => {
   return {
     games: calculatedGames.length,
     results: calculatedGames.reduce((sum, g) => sum + g.totalResults, 0),
-    wins: calculatedGames.reduce((sum, g) => sum + g.patternMatches, 0),
-    losses: calculatedGames.reduce((sum, g) => sum + (g.totalResults - g.patternMatches), 0),
-    netAmount: calculatedGames.reduce((sum, g) => sum + g.netAmount, 0)
+    wins: calculatedGames.reduce((sum, g) => sum + getTotalWins(g), 0),
+    losses: calculatedGames.reduce((sum, g) => sum + (g.totalResults - getTotalWins(g)), 0),
+    netAmount: calculatedGames.reduce((sum, g) => sum + getTotalNetAmount(g), 0)
   }
 })
 
@@ -391,13 +487,26 @@ const monthlyStats = computed(() => {
   const monthlyData: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
   
   selectedGames.value.filter(g => g.calculate).forEach(game => {
-    Object.entries(game.monthlyBreakdown).forEach(([month, data]) => {
-      if (!monthlyData[month]) {
-        monthlyData[month] = { wins: 0, losses: 0, netAmount: 0 }
+    // Get monthly data from each game using the same logic as expandable rows
+    const gameMonthlyData = getMonthlyData(game.game.id)
+    
+    gameMonthlyData.forEach(monthInfo => {
+      if (!monthlyData[monthInfo.month]) {
+        monthlyData[monthInfo.month] = { wins: 0, losses: 0, netAmount: 0 }
       }
-      monthlyData[month].wins += data.wins
-      monthlyData[month].losses += data.losses
-      monthlyData[month].netAmount += data.netAmount
+      
+      // Sum wins from patterns with betAmount > 0
+      const monthWins = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.wins : 0) +
+                       (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.wins : 0) +
+                       (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.wins : 0)
+      
+      const monthLosses = (game.patterns.first_two.betAmount > 0 ? monthInfo.firstTwo.losses : 0) +
+                         (game.patterns.first_third.betAmount > 0 ? monthInfo.firstThird.losses : 0) +
+                         (game.patterns.last_two.betAmount > 0 ? monthInfo.lastTwo.losses : 0)
+      
+      monthlyData[monthInfo.month].wins += monthWins
+      monthlyData[monthInfo.month].losses += monthLosses
+      monthlyData[monthInfo.month].netAmount += monthInfo.netAmount
     })
   })
   
@@ -477,66 +586,117 @@ const removeGame = (gameId: number) => {
 }
 
 const analyzeGameOptimized = (game: Game, results: Result[]): GameAnalysis => {
-  // Create cache key
-  const cacheKey = `${game.id}-${selectedPatterns.value.sort().join(',')}-${betAmount.value}`
+  const totalResults = results.length
   
-  // Return cached result
-  if (analysisCache.has(cacheKey)) {
-    return { ...analysisCache.get(cacheKey)! }
+  // Initialize pattern analysis
+  const patterns = {
+    first_two: createEmptyPatternAnalysis(),
+    first_third: createEmptyPatternAnalysis(), 
+    last_two: createEmptyPatternAnalysis()
   }
   
-  // Early return for empty patterns
-  if (selectedPatterns.value.length === 0) {
-    const analysis = {
-      game, calculate: true, totalResults: 0, patternMatches: 0,
-      winAmount: 0, lossAmount: 0, netAmount: 0, monthlyBreakdown: {}
-    }
-    analysisCache.set(cacheKey, analysis)
-    return analysis
-  }
-  
-  // Pre-calculate constants
-  const totalBetNumbers = selectedPatterns.value.reduce((total, pattern) => {
-    const patternInfo = availablePatterns.find(p => p.key === pattern)
-    return total + (patternInfo?.count || 0)
-  }, 0)
-  const dailyBetAmount = totalBetNumbers * betAmount.value
-  
-  let patternMatches = 0
-  let totalResults = results.length // Already pre-filtered
-  const monthlyBreakdown: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
-  
-  // Single optimized loop
+  // Analyze each result for all patterns
   for (const result of results) {
-    const isMatch = checkPatternMatch(result.result_3up!)
-    const month = result.result_date.slice(0, 7) // Faster than new Date()
+    if (!result.result_3up || result.result_3up.length !== 3) continue
     
-    if (!monthlyBreakdown[month]) {
-      monthlyBreakdown[month] = { wins: 0, losses: 0, netAmount: 0 }
-    }
+    const [d1, d2, d3] = result.result_3up.split('')
+    const month = result.result_date.slice(0, 7)
     
-    if (isMatch) {
-      patternMatches++
-      monthlyBreakdown[month].wins++
-      monthlyBreakdown[month].netAmount += (betAmount.value * 1000) - dailyBetAmount
+    // Check each pattern
+    if (d1 === d2 && d2 !== d3) {
+      updatePatternAnalysis(patterns.first_two, month, true)
     } else {
-      monthlyBreakdown[month].losses++
-      monthlyBreakdown[month].netAmount -= dailyBetAmount
+      updatePatternAnalysis(patterns.first_two, month, false)
+    }
+    
+    if (d1 === d3 && d1 !== d2) {
+      updatePatternAnalysis(patterns.first_third, month, true)
+    } else {
+      updatePatternAnalysis(patterns.first_third, month, false)
+    }
+    
+    if (d2 === d3 && d1 !== d2) {
+      updatePatternAnalysis(patterns.last_two, month, true)
+    } else {
+      updatePatternAnalysis(patterns.last_two, month, false)
     }
   }
   
-  const winAmount = patternMatches * betAmount.value * 1000
-  const totalBetAmount = totalResults * dailyBetAmount
-  const netAmount = winAmount - totalBetAmount
-  
-  const analysis = {
-    game, calculate: true, totalResults, patternMatches,
-    winAmount, lossAmount: Math.max(0, totalBetAmount),
-    netAmount, monthlyBreakdown
+  return {
+    game,
+    calculate: true,
+    totalResults,
+    patterns,
+    // Legacy fields for compatibility
+    patternMatches: 0,
+    winAmount: 0,
+    lossAmount: 0,
+    netAmount: 0,
+    monthlyBreakdown: {}
+  }
+}
+
+const createEmptyPatternAnalysis = (): PatternAnalysis => ({
+  betAmount: 0,
+  wins: 0,
+  losses: 0,
+  winAmount: 0,
+  lossAmount: 0,
+  netAmount: 0,
+  monthlyBreakdown: {}
+})
+
+const updatePatternAnalysis = (pattern: PatternAnalysis, month: string, isWin: boolean) => {
+  if (!pattern.monthlyBreakdown[month]) {
+    pattern.monthlyBreakdown[month] = { wins: 0, losses: 0, netAmount: 0 }
   }
   
-  analysisCache.set(cacheKey, analysis)
-  return analysis
+  if (isWin) {
+    pattern.wins++
+    pattern.monthlyBreakdown[month].wins++
+  } else {
+    pattern.losses++
+    pattern.monthlyBreakdown[month].losses++
+  }
+}
+
+const recalculateGame = (gameAnalysis: GameAnalysis) => {
+  // Recalculate financial data for each pattern
+  Object.values(gameAnalysis.patterns).forEach(pattern => {
+    const dailyBetAmount = 90 * pattern.betAmount // 90 numbers per pattern
+    pattern.winAmount = pattern.wins * pattern.betAmount * 1000
+    pattern.lossAmount = gameAnalysis.totalResults * dailyBetAmount
+    pattern.netAmount = pattern.winAmount - pattern.lossAmount
+    
+    // Update monthly breakdown
+    Object.values(pattern.monthlyBreakdown).forEach(monthData => {
+      monthData.netAmount = (monthData.wins * pattern.betAmount * 1000) - ((monthData.wins + monthData.losses) * dailyBetAmount)
+    })
+  })
+}
+
+const getTotalWins = (gameAnalysis: GameAnalysis): number => {
+  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
+    return sum + (pattern.betAmount > 0 ? pattern.wins : 0)
+  }, 0)
+}
+
+const getTotalWinAmount = (gameAnalysis: GameAnalysis): number => {
+  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
+    return sum + (pattern.betAmount > 0 ? pattern.winAmount : 0)
+  }, 0)
+}
+
+const getTotalLossAmount = (gameAnalysis: GameAnalysis): number => {
+  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
+    return sum + (pattern.betAmount > 0 ? pattern.lossAmount : 0)
+  }, 0)
+}
+
+const getTotalNetAmount = (gameAnalysis: GameAnalysis): number => {
+  return Object.values(gameAnalysis.patterns).reduce((sum, pattern) => {
+    return sum + (pattern.betAmount > 0 ? pattern.netAmount : 0)
+  }, 0)
 }
 
 const analyzeGame = (game: Game, results: Result[]): GameAnalysis => {
@@ -655,10 +815,23 @@ const checkForUnsavedChanges = () => {
     return a.length === b.length && a.every((val, i) => val === b[i])
   }
   
+  // Check if game pattern bets changed
+  const currentGameBets = selectedGames.value.reduce((acc, game) => {
+    acc[game.game.id] = {
+      first_two: game.patterns.first_two.betAmount,
+      first_third: game.patterns.first_third.betAmount,
+      last_two: game.patterns.last_two.betAmount
+    }
+    return acc
+  }, {} as Record<number, any>)
+  
+  const savedGameBets = loadedProfileState.value.gamePatternBets || {}
+  const gameBetsChanged = JSON.stringify(currentGameBets) !== JSON.stringify(savedGameBets)
+  
   return (
-    betAmount.value !== loadedProfileState.value.betAmount ||
     !arraysEqual(selectedPatterns.value, loadedProfileState.value.selectedPatterns) ||
-    !arraysEqual(selectedGames.value.map(g => g.game.id), loadedProfileState.value.selectedGameIds)
+    !arraysEqual(selectedGames.value.map(g => g.game.id), loadedProfileState.value.selectedGameIds) ||
+    gameBetsChanged
   )
 }
 
@@ -717,9 +890,17 @@ const saveCurrentProfile = async () => {
   try {
     const profileData = {
       profile_name: profiles.value.find(p => p.id === selectedProfileId.value)?.profile_name || '',
-      bet_amount: betAmount.value,
+      bet_amount: 0, // Legacy field, not used anymore
       selected_patterns: selectedPatterns.value,
-      selected_game_ids: selectedGames.value.map(g => g.game.id)
+      selected_game_ids: selectedGames.value.map(g => g.game.id),
+      game_pattern_bets: selectedGames.value.reduce((acc, game) => {
+        acc[game.game.id] = {
+          first_two: game.patterns.first_two.betAmount,
+          first_third: game.patterns.first_third.betAmount,
+          last_two: game.patterns.last_two.betAmount
+        }
+        return acc
+      }, {} as Record<number, any>)
     }
     
     await profileApi.updateProfile(selectedProfileId.value, profileData)
@@ -727,9 +908,16 @@ const saveCurrentProfile = async () => {
     
     // Update loaded state
     loadedProfileState.value = {
-      betAmount: betAmount.value,
       selectedPatterns: [...selectedPatterns.value],
-      selectedGameIds: [...selectedGames.value.map(g => g.game.id)]
+      selectedGameIds: [...selectedGames.value.map(g => g.game.id)],
+      gamePatternBets: selectedGames.value.reduce((acc, game) => {
+        acc[game.game.id] = {
+          first_two: game.patterns.first_two.betAmount,
+          first_third: game.patterns.first_third.betAmount,
+          last_two: game.patterns.last_two.betAmount
+        }
+        return acc
+      }, {} as Record<number, any>)
     }
     
     hasUnsavedChanges.value = false
@@ -748,9 +936,17 @@ const saveAsNewProfile = async () => {
   try {
     const profileData = {
       profile_name: newProfileName.value,
-      bet_amount: betAmount.value,
+      bet_amount: 0, // Legacy field, not used anymore
       selected_patterns: selectedPatterns.value,
-      selected_game_ids: selectedGames.value.map(g => g.game.id)
+      selected_game_ids: selectedGames.value.map(g => g.game.id),
+      game_pattern_bets: selectedGames.value.reduce((acc, game) => {
+        acc[game.game.id] = {
+          first_two: game.patterns.first_two.betAmount,
+          first_third: game.patterns.first_third.betAmount,
+          last_two: game.patterns.last_two.betAmount
+        }
+        return acc
+      }, {} as Record<number, any>)
     }
     
     await profileApi.createProfile(profileData)
@@ -779,7 +975,6 @@ const loadProfile = async () => {
     if (!profile || loadProfileAbortController.signal.aborted) return
     
     // Apply settings immediately
-    betAmount.value = profile.bet_amount
     selectedPatterns.value = [...profile.selected_patterns]
     
     // Use setTimeout to allow UI to update with loading state
@@ -789,15 +984,28 @@ const loadProfile = async () => {
     selectedGames.value = profile.selected_game_ids
       .map(gameId => {
         const game = gameMap.get(gameId)
-        return game ? analyzeGameOptimized(game, validResultsByGame.get(gameId) || []) : null
+        if (!game) return null
+        
+        const analysis = analyzeGameOptimized(game, validResultsByGame.get(gameId) || [])
+        
+        // Restore per-game pattern bet amounts
+        const savedBets = (profile as any).game_pattern_bets?.[gameId]
+        if (savedBets) {
+          analysis.patterns.first_two.betAmount = savedBets.first_two || 0
+          analysis.patterns.first_third.betAmount = savedBets.first_third || 0
+          analysis.patterns.last_two.betAmount = savedBets.last_two || 0
+          recalculateGame(analysis)
+        }
+        
+        return analysis
       })
       .filter(Boolean)
     
     // Store state
     loadedProfileState.value = {
-      betAmount: profile.bet_amount,
       selectedPatterns: [...profile.selected_patterns],
-      selectedGameIds: [...profile.selected_game_ids]
+      selectedGameIds: [...profile.selected_game_ids],
+      gamePatternBets: (profile as any).game_pattern_bets || {}
     }
     
     hasUnsavedChanges.value = false
@@ -936,9 +1144,45 @@ const getMonthlyData = (gameId: number) => {
   const game = selectedGames.value.find(g => g.game.id === gameId)
   if (!game) return []
   
-  return Object.entries(game.monthlyBreakdown)
-    .map(([month, data]) => ({ month, ...data }))
-    .sort((a, b) => a.month.localeCompare(b.month))
+  // Get months only from patterns with betAmount > 0
+  const allMonths = new Set<string>()
+  Object.values(game.patterns).forEach(pattern => {
+    if (pattern.betAmount > 0) {
+      Object.keys(pattern.monthlyBreakdown).forEach(month => allMonths.add(month))
+    }
+  })
+  
+  return Array.from(allMonths).map(month => {
+    const firstTwo = game.patterns.first_two.betAmount > 0 ? {
+      wins: game.patterns.first_two.monthlyBreakdown[month]?.wins || 0,
+      losses: game.patterns.first_two.monthlyBreakdown[month]?.losses || 0
+    } : { wins: 0, losses: 0 }
+    
+    const firstThird = game.patterns.first_third.betAmount > 0 ? {
+      wins: game.patterns.first_third.monthlyBreakdown[month]?.wins || 0,
+      losses: game.patterns.first_third.monthlyBreakdown[month]?.losses || 0
+    } : { wins: 0, losses: 0 }
+    
+    const lastTwo = game.patterns.last_two.betAmount > 0 ? {
+      wins: game.patterns.last_two.monthlyBreakdown[month]?.wins || 0,
+      losses: game.patterns.last_two.monthlyBreakdown[month]?.losses || 0
+    } : { wins: 0, losses: 0 }
+    
+    let netAmount = 0
+    if (game.patterns.first_two.betAmount > 0) netAmount += game.patterns.first_two.monthlyBreakdown[month]?.netAmount || 0
+    if (game.patterns.first_third.betAmount > 0) netAmount += game.patterns.first_third.monthlyBreakdown[month]?.netAmount || 0
+    if (game.patterns.last_two.betAmount > 0) netAmount += game.patterns.last_two.monthlyBreakdown[month]?.netAmount || 0
+    
+    return {
+      month,
+      firstTwo,
+      firstThird, 
+      lastTwo,
+      allWins: firstTwo.wins + firstThird.wins + lastTwo.wins,
+      allLosses: firstTwo.losses + firstThird.losses + lastTwo.losses,
+      netAmount
+    }
+  }).sort((a, b) => a.month.localeCompare(b.month))
 }
 
 const formatMonth = (month: string) => {
@@ -950,6 +1194,43 @@ const formatMonth = (month: string) => {
 const getWinRate = (wins: number, losses: number) => {
   const total = wins + losses
   return total > 0 ? Math.round((wins / total) * 100) : 0
+}
+
+// Reorder dialog methods
+const openReorderDialog = () => {
+  reorderGames.value = [...selectedGames.value]
+  showReorderDialog.value = true
+}
+
+const moveGameUp = (index: number) => {
+  if (index > 0) {
+    const game = reorderGames.value[index]
+    reorderGames.value.splice(index, 1)
+    reorderGames.value.splice(index - 1, 0, game)
+  }
+}
+
+const moveGameDown = (index: number) => {
+  if (index < reorderGames.value.length - 1) {
+    const game = reorderGames.value[index]
+    reorderGames.value.splice(index, 1)
+    reorderGames.value.splice(index + 1, 0, game)
+  }
+}
+
+const saveReorder = () => {
+  gameOperationLoading.value = true
+  
+  setTimeout(() => {
+    selectedGames.value = [...reorderGames.value]
+    showReorderDialog.value = false
+    gameOperationLoading.value = false
+  }, 0)
+}
+
+const cancelReorder = () => {
+  showReorderDialog.value = false
+  reorderGames.value = []
 }
 
 // Navigation guards and lifecycle
@@ -1001,6 +1282,7 @@ select:disabled {
   position: sticky;
   left: 0;
   z-index: 10;
+  width: 49px;
   min-width: 49px;
   max-width: 49px;
   border: 0;
@@ -1010,6 +1292,7 @@ select:disabled {
   position: sticky;
   left: 49px;
   z-index: 10;
+  width: 32px;
   min-width: 32px;
   max-width: 32px;
   border: 0;
@@ -1019,6 +1302,7 @@ select:disabled {
   position: sticky;
   left: 81px;
   z-index: 10;
+  width: 80px;
   min-width: 80px;
   max-width: 80px;
   border: 0;
