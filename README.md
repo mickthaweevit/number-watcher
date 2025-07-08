@@ -1,47 +1,47 @@
 # 🎯 NumWatch - Thai Lottery Analysis System
 
-A comprehensive Thai lottery number analysis and tracking system with real-time data import, pattern analysis, and user management.
+A comprehensive Thai lottery number analysis and tracking system with real-time data import, advanced pattern analysis, and user management. Features per-game pattern betting with detailed financial calculations.
 
-## 🌟 Features
+## 🌟 Key Features
 
 ### 🔐 Authentication & User Management
-- **Secure JWT Authentication** (no expiration for convenience)
-- **Invite-based Registration** system
+- **Secure JWT Authentication** with invite-based registration
 - **Admin Panel** for user and invite code management
+- **Multi-user Support** with individual profiles
 - **Thai Language Interface** throughout the application
 
-### 📊 Lottery Data Management
-- **Dual API Support** (V1 & V2 formats)
-- **Real-time Data Import** from external APIs
+### 📊 Dual API Data Management
+- **V1 & V2 API Support** with source selection
+- **Real-time Data Import** from external lottery APIs
 - **Automated Scheduler** for regular data updates
+- **Data Export/Import** with source-aware backups
 - **Buddhist Calendar Support** (พ.ศ. format)
-- **Multiple Game Types** including HNLOCAL
 
-### 🎲 Pattern Analysis Dashboard
-- **3-Up Pattern Analysis** with multiple betting strategies:
-  - เบิ้ลหน้า (First Two Same)
-  - หาม (First & Last Same) 
-  - เบิ้ลหลัง (Last Two Same)
-- **Profit/Loss Calculations** with customizable bet amounts
-- **Monthly Statistics** breakdown
-- **Visual Pattern Highlighting** in results table
+### 🎲 Advanced Pattern Analysis
+- **Per-Game Pattern Betting** system:
+  - เบิ้ลหน้า (First Two Same) - 90 numbers
+  - หาม (First & Last Same) - 90 numbers
+  - เบิ้ลหลัง (Last Two Same) - 90 numbers
+- **Individual Bet Amounts** per pattern per game
+- **Real-time Financial Calculations**:
+  - Win/Loss tracking per pattern
+  - Net profit/loss calculations
+  - Monthly breakdown by pattern
+- **Visual Pattern Highlighting** in results table (display only)
 
-### 👤 Profile Management
-- **Auto-load Profiles** on selection (no manual load button)
-- **Split Save Options**:
-  - บันทึก (Save Current) - Update existing profile
-  - บันทึกใหม่ (Save as New) - Create new profile
-- **Unsaved Changes Protection**:
-  - Visual indicators (orange border, asterisk)
-  - Browser exit warnings
-  - Route navigation guards
-- **Smart Button States** (disabled when no changes)
+### 📈 Comprehensive Analytics
+- **Game-by-Game Analysis** with expandable monthly details
+- **Pattern-specific Statistics** showing wins/losses per pattern
+- **Aggregated Summary Statistics** across all games
+- **Monthly Performance Tracking** with profit/loss trends
+- **Drag & Drop Game Reordering** via dedicated dialog
 
-### 📱 Mobile-Responsive Design
-- **Thai-optimized Interface** for local users
-- **Responsive Layout** for mobile devices
-- **Touch-friendly Navigation**
-- **Optimized Table Scrolling**
+### 👤 Advanced Profile System
+- **Per-Game Pattern Betting** profiles
+- **Auto-save Detection** with unsaved changes protection
+- **Profile Import/Export** with pattern bet preservation
+- **Source-aware Profiles** (V1/V2 API compatibility)
+- **Browser Navigation Guards** preventing data loss
 
 ## 🛠️ Tech Stack
 
@@ -69,6 +69,7 @@ A comprehensive Thai lottery number analysis and tracking system with real-time 
 
 ### Prerequisites
 - Docker & Docker Compose
+- PostgreSQL database (local or cloud)
 - Node.js 18+ (for local development)
 - Python 3.9+ (for local development)
 
@@ -84,8 +85,8 @@ cd number-watcher
 ```bash
 # Backend (.env)
 DATABASE_URL=postgresql://user:password@localhost:5432/numwatch
-EXTERNAL_API_URL=https://api.example.com
-EXTERNAL_API_URL_V2=https://apiv2.example.com
+EXTERNAL_API_URL=https://api.lottery-v1.com
+EXTERNAL_API_URL_V2=https://api.lottery-v2.com
 CORS_ORIGINS=http://localhost:5173
 
 # Frontend (.env)
@@ -97,9 +98,13 @@ VITE_API_URL=http://localhost:8000
 docker-compose up -d
 ```
 
-4. **Create admin user**
+4. **Initialize database and admin**
 ```bash
+# Create admin user
 curl -X POST "http://localhost:8000/create-admin"
+
+# Import sample data (optional)
+curl -X POST "http://localhost:8000/import-sample-data-v2"
 ```
 
 5. **Access the application**
@@ -134,24 +139,29 @@ curl -X POST "http://localhost:8000/create-admin"
 ## 🎯 Usage Guide
 
 ### Setting Up Analysis
-1. **Login** with your credentials
-2. **Select API Source** (แหล่ง 1 or แหล่ง 2)
-3. **Configure Global Settings**:
-   - Set bet amount (จำนวนเงินแทง)
-   - Choose patterns (รูปแบบที่เลือก)
-4. **Add Games** to analyze
-5. **Save Profile** for future use
+1. **Login** with your credentials or register with invite code
+2. **Select API Source** (V1 or V2) for data import
+3. **Add Games** to your analysis dashboard
+4. **Configure Per-Game Betting**:
+   - Set individual bet amounts for each pattern per game
+   - เบิ้ลหน้า: 0-999 baht per game
+   - หาม: 0-999 baht per game  
+   - เบิ้ลหลัง: 0-999 baht per game
+5. **Save Profile** to preserve your betting configuration
 
-### Pattern Analysis
-- **เบิ้ลหน้า**: Numbers like 113, 225, 882 (first two digits same)
-- **หาม**: Numbers like 040, 747, 202 (first and last digits same)
-- **เบิ้ลหลัง**: Numbers like 200, 877, 399 (last two digits same)
+### Pattern Analysis System
+- **เบิ้ลหน้า**: Numbers like 113, 225, 882 (first two digits same) - 90 possible numbers
+- **หาม**: Numbers like 040, 747, 202 (first and last digits same) - 90 possible numbers
+- **เบิ้ลหลัง**: Numbers like 200, 877, 399 (last two digits same) - 90 possible numbers
+- **Prize Structure**: 1000x bet amount per winning number
+- **Cost Structure**: 90 × bet amount per draw (covers all numbers in pattern)
 
 ### Reading Results
-- **Green numbers**: Pattern matches (wins)
-- **Red/Blue/Yellow highlights**: Different pattern types
-- **Statistics panel**: Win/loss ratios and profit calculations
-- **Monthly breakdown**: Performance over time
+- **Pattern Highlighting**: Visual indicators for different patterns (display only)
+- **Financial Calculations**: Real-time profit/loss per pattern per game
+- **Statistics Table**: Individual game performance with expandable monthly details
+- **Summary Statistics**: Aggregated performance across all active bets
+- **Monthly Breakdown**: Pattern-specific performance trends
 
 ## 🔧 Development
 
@@ -169,19 +179,48 @@ npm install
 npm run dev
 ```
 
-### Database Migrations
+### Database Schema Updates
 ```bash
-cd backend
-alembic upgrade head
+# For new columns (like game_pattern_bets)
+docker-compose exec backend python add_migration_script.py
+
+# Or manually via SQL
+ALTER TABLE user_profiles ADD COLUMN game_pattern_bets JSON;
+```
+
+### API Source Management
+```bash
+# Switch between V1 and V2 APIs
+localStorage.setItem('selectedApiSource', 'new') // V2
+localStorage.setItem('selectedApiSource', 'old') // V1
 ```
 
 ## 🌐 Deployment
 
-The application is configured for containerized deployment with:
-- **Multi-stage Docker builds** for optimization
+### Production Deployment
+- **Docker Compose** for containerized deployment
+- **PostgreSQL** database (Supabase recommended)
 - **Environment-based configuration**
-- **Health checks** and monitoring
-- **Automated CI/CD** via GitHub Actions
+- **Health checks** and API monitoring
+- **Source-aware data export/import** for backups
+
+### Database Setup (Supabase)
+1. Create new Supabase project
+2. Run SQL migrations in Supabase SQL Editor
+3. Update DATABASE_URL in environment variables
+4. Deploy containers with updated configuration
+
+### Environment Variables
+```bash
+# Production Backend
+DATABASE_URL=postgresql://postgres:[password]@[host]:5432/postgres
+EXTERNAL_API_URL=https://production-api-v1.com
+EXTERNAL_API_URL_V2=https://production-api-v2.com
+CORS_ORIGINS=https://your-domain.com
+
+# Production Frontend  
+VITE_API_URL=https://api.your-domain.com
+```
 
 ## 🤝 Contributing
 
@@ -201,6 +240,34 @@ This project is licensed under the MIT License.
 - Vue.js and FastAPI communities
 - Contributors and testers
 
+## 📊 Data Structure
+
+### Profile Schema
+```json
+{
+  "profile_name": "My Strategy",
+  "selected_patterns": ["first_two", "last_two"],
+  "selected_game_ids": [1, 2, 3],
+  "game_pattern_bets": {
+    "1": {"first_two": 10, "first_third": 0, "last_two": 20},
+    "2": {"first_two": 15, "first_third": 5, "last_two": 0}
+  }
+}
+```
+
+### Analysis Output
+```json
+{
+  "month": "2025-01",
+  "patternA": {"wins": 5, "losses": 25},
+  "patternB": {"wins": 3, "losses": 27}, 
+  "patternC": {"wins": 8, "losses": 22},
+  "netAmount": 2500
+}
+```
+
 ---
 
 **Built with ❤️ for Thai lottery enthusiasts**
+
+*Advanced pattern analysis system with per-game betting strategies*
