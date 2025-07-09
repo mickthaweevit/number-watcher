@@ -393,46 +393,44 @@ const totalStats = computed(() => {
   }
 })
 
-const monthlyStats = computed(() => {
-  const monthlyData: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
+// Consolidated monthly data computation to avoid duplicate getMonthlyData calls
+const consolidatedMonthlyData = computed(() => {
+  const monthlyStats: { [month: string]: { wins: number, losses: number, netAmount: number } } = {}
+  const monthlyPatterns: { [month: string]: { firstTwo: number, firstThird: number, lastTwo: number } } = {}
   
   selectedGames.value.filter(g => g.calculate).forEach(game => {
-    const gameMonthlyData = getMonthlyData(game)
+    const gameMonthlyData = getMonthlyData(game) // Single call per game
     
     gameMonthlyData.forEach(monthInfo => {
-      if (!monthlyData[monthInfo.month]) {
-        monthlyData[monthInfo.month] = { wins: 0, losses: 0, netAmount: 0 }
+      // Initialize if not exists
+      if (!monthlyStats[monthInfo.month]) {
+        monthlyStats[monthInfo.month] = { wins: 0, losses: 0, netAmount: 0 }
+        monthlyPatterns[monthInfo.month] = { firstTwo: 0, firstThird: 0, lastTwo: 0 }
       }
       
-      monthlyData[monthInfo.month].wins += monthInfo.allWins
-      monthlyData[monthInfo.month].losses += monthInfo.allLosses
-      monthlyData[monthInfo.month].netAmount += monthInfo.netAmount
+      // Aggregate stats
+      monthlyStats[monthInfo.month].wins += monthInfo.allWins
+      monthlyStats[monthInfo.month].losses += monthInfo.allLosses
+      monthlyStats[monthInfo.month].netAmount += monthInfo.netAmount
+      
+      // Aggregate patterns
+      monthlyPatterns[monthInfo.month].firstTwo += monthInfo.firstTwo.wins
+      monthlyPatterns[monthInfo.month].firstThird += monthInfo.firstThird.wins
+      monthlyPatterns[monthInfo.month].lastTwo += monthInfo.lastTwo.wins
     })
   })
   
-  return Object.entries(monthlyData)
+  return { monthlyStats, monthlyPatterns }
+})
+
+const monthlyStats = computed(() => {
+  return Object.entries(consolidatedMonthlyData.value.monthlyStats)
     .map(([month, data]) => ({ month, ...data }))
     .sort((a, b) => a.month.localeCompare(b.month))
 })
 
 const monthlyPatternStats = computed(() => {
-  const monthlyData: { [month: string]: { firstTwo: number, firstThird: number, lastTwo: number } } = {}
-  
-  selectedGames.value.filter(g => g.calculate).forEach(game => {
-    const gameMonthlyData = getMonthlyData(game)
-    
-    gameMonthlyData.forEach(monthInfo => {
-      if (!monthlyData[monthInfo.month]) {
-        monthlyData[monthInfo.month] = { firstTwo: 0, firstThird: 0, lastTwo: 0 }
-      }
-      
-      monthlyData[monthInfo.month].firstTwo += monthInfo.firstTwo.wins
-      monthlyData[monthInfo.month].firstThird += monthInfo.firstThird.wins
-      monthlyData[monthInfo.month].lastTwo += monthInfo.lastTwo.wins
-    })
-  })
-  
-  return Object.entries(monthlyData)
+  return Object.entries(consolidatedMonthlyData.value.monthlyPatterns)
     .map(([month, data]) => ({
       month,
       monthFormatted: formatMonthShort(month),
@@ -656,10 +654,20 @@ const toggleRowExpansion = (gameId: number) => {
   }
 }
 
+// Cache for game monthly data to avoid recalculation
+const gameMonthlyDataCache = computed(() => {
+  const cache: { [gameId: number]: any[] } = {}
+  selectedGames.value.forEach(game => {
+    if (game.calculate) {
+      cache[game.game.id] = getMonthlyData(game)
+    }
+  })
+  return cache
+})
+
 // Helper function to get monthly data for a specific game
 const getGameMonthlyData = (gameId: number) => {
-  const game = selectedGames.value.find(g => g.game.id === gameId)
-  return game ? getMonthlyData(game) : []
+  return gameMonthlyDataCache.value[gameId] || []
 }
 
 const formatMonth = (month: string) => {
