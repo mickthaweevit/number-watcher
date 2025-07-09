@@ -44,7 +44,7 @@
 
 
       <!-- Results Table -->
-      <div class="table-container border border-gray-300 rounded overflow-x-auto">
+      <div class="table-container border border-gray-300 rounded overflow-x-auto" ref="resultsTableContainer">
         <table class="min-w-full text-xs md:text-sm">
           <thead class="bg-gray-100 sticky-header">
             <tr>
@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { gameApi } from '../services/api'
 import type { Result, TableData, DateResult } from '../types'
 import { mdiCancel, mdiTimerSand } from '@mdi/js'
@@ -272,6 +272,21 @@ const getPatternClass = (result: string): string => {
   
   return ''
 }
+
+// Template ref
+const resultsTableContainer = ref<HTMLElement | null>(null)
+
+// Auto-scroll to right when results load
+watch(() => uniqueDates.value.length, (newLength) => {
+  if (newLength > 0) {
+    nextTick(() => {
+      const container = resultsTableContainer.value
+      if (container) {
+        container.scrollLeft = container.scrollWidth
+      }
+    })
+  }
+})
 
 // Lifecycle
 onMounted(() => {

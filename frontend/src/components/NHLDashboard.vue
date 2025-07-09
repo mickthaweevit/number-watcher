@@ -39,7 +39,7 @@
     />
       
       <!-- Game Results Preview -->
-    <div v-if="selectedGames.length > 0" class="overflow-x-auto">
+    <div v-if="selectedGames.length > 0" class="overflow-x-auto" ref="previewTableContainer">
       <table class="min-w-full text-xs">
         <thead class="bg-gray-100">
           <tr>
@@ -270,7 +270,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { gameApi, authApi, profileApi } from '../services/api'
 import type { Game, Result, User, DashboardProfile } from '../types'
 import { useGameAnalysis, type GameAnalysis } from '../composables/useGameAnalysis'
@@ -669,6 +669,21 @@ watch([betAmount, selectedPatterns, selectedGames], () => {
     hasUnsavedChanges.value = checkForUnsavedChanges(selectedPatterns.value, selectedGames.value)
   }
 }, { deep: true })
+
+// Template ref
+const previewTableContainer = ref<HTMLElement | null>(null)
+
+// Auto-scroll to right when results load
+watch(() => baseTableData.value.dates.length, (newLength) => {
+  if (newLength > 0) {
+    nextTick(() => {
+      const container = previewTableContainer.value
+      if (container) {
+        container.scrollLeft = container.scrollWidth
+      }
+    })
+  }
+})
 
 // Initialize
 onMounted(async () => {

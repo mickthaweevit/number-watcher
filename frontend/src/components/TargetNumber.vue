@@ -73,7 +73,7 @@
     />
     
     <!-- Game Results Preview -->
-    <div v-if="selectedGames.length > 0" class="overflow-x-auto">
+    <div v-if="selectedGames.length > 0" class="overflow-x-auto" ref="previewTableContainer">
       <table class="min-w-full text-xs">
         <thead class="bg-gray-100">
           <tr>
@@ -176,7 +176,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import type { Game, Result } from '../types'
 import { useProfileManagement } from '../composables/useProfileManagement'
 import GameManager from './GameManager.vue'
@@ -535,6 +535,21 @@ watch(targetDigits, () => {
   // Clear cell cache when target digits change
   cellCache.clear()
 }, { deep: true })
+
+// Template ref
+const previewTableContainer = ref<HTMLElement | null>(null)
+
+// Auto-scroll to right when results load
+watch(() => tableData.value.dates.length, (newLength) => {
+  if (newLength > 0) {
+    nextTick(() => {
+      const container = previewTableContainer.value
+      if (container) {
+        container.scrollLeft = container.scrollWidth
+      }
+    })
+  }
+})
 
 // Initialize
 onMounted(async () => {
