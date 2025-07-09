@@ -220,7 +220,8 @@ const {
   deleteProfile: deleteProfileComposable,
   updateLoadedState,
   checkForUnsavedChanges,
-  clearProfile
+  clearProfile,
+  loadedProfileState
 } = useProfileManagement()
 
 // Performance cache
@@ -414,12 +415,24 @@ watch(matchMethod, () => {
 
 // Profile methods
 const saveCurrentProfile = async () => {
+  if (!selectedProfileId.value) return
+  
+  const currentProfile = profiles.value.find(p => p.id === selectedProfileId.value)
+  if (!currentProfile) return
+  
   const profileData = {
+    profile_name: currentProfile.profile_name,
     match_method: matchMethod.value,
     target_digits: targetDigits.value,
     selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
   }
-  await saveCurrentProfileComposable([], [], profileData, 'target_number')
+  
+  const success = await saveCurrentProfileComposable([], [], profileData, 'target_number')
+  if (success) {
+    // Update loaded state for TargetNumber
+    updateLoadedState([], [])
+    hasUnsavedChanges.value = false
+  }
 }
 
 const saveAsNewProfile = async () => {
@@ -488,13 +501,32 @@ const loadProfile = async () => {
     console.log('Loaded selected_games:', selectedGames.value)
   }
   
-  updateLoadedState([], [])
+  // Store loaded state for TargetNumber
+  loadedProfileState.value = {
+    match_method: matchMethod.value,
+    target_digits: [...targetDigits.value],
+    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+  }
+  hasUnsavedChanges.value = false
 }
 
-// Track unsaved changes
+// Track unsaved changes for TargetNumber
 watch([matchMethod, targetDigits, selectedGames], () => {
-  if (selectedProfileId.value) {
-    hasUnsavedChanges.value = true
+  if (selectedProfileId.value && loadedProfileState.value) {
+    const current = {
+      match_method: matchMethod.value,
+      target_digits: [...targetDigits.value],
+      selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+    }
+    
+    const loaded = loadedProfileState.value
+    const hasChanges = (
+      current.match_method !== loaded.match_method ||
+      JSON.stringify(current.target_digits) !== JSON.stringify(loaded.target_digits) ||
+      JSON.stringify(current.selected_games) !== JSON.stringify(loaded.selected_games)
+    )
+    
+    hasUnsavedChanges.value = hasChanges
   }
 }, { deep: true })
 

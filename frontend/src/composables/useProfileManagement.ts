@@ -57,7 +57,7 @@ export const useProfileManagement = () => {
       finalProfileData.dashboard_type = dashboardType
       
       await profileApi.updateProfile(selectedProfileId.value, finalProfileData)
-      await fetchProfiles()
+      await fetchProfiles(dashboardType)
       
       updateLoadedState(selectedPatterns, selectedGames)
       hasUnsavedChanges.value = false
@@ -86,7 +86,7 @@ export const useProfileManagement = () => {
       finalProfileData.profile_name = profileName
       finalProfileData.dashboard_type = dashboardType
       await profileApi.createProfile(finalProfileData)
-      await fetchProfiles()
+      await fetchProfiles(dashboardType)
       alert('สร้างโปรไฟล์ใหม่สำเร็จแล้ว!')
       return true
     } catch (error) {
@@ -104,7 +104,7 @@ export const useProfileManagement = () => {
     if (confirm(`Delete profile "${profile.profile_name}"?`)) {
       try {
         await profileApi.deleteProfile(selectedProfileId.value)
-        await fetchProfiles()
+        await fetchProfiles('nhl_dashboard') // Default for delete since we don't know the type
         selectedProfileId.value = null
         alert('Profile deleted successfully!')
         return true
