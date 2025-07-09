@@ -748,37 +748,52 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 @app.get("/profiles", response_model=List[DashboardProfileResponse])
 async def get_user_profiles(
     source: str = Query("old", description="API source: old or new"),
+    dashboard_type: str = Query("nhl_dashboard", description="Dashboard type: nhl_dashboard or target_number"),
     current_user: User = Depends(get_current_user), 
     db: Session = Depends(get_db)
 ):
-    """Get dashboard profiles for current user filtered by API source"""
+    """Get dashboard profiles for current user filtered by API source and dashboard type"""
     profiles = db.query(DashboardProfile).filter(
         DashboardProfile.user_id == current_user.id,
-        DashboardProfile.api_source == source
+        DashboardProfile.api_source == source,
+        DashboardProfile.dashboard_type == dashboard_type
     ).all()
     return profiles
 
 @app.post("/profiles", response_model=DashboardProfileResponse)
 async def create_profile(profile_data: DashboardProfileCreate, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     """Create a new dashboard profile for current user"""
-    # Check if profile name already exists for this user and source
+    # Check if profile name already exists for this user, source, and dashboard type
     existing_profile = db.query(DashboardProfile).filter(
         DashboardProfile.user_id == current_user.id,
         DashboardProfile.profile_name == profile_data.profile_name,
-        DashboardProfile.api_source == profile_data.api_source
+        DashboardProfile.api_source == profile_data.api_source,
+        DashboardProfile.dashboard_type == profile_data.dashboard_type
     ).first()
     
     if existing_profile:
-        raise HTTPException(status_code=400, detail="Profile name already exists for this API source")
+        raise HTTPException(status_code=400, detail="Profile name already exists for this API source and dashboard type")
+    
+    # Store extra fields in game_pattern_bets for target_number dashboard
+    extra_data = profile_data.game_pattern_bets or {}
+    if profile_data.dashboard_type == 'target_number':
+        # Store TargetNumber specific fields
+        profile_dict = profile_data.dict()
+        extra_data = {
+            'match_method': profile_dict.get('match_method'),
+            'target_digits': profile_dict.get('target_digits'),
+            'selected_games': profile_dict.get('selected_games')
+        }
     
     db_profile = DashboardProfile(
         user_id=current_user.id,
         profile_name=profile_data.profile_name,
-        bet_amount=profile_data.bet_amount,
-        selected_patterns=profile_data.selected_patterns,
-        selected_game_ids=profile_data.selected_game_ids,
+        bet_amount=profile_data.bet_amount or 0,
+        selected_patterns=profile_data.selected_patterns or [],
+        selected_game_ids=profile_data.selected_game_ids or [],
         api_source=profile_data.api_source,
-        game_pattern_bets=profile_data.game_pattern_bets
+        dashboard_type=profile_data.dashboard_type,
+        game_pattern_bets=extra_data
     )
     db.add(db_profile)
     db.commit()
@@ -799,11 +814,23 @@ async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, 
     
     # Update profile fields
     profile.profile_name = profile_data.profile_name
-    profile.bet_amount = profile_data.bet_amount
-    profile.selected_patterns = profile_data.selected_patterns
-    profile.selected_game_ids = profile_data.selected_game_ids
+    profile.bet_amount = profile_data.bet_amount or 0
+    profile.selected_patterns = profile_data.selected_patterns or []
+    profile.selected_game_ids = profile_data.selected_game_ids or []
     profile.api_source = profile_data.api_source
-    profile.game_pattern_bets = profile_data.game_pattern_bets
+    profile.dashboard_type = profile_data.dashboard_type
+    
+    # Store extra fields in game_pattern_bets for target_number dashboard
+    if profile_data.dashboard_type == 'target_number':
+        profile_dict = profile_data.dict()
+        profile.game_pattern_bets = {
+            'match_method': profile_dict.get('match_method'),
+            'target_digits': profile_dict.get('target_digits'),
+            'selected_games': profile_dict.get('selected_games')
+        }
+    else:
+        profile.game_pattern_bets = profile_data.game_pattern_bets
+    
     profile.updated_at = datetime.now()
     
     db.commit()

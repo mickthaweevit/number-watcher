@@ -205,19 +205,19 @@ export const authApi = {
 };
 
 export const profileApi = {
-  getProfiles: async (signal?: AbortSignal): Promise<DashboardProfile[]> => {
+  getProfiles: async (dashboardType: string = 'nhl_dashboard', signal?: AbortSignal): Promise<DashboardProfile[]> => {
     const source = getCurrentSource()
-    const response = await api.get(`/profiles?source=${source}`, { signal });
+    const response = await api.get(`/profiles?source=${source}&dashboard_type=${dashboardType}`, { signal });
     return response.data;
   },
 
-  createProfile: async (profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'api_source'>): Promise<DashboardProfile> => {
+  createProfile: async (profileData: any): Promise<DashboardProfile> => {
     const source = getCurrentSource()
     const response = await api.post('/profiles', { ...profileData, api_source: source });
     return response.data;
   },
 
-  updateProfile: async (profileId: number, profileData: Omit<DashboardProfile, 'id' | 'user_id' | 'created_at' | 'updated_at' | 'api_source'>): Promise<DashboardProfile> => {
+  updateProfile: async (profileId: number, profileData: any): Promise<DashboardProfile> => {
     const source = getCurrentSource()
     const response = await api.put(`/profiles/${profileId}`, { ...profileData, api_source: source });
     return response.data;

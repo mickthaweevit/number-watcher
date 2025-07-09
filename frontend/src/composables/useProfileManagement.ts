@@ -13,10 +13,10 @@ export const useProfileManagement = () => {
   
   let loadProfileAbortController: AbortController | null = null
 
-  const fetchProfiles = async () => {
+  const fetchProfiles = async (dashboardType: string = 'nhl_dashboard') => {
     profilesLoading.value = true
     try {
-      profiles.value = await profileApi.getProfiles()
+      profiles.value = await profileApi.getProfiles(dashboardType)
     } catch (error) {
       console.error('Failed to fetch profiles:', error)
     } finally {
@@ -45,15 +45,18 @@ export const useProfileManagement = () => {
 
   const saveCurrentProfile = async (
     selectedPatterns: string[],
-    selectedGames: GameAnalysis[]
+    selectedGames: GameAnalysis[],
+    profileData: any = null,
+    dashboardType: string = 'nhl_dashboard'
   ) => {
     if (!selectedProfileId.value) return false
     
     try {
       const profileName = profiles.value.find(p => p.id === selectedProfileId.value)?.profile_name || ''
-      const profileData = buildProfileData(profileName, selectedPatterns, selectedGames)
+      const finalProfileData = profileData || buildProfileData(profileName, selectedPatterns, selectedGames)
+      finalProfileData.dashboard_type = dashboardType
       
-      await profileApi.updateProfile(selectedProfileId.value, profileData)
+      await profileApi.updateProfile(selectedProfileId.value, finalProfileData)
       await fetchProfiles()
       
       updateLoadedState(selectedPatterns, selectedGames)
@@ -69,7 +72,9 @@ export const useProfileManagement = () => {
   const saveAsNewProfile = async (
     profileName: string,
     selectedPatterns: string[],
-    selectedGames: GameAnalysis[]
+    selectedGames: GameAnalysis[],
+    profileData: any = null,
+    dashboardType: string = 'nhl_dashboard'
   ) => {
     if (!profileName.trim()) {
       alert('กรุณากรอกชื่อโปรไฟล์')
@@ -77,8 +82,10 @@ export const useProfileManagement = () => {
     }
     
     try {
-      const profileData = buildProfileData(profileName, selectedPatterns, selectedGames)
-      await profileApi.createProfile(profileData)
+      const finalProfileData = profileData || buildProfileData(profileName, selectedPatterns, selectedGames)
+      finalProfileData.profile_name = profileName
+      finalProfileData.dashboard_type = dashboardType
+      await profileApi.createProfile(finalProfileData)
       await fetchProfiles()
       alert('สร้างโปรไฟล์ใหม่สำเร็จแล้ว!')
       return true

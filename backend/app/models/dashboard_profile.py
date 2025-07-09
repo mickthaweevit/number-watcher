@@ -13,6 +13,7 @@ class DashboardProfile(Base):
     selected_patterns = Column(JSON, nullable=False)
     selected_game_ids = Column(JSON, nullable=False)
     api_source = Column(String(20), nullable=False, default='old')
+    dashboard_type = Column(String(50), nullable=False, default='nhl_dashboard')
     game_pattern_bets = Column(JSON, nullable=True)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
@@ -20,5 +21,5 @@ class DashboardProfile(Base):
     # Relationship
     user = relationship("User", back_populates="dashboard_profiles")
     
-    # Unique constraint - include api_source to allow same profile name for different sources
-    __table_args__ = (UniqueConstraint('user_id', 'profile_name', 'api_source', name='unique_user_profile_source'),)
+    # Unique constraint - include api_source and dashboard_type
+    __table_args__ = (UniqueConstraint('user_id', 'profile_name', 'api_source', 'dashboard_type', name='unique_user_profile_source_type'),)
