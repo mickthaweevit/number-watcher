@@ -99,6 +99,31 @@
       v-model:selectedPatterns="selectedPatterns" 
       :availablePatterns="availablePatterns" 
     />
+
+    <!-- Monthly Pattern Statistics -->
+    <div v-if="selectedGames.length > 0" class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรายเดือน</h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เดือน</th>
+              <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">หน้า</th>
+              <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">หาม</th>
+              <th class="px-3 py-2 text-center text-xs font-medium text-gray-500 uppercase">หลัง</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr v-for="monthStat in monthlyPatternStats" :key="monthStat.month" class="hover:bg-gray-50">
+              <td class="px-3 py-2 text-sm text-gray-900">{{ monthStat.monthFormatted }}</td>
+              <td class="px-3 py-2 text-sm text-center text-gray-900">{{ monthStat.firstTwo }}</td>
+              <td class="px-3 py-2 text-sm text-center text-gray-900">{{ monthStat.firstThird }}</td>
+              <td class="px-3 py-2 text-sm text-center text-gray-900">{{ monthStat.lastTwo }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
     
     <!-- Statistic Table -->
     <div v-if="selectedGames.length > 0" class="mb-6">
@@ -237,7 +262,7 @@
         </table>
       </div>
     </div>
-    
+
     <!-- Statistics Summary -->
     <StatisticsPanel 
       :totalStats="totalStats"
@@ -387,6 +412,32 @@ const monthlyStats = computed(() => {
   
   return Object.entries(monthlyData)
     .map(([month, data]) => ({ month, ...data }))
+    .sort((a, b) => a.month.localeCompare(b.month))
+})
+
+const monthlyPatternStats = computed(() => {
+  const monthlyData: { [month: string]: { firstTwo: number, firstThird: number, lastTwo: number } } = {}
+  
+  selectedGames.value.filter(g => g.calculate).forEach(game => {
+    const gameMonthlyData = getMonthlyData(game)
+    
+    gameMonthlyData.forEach(monthInfo => {
+      if (!monthlyData[monthInfo.month]) {
+        monthlyData[monthInfo.month] = { firstTwo: 0, firstThird: 0, lastTwo: 0 }
+      }
+      
+      monthlyData[monthInfo.month].firstTwo += monthInfo.firstTwo.wins
+      monthlyData[monthInfo.month].firstThird += monthInfo.firstThird.wins
+      monthlyData[monthInfo.month].lastTwo += monthInfo.lastTwo.wins
+    })
+  })
+  
+  return Object.entries(monthlyData)
+    .map(([month, data]) => ({
+      month,
+      monthFormatted: formatMonthShort(month),
+      ...data
+    }))
     .sort((a, b) => a.month.localeCompare(b.month))
 })
 
@@ -615,6 +666,11 @@ const formatMonth = (month: string) => {
   const [year, monthNum] = month.split('-')
   const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
   return `${monthNames[parseInt(monthNum) - 1]} ${year}`
+}
+
+const formatMonthShort = (month: string) => {
+  const [year, monthNum] = month.split('-')
+  return `${monthNum.padStart(2, '0')}/${year.slice(-2)}`
 }
 
 const getWinRate = (wins: number, losses: number) => {
