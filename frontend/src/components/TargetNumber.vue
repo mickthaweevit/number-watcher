@@ -50,7 +50,7 @@
       </div>
       
       <!-- Digit Selection -->
-      <div class="grid grid-cols-5 gap-3">
+      <div class="grid grid-cols-5 gap-3 mb-4">
         <label v-for="digit in [0,1,2,3,4,5,6,7,8,9]" :key="digit" class="flex items-center space-x-2 cursor-pointer">
           <input 
             v-model="targetDigits" 
@@ -61,6 +61,19 @@
           >
           <span class="text-lg font-medium" :class="{ 'text-gray-400': matchMethod === 'AND' && targetDigits.length >= 3 && !targetDigits.includes(digit.toString()) }">เลข {{ digit }}</span>
         </label>
+      </div>
+      
+      <!-- Bet Amount -->
+      <div class="flex items-center gap-3">
+        <label class="text-sm font-medium text-gray-700">จำนวนเงินเดิมพัน:</label>
+        <input 
+          v-model.number="betAmount" 
+          type="number" 
+          min="1" 
+          class="w-24 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="10"
+        >
+        <span class="text-sm text-gray-600">บาท</span>
       </div>
     </div>
     
@@ -139,6 +152,9 @@
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">หวย</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลทั้งหมด</th>
               <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Match</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
@@ -146,9 +162,66 @@
               <td class="px-3 py-2 text-sm text-gray-900">{{ gameData.game.game_name }}</td>
               <td class="px-3 py-2 text-sm text-gray-600">{{ gameData.calculate ? gameData.totalResults : '-' }}</td>
               <td class="px-3 py-2 text-sm text-green-600 font-medium">{{ gameData.calculate ? gameData.matches : '-' }}</td>
+              <td class="px-3 py-2 text-sm text-green-600 font-medium">{{ gameData.calculate ? formatCurrency(gameData.winAmount) : '-' }}</td>
+              <td class="px-3 py-2 text-sm text-red-600 font-medium">{{ gameData.calculate ? formatCurrency(gameData.lossAmount) : '-' }}</td>
+              <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(gameData.netAmount)">{{ gameData.calculate ? formatCurrency(gameData.netAmount) : '-' }}</td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+    
+    <!-- Monthly Statistics -->
+    <div v-if="selectedGames.length > 0 && monthlyStats.length > 0" class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">สถิติรายเดือน</h3>
+      <div class="overflow-x-auto">
+        <table class="min-w-full bg-white border border-gray-200 rounded">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เดือน</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ถูก</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลทั้งหมด</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่ได้</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">เงินที่เสีย</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ผลรวม</th>
+              <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">%</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr v-for="monthData in monthlyStats" :key="monthData.month" class="hover:bg-gray-100">
+              <td class="px-3 py-2 text-sm text-gray-900">{{ formatMonth(monthData.month) }}</td>
+              <td class="px-3 py-2 text-sm text-green-600 font-medium">{{ monthData.wins }}</td>
+              <td class="px-3 py-2 text-sm text-gray-600">{{ monthData.wins + monthData.losses }}</td>
+              <td class="px-3 py-2 text-sm text-green-600 font-medium">{{ formatCurrency(monthData.winAmount) }}</td>
+              <td class="px-3 py-2 text-sm text-red-600 font-medium">{{ formatCurrency(monthData.lossAmount) }}</td>
+              <td class="px-3 py-2 text-sm font-medium" :class="getNetClass(monthData.netAmount)">{{ formatCurrency(monthData.netAmount) }}</td>
+              <td class="px-3 py-2 text-sm text-gray-600">{{ getWinRate(monthData.wins, monthData.losses) }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Summary Statistics -->
+    <div v-if="selectedGames.length > 0" class="mb-6">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">สรุปรวม</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <div class="text-2xl font-bold text-blue-600">{{ totalStats.games }}</div>
+          <div class="text-sm text-gray-600">หวยที่คิด</div>
+        </div>
+        <div class="bg-green-50 p-4 rounded-lg">
+          <div class="text-2xl font-bold text-green-600">{{ totalStats.wins }}</div>
+          <div class="text-sm text-gray-600">ถูกทั้งหมด</div>
+        </div>
+        <div class="bg-blue-50 p-4 rounded-lg">
+          <div class="text-2xl font-bold text-black-600">{{ totalStats.wins + totalStats.losses }}</div>
+          <div class="text-sm text-gray-600">ผลทั้งหมด</div>
+        </div>
+        <div class="bg-purple-50 p-4 rounded-lg">
+          <div class="text-2xl font-bold" :class="getNetClass(totalStats.netAmount)">{{ formatCurrency(totalStats.netAmount) }}</div>
+          <div class="text-sm text-gray-600">ผลรวมสุทธิ</div>
+        </div>
       </div>
     </div>
     
@@ -201,6 +274,7 @@ const emit = defineEmits<{
 const matchMethod = ref('OR')
 const targetDigits = ref<string[]>([])
 const selectedGames = ref<{ game: Game, calculate: boolean }[]>([])
+const betAmount = ref(10)
 
 // Profile UI state
 const showSaveAsNewForm = ref(false)
@@ -255,8 +329,39 @@ const totalResults = computed(() => {
     .length
 })
 
-// Game statistics for table
+// Calculate how many numbers to bet on based on method and digits
+const getBetNumbersCount = () => {
+  if (targetDigits.value.length === 0) return 0
+  
+  if (matchMethod.value === 'OR') {
+    // OR: Bet on every number that has ANY of the selected digits
+    const digitSet = new Set(targetDigits.value)
+    let count = 0
+    
+    for (let i = 0; i <= 999; i++) {
+      const numStr = i.toString().padStart(3, '0')
+      const hasAnyDigit = numStr.split('').some(d => digitSet.has(d))
+      if (hasAnyDigit) count++
+    }
+    return count
+  } else {
+    // AND: Bet on every number that has ALL of the selected digits
+    const digits = targetDigits.value
+    let count = 0
+    
+    for (let i = 0; i <= 999; i++) {
+      const numStr = i.toString().padStart(3, '0')
+      const hasAllDigits = digits.every(digit => numStr.includes(digit))
+      if (hasAllDigits) count++
+    }
+    return count
+  }
+}
+
+// Game statistics for table with financial calculations
 const gameStats = computed(() => {
+  const betNumbersCount = getBetNumbersCount()
+  
   return selectedGames.value.map(gameData => {
     const gameResults = props.allResults.filter(r => 
       r.game_id === gameData.game.id && r.result_3up && r.status === 'completed'
@@ -266,12 +371,80 @@ const gameStats = computed(() => {
       ? gameResults.filter(r => checkMatch(r.result_3up!)).length
       : 0
     
+    // Financial calculations based on actual betting numbers
+    const winAmount = matches * betAmount.value * 1000 // 1000x payout per winning number
+    const lossAmount = gameResults.length * betAmount.value * betNumbersCount // Cost per draw = bet × numbers bet on
+    const netAmount = winAmount - lossAmount
+    
     return {
       ...gameData,
       totalResults: gameResults.length,
-      matches
+      matches,
+      winAmount,
+      lossAmount,
+      netAmount,
+      betNumbersCount
     }
   })
+})
+
+// Monthly statistics
+const monthlyStats = computed(() => {
+  if (selectedGames.value.length === 0 || targetDigits.value.length === 0) return []
+  
+  const monthlyData: { [month: string]: { wins: number, losses: number, winAmount: number, lossAmount: number } } = {}
+  
+  selectedGames.value.filter(g => g.calculate).forEach(gameData => {
+    const gameResults = props.allResults.filter(r => 
+      r.game_id === gameData.game.id && r.result_3up && r.status === 'completed'
+    )
+    
+    gameResults.forEach(result => {
+      const month = result.result_date.substring(0, 7) // YYYY-MM
+      
+      if (!monthlyData[month]) {
+        monthlyData[month] = { wins: 0, losses: 0, winAmount: 0, lossAmount: 0 }
+      }
+      
+      const isMatch = checkMatch(result.result_3up!)
+      if (isMatch) {
+        monthlyData[month].wins += 1
+        monthlyData[month].winAmount += betAmount.value * 1000
+      } else {
+        monthlyData[month].losses += 1
+      }
+      monthlyData[month].lossAmount += betAmount.value * getBetNumbersCount()
+    })
+  })
+  
+  return Object.entries(monthlyData)
+    .map(([month, data]) => ({
+      month,
+      wins: data.wins,
+      losses: data.losses,
+      winAmount: data.winAmount,
+      lossAmount: data.lossAmount,
+      netAmount: data.winAmount - data.lossAmount
+    }))
+    .sort((a, b) => a.month.localeCompare(b.month))
+})
+
+// Total statistics
+const totalStats = computed(() => {
+  const calculatedGames = selectedGames.value.filter(g => g.calculate)
+  const totalWins = calculatedGames.reduce((sum, g) => sum + (gameStats.value.find(gs => gs.game.id === g.game.id)?.matches || 0), 0)
+  const totalResults = calculatedGames.reduce((sum, g) => sum + (gameStats.value.find(gs => gs.game.id === g.game.id)?.totalResults || 0), 0)
+  const totalWinAmount = calculatedGames.reduce((sum, g) => sum + (gameStats.value.find(gs => gs.game.id === g.game.id)?.winAmount || 0), 0)
+  const totalLossAmount = calculatedGames.reduce((sum, g) => sum + (gameStats.value.find(gs => gs.game.id === g.game.id)?.lossAmount || 0), 0)
+  
+  return {
+    games: calculatedGames.length,
+    wins: totalWins,
+    losses: totalResults - totalWins,
+    winAmount: totalWinAmount,
+    lossAmount: totalLossAmount,
+    netAmount: totalWinAmount - totalLossAmount
+  }
 })
 
 // Game management event handlers
@@ -429,7 +602,8 @@ const saveCurrentProfile = async () => {
     profile_name: currentProfile.profile_name,
     match_method: matchMethod.value,
     target_digits: targetDigits.value,
-    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
+    bet_amount: betAmount.value
   }
   
   const success = await saveCurrentProfileComposable([], [], profileData, 'target_number')
@@ -444,7 +618,8 @@ const saveAsNewProfile = async () => {
   const profileData = {
     match_method: matchMethod.value,
     target_digits: targetDigits.value,
-    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
+    bet_amount: betAmount.value
   }
   const success = await saveAsNewProfileComposable(newProfileName.value, [], [], profileData, 'target_number')
   if (success) {
@@ -465,6 +640,7 @@ watch(selectedProfileId, (newProfileId) => {
     matchMethod.value = 'OR'
     targetDigits.value = []
     selectedGames.value = []
+    betAmount.value = 10
     clearProfile()
   }
 })
@@ -486,6 +662,8 @@ const loadProfile = async () => {
   const targetData = (profile as any).game_pattern_bets || {}
   console.log('Target data:', targetData)
   
+  targetData.bet_amount = profile.bet_amount || 10 // Default to 10 if not set
+
   // Load all data at once to avoid multiple watch triggers
   if (targetData.match_method) {
     matchMethod.value = targetData.match_method
@@ -506,12 +684,22 @@ const loadProfile = async () => {
       .filter(Boolean)
     console.log('Loaded selected_games:', selectedGames.value)
   }
+
+  
+  if (targetData.bet_amount !== undefined && targetData.bet_amount !== null) {
+    betAmount.value = targetData.bet_amount
+    console.log('Loaded bet_amount:', targetData.bet_amount)
+  } else {
+    betAmount.value = 10 // Default value
+    console.log('Using default bet_amount: 10')
+  }
   
   // Store loaded state for TargetNumber
   loadedProfileState.value = {
     match_method: matchMethod.value,
     target_digits: [...targetDigits.value],
-    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+    selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
+    bet_amount: betAmount.value
   }
   hasUnsavedChanges.value = false
   
@@ -520,20 +708,44 @@ const loadProfile = async () => {
   isLoadingProfile.value = false
 }
 
+// Helper functions
+const formatCurrency = (amount: number): string => {
+  return amount.toLocaleString()
+}
+
+const getNetClass = (amount: number): string => {
+  if (amount > 0) return 'text-green-600'
+  if (amount < 0) return 'text-red-600'
+  return 'text-gray-600'
+}
+
+const formatMonth = (month: string) => {
+  const [year, monthNum] = month.split('-')
+  const monthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.']
+  return `${monthNames[parseInt(monthNum) - 1]} ${year}`
+}
+
+const getWinRate = (wins: number, losses: number) => {
+  const total = wins + losses
+  return total > 0 ? Math.round((wins / total) * 100) : 0
+}
+
 // Track unsaved changes for TargetNumber
-watch([matchMethod, targetDigits, selectedGames], () => {
+watch([matchMethod, targetDigits, selectedGames, betAmount], () => {
   if (selectedProfileId.value && loadedProfileState.value) {
     const current = {
       match_method: matchMethod.value,
       target_digits: [...targetDigits.value],
-      selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
+      selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
+      bet_amount: betAmount.value
     }
     
     const loaded = loadedProfileState.value
     const hasChanges = (
       current.match_method !== loaded.match_method ||
       JSON.stringify(current.target_digits) !== JSON.stringify(loaded.target_digits) ||
-      JSON.stringify(current.selected_games) !== JSON.stringify(loaded.selected_games)
+      JSON.stringify(current.selected_games) !== JSON.stringify(loaded.selected_games) ||
+      current.bet_amount !== loaded.bet_amount
     )
     
     hasUnsavedChanges.value = hasChanges
