@@ -407,9 +407,14 @@ const checkMatch = (result: string) => {
   }
 }
 
-// Watch for match method changes - clear digits
+// Flag to prevent clearing digits during profile load
+const isLoadingProfile = ref(false)
+
+// Watch for match method changes - clear digits (but not during profile load)
 watch(matchMethod, () => {
-  targetDigits.value = []
+  if (!isLoadingProfile.value) {
+    targetDigits.value = []
+  }
   cellCache.clear()
 })
 
@@ -472,15 +477,16 @@ const loadProfile = async () => {
   
   console.log('Loading profile:', profile) // Debug log
   
-  // Reset to defaults first
-  matchMethod.value = 'OR'
-  targetDigits.value = []
-  selectedGames.value = []
+  // Set loading flag to prevent digit clearing
+  isLoadingProfile.value = true
+  
+  await nextTick() // Ensure flag is set before any changes
   
   // Load TargetNumber data from game_pattern_bets field
   const targetData = (profile as any).game_pattern_bets || {}
   console.log('Target data:', targetData)
   
+  // Load all data at once to avoid multiple watch triggers
   if (targetData.match_method) {
     matchMethod.value = targetData.match_method
     console.log('Loaded match_method:', targetData.match_method)
@@ -508,6 +514,10 @@ const loadProfile = async () => {
     selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate }))
   }
   hasUnsavedChanges.value = false
+  
+  // Clear loading flag after next tick
+  await nextTick()
+  isLoadingProfile.value = false
 }
 
 // Track unsaved changes for TargetNumber
