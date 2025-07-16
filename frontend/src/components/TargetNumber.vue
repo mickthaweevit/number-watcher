@@ -63,6 +63,23 @@
         </label>
       </div>
       
+      <!-- Bet Numbers -->
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-sm font-medium text-gray-700">จำนวนตัวเลขทั้งหมด</span>
+        <span class="font-medium text-orange-600">{{ betNumbersData.count }}</span>
+        <span class="text-sm text-gray-600">เลข</span>
+        <button 
+          v-if="betNumbersData.count > 0"
+          @click="showBetNumbersDialog = true" 
+          class="ml-2 p-1 text-gray-500 hover:text-blue-600 transition-colors"
+          title="ดูตัวเลขที่เดิมพัน"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z" />
+          </svg>
+        </button>
+      </div>
+
       <!-- Bet Amount -->
       <div class="flex items-center gap-3">
         <label class="text-sm font-medium text-gray-700">จำนวนเงินเดิมพัน:</label>
@@ -245,6 +262,27 @@
         </form>
       </div>
     </div>
+    
+    <!-- Bet Numbers Dialog -->
+    <div v-if="showBetNumbersDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">ตัวเลขที่เดิมพัน ({{ betNumbersData.count }} ตัว)</h3>
+          <button @click="showBetNumbersDialog = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+            </svg>
+          </button>
+        </div>
+        <div class="overflow-y-auto max-h-[80vh]">
+          <div class="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-10 gap-2 text-lg">
+            <span v-for="number in betNumbersData.numbers" :key="number" class="px-2 py-1 bg-gray-100 rounded text-center font-mono">
+              {{ number }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -279,6 +317,7 @@ const betAmount = ref(10)
 // Profile UI state
 const showSaveAsNewForm = ref(false)
 const newProfileName = ref('')
+const showBetNumbersDialog = ref(false)
 
 // Use profile management composable
 const {
@@ -293,7 +332,6 @@ const {
   saveAsNewProfile: saveAsNewProfileComposable,
   deleteProfile: deleteProfileComposable,
   updateLoadedState,
-  checkForUnsavedChanges,
   clearProfile,
   loadedProfileState
 } = useProfileManagement()
@@ -309,58 +347,39 @@ const availableGames = computed(() => {
   )
 })
 
-// Match counting
-const matchCount = computed(() => {
-  if (targetDigits.value.length === 0 || selectedGames.value.length === 0) return 0
-  
-  const gameIds = selectedGames.value.map(g => g.game.id)
-  return props.allResults
-    .filter(r => gameIds.includes(r.game_id) && r.result_3up && r.status === 'completed')
-    .filter(r => checkMatch(r.result_3up!))
-    .length
-})
 
-const totalResults = computed(() => {
-  if (selectedGames.value.length === 0) return 0
-  
-  const gameIds = selectedGames.value.map(g => g.game.id)
-  return props.allResults
-    .filter(r => gameIds.includes(r.game_id) && r.result_3up && r.status === 'completed')
-    .length
-})
 
 // Calculate how many numbers to bet on based on method and digits
-const getBetNumbersCount = () => {
-  if (targetDigits.value.length === 0) return 0
+const betNumbersData = computed(() => {
+  if (targetDigits.value.length === 0) return { count: 0, numbers: [] }
+  
+  const numbers: string[] = []
   
   if (matchMethod.value === 'OR') {
     // OR: Bet on every number that has ANY of the selected digits
     const digitSet = new Set(targetDigits.value)
-    let count = 0
     
     for (let i = 0; i <= 999; i++) {
       const numStr = i.toString().padStart(3, '0')
       const hasAnyDigit = numStr.split('').some(d => digitSet.has(d))
-      if (hasAnyDigit) count++
+      if (hasAnyDigit) numbers.push(numStr)
     }
-    return count
   } else {
     // AND: Bet on every number that has ALL of the selected digits
     const digits = targetDigits.value
-    let count = 0
     
     for (let i = 0; i <= 999; i++) {
       const numStr = i.toString().padStart(3, '0')
       const hasAllDigits = digits.every(digit => numStr.includes(digit))
-      if (hasAllDigits) count++
+      if (hasAllDigits) numbers.push(numStr)
     }
-    return count
   }
-}
+  
+  return { count: numbers.length, numbers }
+})
 
 // Game statistics for table with financial calculations
 const gameStats = computed(() => {
-  const betNumbersCount = getBetNumbersCount()
   
   return selectedGames.value.map(gameData => {
     const gameResults = props.allResults.filter(r => 
@@ -373,7 +392,7 @@ const gameStats = computed(() => {
     
     // Financial calculations based on actual betting numbers
     const winAmount = matches * betAmount.value * 1000 // 1000x payout per winning number
-    const lossAmount = gameResults.length * betAmount.value * betNumbersCount // Cost per draw = bet × numbers bet on
+    const lossAmount = gameResults.length * betAmount.value * betNumbersData.value.count // Cost per draw = bet × numbers bet on
     const netAmount = winAmount - lossAmount
     
     return {
@@ -383,7 +402,7 @@ const gameStats = computed(() => {
       winAmount,
       lossAmount,
       netAmount,
-      betNumbersCount
+      betNumbersCount: betNumbersData.value.count
     }
   })
 })
@@ -413,7 +432,7 @@ const monthlyStats = computed(() => {
       } else {
         monthlyData[month].losses += 1
       }
-      monthlyData[month].lossAmount += betAmount.value * getBetNumbersCount()
+      monthlyData[month].lossAmount += betAmount.value * betNumbersData.value.count
     })
   })
   
