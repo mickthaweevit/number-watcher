@@ -18,11 +18,13 @@ A comprehensive Thai lottery number analysis and tracking system with real-time 
 - **Buddhist Calendar Support** (พ.ศ. format)
 
 ### 🎲 Advanced Pattern Analysis
-- **Per-Game Pattern Betting** system:
-  - เบิ้ลหน้า (First Two Same) - 90 numbers
-  - หาม (First & Last Same) - 90 numbers
-  - เบิ้ลหลัง (Last Two Same) - 90 numbers
-- **Individual Bet Amounts** per pattern per game
+- **Dual Dashboard System**:
+  - **NHLDashboard**: Per-game pattern betting (เบิ้ลหน้า, หาม, เบิ้ลหลัง)
+  - **TargetNumber**: Digit-based analysis with OR/AND matching
+- **Pattern Betting Features**:
+  - Individual bet amounts per pattern per game
+  - 90 numbers per pattern (เบิ้ลหน้า, หาม, เบิ้ลหลัง)
+  - "ตัดเบิ้ล" (No Duplicate) filtering option
 - **Real-time Financial Calculations**:
   - Win/Loss tracking per pattern
   - Net profit/loss calculations
@@ -142,19 +144,33 @@ curl -X POST "http://localhost:8000/import-sample-data-v2"
 1. **Login** with your credentials or register with invite code
 2. **Select API Source** (V1 or V2) for data import
 3. **Add Games** to your analysis dashboard
-4. **Configure Per-Game Betting**:
-   - Set individual bet amounts for each pattern per game
-   - เบิ้ลหน้า: 0-999 baht per game
-   - หาม: 0-999 baht per game  
-   - เบิ้ลหลัง: 0-999 baht per game
-5. **Save Profile** to preserve your betting configuration
+4. **Choose Dashboard Type**:
+   - **NHLDashboard**: Pattern-based betting (เบิ้ลหน้า, หาม, เบิ้ลหลัง)
+   - **TargetNumber**: Digit-based analysis with OR/AND matching
+5. **Configure Betting Strategy**:
+   - **NHLDashboard**: Set individual bet amounts per pattern per game
+   - **TargetNumber**: Select digits, match method, and global bet amount
+   - **"ตัดเบิ้ล"**: Optional duplicate digit filtering
+6. **Save Profile** to preserve your betting configuration
 
 ### Pattern Analysis System
+
+#### NHLDashboard Patterns
 - **เบิ้ลหน้า**: Numbers like 113, 225, 882 (first two digits same) - 90 possible numbers
 - **หาม**: Numbers like 040, 747, 202 (first and last digits same) - 90 possible numbers
 - **เบิ้ลหลัง**: Numbers like 200, 877, 399 (last two digits same) - 90 possible numbers
 - **Prize Structure**: 1000x bet amount per winning number
 - **Cost Structure**: 90 × bet amount per draw (covers all numbers in pattern)
+
+#### TargetNumber Dashboard
+- **OR Method**: Bet on numbers containing ANY selected digits
+- **AND Method**: Bet on numbers containing ALL selected digits (max 3)
+- **"ตัดเบิ้ล" Option**: Filter out numbers with duplicate digits
+- **Dynamic Betting**: Cost varies based on method and digit selection
+- **Examples**:
+  - OR (digits 1,2): Bets on 001, 010, 012, 100, 102, 120, 121, 200, 201, 210, 212, etc.
+  - AND (digits 1,2): Bets on 012, 021, 102, 120, 201, 210, etc.
+  - With "ตัดเบิ้ล": Excludes 100, 011, 122, 211, etc.
 
 ### Reading Results
 - **Pattern Highlighting**: Visual indicators for different patterns (display only)
@@ -243,14 +259,35 @@ This project is licensed under the MIT License.
 ## 📊 Data Structure
 
 ### Profile Schema
+
+#### NHLDashboard Profile
 ```json
 {
-  "profile_name": "My Strategy",
+  "profile_name": "My NHL Strategy",
+  "dashboard_type": "nhl_dashboard",
   "selected_patterns": ["first_two", "last_two"],
   "selected_game_ids": [1, 2, 3],
   "game_pattern_bets": {
     "1": {"first_two": 10, "first_third": 0, "last_two": 20},
     "2": {"first_two": 15, "first_third": 5, "last_two": 0}
+  }
+}
+```
+
+#### TargetNumber Profile
+```json
+{
+  "profile_name": "My Target Strategy",
+  "dashboard_type": "target_number",
+  "game_pattern_bets": {
+    "match_method": "OR",
+    "target_digits": ["1", "2", "7"],
+    "no_duplicate": true,
+    "bet_amount": 10,
+    "selected_games": [
+      {"gameId": 1, "calculate": true},
+      {"gameId": 2, "calculate": false}
+    ]
   }
 }
 ```

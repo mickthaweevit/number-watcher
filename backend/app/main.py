@@ -782,7 +782,9 @@ async def create_profile(profile_data: DashboardProfileCreate, current_user: Use
         extra_data = {
             'match_method': profile_dict.get('match_method'),
             'target_digits': profile_dict.get('target_digits'),
-            'selected_games': profile_dict.get('selected_games')
+            'selected_games': profile_dict.get('selected_games'),
+            'bet_amount': profile_dict.get('bet_amount'),
+            'no_duplicate': profile_dict.get('no_duplicate')
         }
     
     db_profile = DashboardProfile(
@@ -826,7 +828,9 @@ async def update_profile(profile_id: int, profile_data: DashboardProfileCreate, 
         profile.game_pattern_bets = {
             'match_method': profile_dict.get('match_method'),
             'target_digits': profile_dict.get('target_digits'),
-            'selected_games': profile_dict.get('selected_games')
+            'selected_games': profile_dict.get('selected_games'),
+            'bet_amount': profile_dict.get('bet_amount'),
+            'no_duplicate': profile_dict.get('no_duplicate')
         }
     else:
         profile.game_pattern_bets = profile_data.game_pattern_bets

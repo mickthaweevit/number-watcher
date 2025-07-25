@@ -37,7 +37,7 @@
       <!-- Match Method Selection -->
       <div class="mb-4">
         <label class="text-sm font-medium text-gray-700 mb-2 block">วิธีการตรวจสอบ:</label>
-        <div class="flex gap-4">
+        <div class="flex flex-wrap gap-4">
           <label class="flex items-center space-x-2 cursor-pointer">
             <input v-model="matchMethod" value="OR" type="radio" class="rounded">
             <span>OR (มีเลขใดเลขหนึ่ง)</span>
@@ -45,6 +45,10 @@
           <label class="flex items-center space-x-2 cursor-pointer">
             <input v-model="matchMethod" value="AND" type="radio" class="rounded">
             <span>AND (มีเลขทุกตัว สูงสุด 3 ตัว)</span>
+          </label>
+          <label class="flex items-center space-x-2 cursor-pointer">
+            <input v-model="noDuplicate" type="checkbox" class="rounded">
+            <span>ตัดเบิ้ล (ไม่มีเลขซ้ำ)</span>
           </label>
         </div>
       </div>
@@ -313,6 +317,7 @@ const matchMethod = ref('OR')
 const targetDigits = ref<string[]>([])
 const selectedGames = ref<{ game: Game, calculate: boolean }[]>([])
 const betAmount = ref(10)
+const noDuplicate = ref(false)
 
 // Profile UI state
 const showSaveAsNewForm = ref(false)
@@ -349,11 +354,17 @@ const availableGames = computed(() => {
 
 
 
+// Helper function to check if number has duplicate digits
+const hasDuplicateDigits = (numStr: string) => {
+  const digits = numStr.split('')
+  return new Set(digits).size !== digits.length
+}
+
 // Calculate how many numbers to bet on based on method and digits
 const betNumbersData = computed(() => {
   if (targetDigits.value.length === 0) return { count: 0, numbers: [] }
   
-  const numbers: string[] = []
+  let numbers: string[] = []
   
   if (matchMethod.value === 'OR') {
     // OR: Bet on every number that has ANY of the selected digits
@@ -373,6 +384,11 @@ const betNumbersData = computed(() => {
       const hasAllDigits = digits.every(digit => numStr.includes(digit))
       if (hasAllDigits) numbers.push(numStr)
     }
+  }
+  
+  // Filter out duplicates if noDuplicate is checked
+  if (noDuplicate.value) {
+    numbers = numbers.filter(numStr => !hasDuplicateDigits(numStr))
   }
   
   return { count: numbers.length, numbers }
@@ -622,7 +638,8 @@ const saveCurrentProfile = async () => {
     match_method: matchMethod.value,
     target_digits: targetDigits.value,
     selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
-    bet_amount: betAmount.value
+    bet_amount: betAmount.value,
+    no_duplicate: noDuplicate.value
   }
   
   const success = await saveCurrentProfileComposable([], [], profileData, 'target_number')
@@ -638,7 +655,8 @@ const saveAsNewProfile = async () => {
     match_method: matchMethod.value,
     target_digits: targetDigits.value,
     selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
-    bet_amount: betAmount.value
+    bet_amount: betAmount.value,
+    no_duplicate: noDuplicate.value
   }
   const success = await saveAsNewProfileComposable(newProfileName.value, [], [], profileData, 'target_number')
   if (success) {
@@ -660,6 +678,7 @@ watch(selectedProfileId, (newProfileId) => {
     targetDigits.value = []
     selectedGames.value = []
     betAmount.value = 10
+    noDuplicate.value = false
     clearProfile()
   }
 })
@@ -713,12 +732,21 @@ const loadProfile = async () => {
     console.log('Using default bet_amount: 10')
   }
   
+  if (targetData.no_duplicate !== undefined) {
+    noDuplicate.value = targetData.no_duplicate
+    console.log('Loaded no_duplicate:', targetData.no_duplicate)
+  } else {
+    noDuplicate.value = false
+    console.log('Using default no_duplicate: false')
+  }
+  
   // Store loaded state for TargetNumber
   loadedProfileState.value = {
     match_method: matchMethod.value,
     target_digits: [...targetDigits.value],
     selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
-    bet_amount: betAmount.value
+    bet_amount: betAmount.value,
+    no_duplicate: noDuplicate.value
   }
   hasUnsavedChanges.value = false
   
@@ -750,13 +778,14 @@ const getWinRate = (wins: number, losses: number) => {
 }
 
 // Track unsaved changes for TargetNumber
-watch([matchMethod, targetDigits, selectedGames, betAmount], () => {
+watch([matchMethod, targetDigits, selectedGames, betAmount, noDuplicate], () => {
   if (selectedProfileId.value && loadedProfileState.value) {
     const current = {
       match_method: matchMethod.value,
       target_digits: [...targetDigits.value],
       selected_games: selectedGames.value.map(g => ({ gameId: g.game.id, calculate: g.calculate })),
-      bet_amount: betAmount.value
+      bet_amount: betAmount.value,
+      no_duplicate: noDuplicate.value
     }
     
     const loaded = loadedProfileState.value
@@ -764,7 +793,8 @@ watch([matchMethod, targetDigits, selectedGames, betAmount], () => {
       current.match_method !== loaded.match_method ||
       JSON.stringify(current.target_digits) !== JSON.stringify(loaded.target_digits) ||
       JSON.stringify(current.selected_games) !== JSON.stringify(loaded.selected_games) ||
-      current.bet_amount !== loaded.bet_amount
+      current.bet_amount !== loaded.bet_amount ||
+      current.no_duplicate !== loaded.no_duplicate
     )
     
     hasUnsavedChanges.value = hasChanges
