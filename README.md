@@ -36,6 +36,7 @@ A comprehensive Thai lottery number analysis and tracking system with real-time 
 - **Pattern-specific Statistics** showing wins/losses per pattern
 - **Aggregated Summary Statistics** across all games
 - **Monthly Performance Tracking** with profit/loss trends
+- **Bulk Game Management** with search filter and multi-select
 - **Drag & Drop Game Reordering** via dedicated dialog
 
 ### 👤 Advanced Profile System
@@ -44,6 +45,13 @@ A comprehensive Thai lottery number analysis and tracking system with real-time 
 - **Profile Import/Export** with pattern bet preservation
 - **Source-aware Profiles** (V1/V2 API compatibility)
 - **Browser Navigation Guards** preventing data loss
+
+### 🎮 Enhanced Game Management
+- **Bulk Game Selection** via modal with table interface
+- **Search Filter** for quick game discovery
+- **Select All/None** functionality for efficient selection
+- **Real-time Game Counter** showing selected games
+- **Optimized Performance** with single bulk operation
 
 ## 🛠️ Tech Stack
 

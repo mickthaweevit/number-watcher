@@ -1,7 +1,7 @@
 <template>
   <div class="mb-6 flex justify-between">
     <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
-    <div class="flex gap-3 mb-4">
+    <div class="flex gap-3">
       <button
         @click="showBulkAddDialog = true"
         :disabled="availableGames.length === 0"
