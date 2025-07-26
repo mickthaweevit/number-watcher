@@ -557,7 +557,7 @@ const getResult = (gameId: number, date: string) => {
 }
 
 const getCellData = (gameId: number, date: string) => {
-  const key = `${gameId}-${date}-${targetDigits.value.join(',')}`
+  const key = `${gameId}-${date}-${targetDigits.value.join(',')}-${matchMethod.value}-${noDuplicate.value}`
   
   if (!cellCache.has(key)) {
     const result = getResult(gameId, date)
@@ -607,6 +607,11 @@ const handleCalculateChange = () => {
 // Match checking function
 const checkMatch = (result: string) => {
   if (targetDigits.value.length === 0) return false
+  
+  // Check if number has duplicates and noDuplicate is enabled
+  if (noDuplicate.value && hasDuplicateDigits(result)) {
+    return false
+  }
   
   if (matchMethod.value === 'OR') {
     return targetDigits.value.some(digit => result.includes(digit))
@@ -801,9 +806,9 @@ watch([matchMethod, targetDigits, selectedGames, betAmount, noDuplicate], () => 
   }
 }, { deep: true })
 
-// Watch for target digits changes and clear cache
-watch(targetDigits, () => {
-  // Clear cell cache when target digits change
+// Watch for target digits and settings changes and clear cache
+watch([targetDigits, matchMethod, noDuplicate], () => {
+  // Clear cell cache when target digits or settings change
   cellCache.clear()
 }, { deep: true })
 
