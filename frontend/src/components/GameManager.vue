@@ -1,19 +1,10 @@
 <template>
-  <div class="mb-6">
+  <div class="mb-6 flex justify-between">
     <h3 class="text-lg font-semibold text-gray-800 mb-3">จัดการหวย</h3>
     <div class="flex gap-3 mb-4">
-      <select
-        v-model="selectedGameId"
-        class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option value="">เลือกหวยที่จะเพิ่ม</option>
-        <option v-for="game in availableGames" :key="game.id" :value="game.id">
-          {{ game.game_name }}
-        </option>
-      </select>
       <button
-        @click="handleAddGame"
-        :disabled="!selectedGameId"
+        @click="showBulkAddDialog = true"
+        :disabled="availableGames.length === 0"
         class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         เพิ่มหวย
@@ -25,6 +16,70 @@
       >
         จัดเรียง
       </button>
+    </div>
+    
+    <!-- Bulk Add Games Modal -->
+    <div v-if="showBulkAddDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white p-6 rounded-lg max-w-4xl w-full mx-4 max-h-[80vh] overflow-hidden">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold">เลือกหวยที่จะเพิ่ม</h3>
+          <button @click="showBulkAddDialog = false" class="text-gray-500 hover:text-gray-700">
+            <svg class="w-6 h-6" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+            </svg>
+          </button>
+        </div>
+        <div class="mb-4">
+          <input 
+            v-model="searchFilter" 
+            type="text" 
+            placeholder="ค้นหาชื่อหวย..."
+            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+        <div class="overflow-y-auto max-h-[60vh] mb-4">
+          <table class="min-w-full bg-white border border-gray-200 rounded">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-12">
+                  <input 
+                    type="checkbox" 
+                    @change="toggleSelectAll" 
+                    :checked="selectedGameIds.length === filteredGames.length && filteredGames.length > 0"
+                    class="rounded"
+                  >
+                </th>
+                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">ชื่อหวย</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr v-for="game in filteredGames" :key="game.id" class="hover:bg-gray-100">
+                <td class="px-3 py-2">
+                  <input 
+                    v-model="selectedGameIds" 
+                    :value="game.id" 
+                    type="checkbox" 
+                    class="rounded"
+                  >
+                </td>
+                <td class="px-3 py-2 text-sm text-gray-900">{{ game.game_name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex gap-3">
+          <button 
+            @click="handleBulkAddGames" 
+            :disabled="selectedGameIds.length === 0"
+            class="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:bg-gray-400"
+          >
+            เพิ่มหวย ({{ selectedGameIds.length }})
+          </button>
+          <button @click="showBulkAddDialog = false" class="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
+            ยกเลิก
+          </button>
+        </div>
+      </div>
     </div>
     
     <!-- Reorder Games Modal -->
@@ -62,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import type { Game } from '../types'
 import type { GameAnalysis } from '../composables/useGameAnalysis'
 
@@ -73,20 +128,37 @@ interface Props {
 
 interface Emits {
   (e: 'addGame', gameId: number): void
+  (e: 'addMultipleGames', gameIds: number[]): void
   (e: 'reorderGames', games: GameAnalysis[]): void
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const selectedGameId = ref('')
+const showBulkAddDialog = ref(false)
+const selectedGameIds = ref<number[]>([])
+const searchFilter = ref('')
 const showReorderDialog = ref(false)
 const reorderGames = ref<GameAnalysis[]>([])
 
-const handleAddGame = () => {
-  if (selectedGameId.value) {
-    emit('addGame', parseInt(selectedGameId.value))
-    selectedGameId.value = ''
+const handleBulkAddGames = () => {
+  emit('addMultipleGames', [...selectedGameIds.value])
+  selectedGameIds.value = []
+  showBulkAddDialog.value = false
+}
+
+const filteredGames = computed(() => {
+  if (!searchFilter.value) return props.availableGames
+  return props.availableGames.filter(game => 
+    game.game_name.toLowerCase().includes(searchFilter.value.toLowerCase())
+  )
+})
+
+const toggleSelectAll = () => {
+  if (selectedGameIds.value.length === filteredGames.value.length) {
+    selectedGameIds.value = []
+  } else {
+    selectedGameIds.value = filteredGames.value.map(game => game.id)
   }
 }
 
