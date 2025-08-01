@@ -35,6 +35,7 @@
       :availableGames="availableGames" 
       :selectedGames="selectedGames"
       @addGame="handleAddGame"
+      @addMultipleGames="handleAddMultipleGames"
       @reorderGames="handleReorderGames"
     />
       
@@ -453,6 +454,24 @@ const handleAddGame = (gameId: number) => {
     const analysis = analyzeGameOptimized(game, gameResults)
     
     selectedGames.value.push(analysis)
+    emit('gameOperationLoading', false)
+  }, 0)
+}
+
+const handleAddMultipleGames = (gameIds: number[]) => {
+  if (!props.gameMap || !props.validResultsByGame) return
+  
+  emit('gameOperationLoading', true)
+  
+  setTimeout(() => {
+    gameIds.forEach(gameId => {
+      const game = props.gameMap!.get(gameId)
+      if (game) {
+        const gameResults = props.validResultsByGame!.get(gameId) || []
+        const analysis = analyzeGameOptimized(game, gameResults)
+        selectedGames.value.push(analysis)
+      }
+    })
     emit('gameOperationLoading', false)
   }, 0)
 }
