@@ -27,7 +27,7 @@ from .services.external_api_v2 import ExternalAPIServiceV2
 from .services.scheduler import lottery_scheduler
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create database tables
 from .database import Base
@@ -192,15 +192,25 @@ async def get_games(
 @app.get("/results", response_model=List[ResultSchema])
 async def get_results(
     source: str = Query("old", description="API source: old or new"),
+    months: int = Query(4, description="Number of months to include; set 0 for all"),
     db: Session = Depends(get_db)
 ):
-    """Get results with source selection"""
+    """Get results with source selection and optional months filter (default 4 months). Set months=0 to return all results."""
     try:
+        # Compute cutoff date if months filter is enabled (approximate months as 30 days each)
+        cutoff_date = None
+        if months and months > 0:
+            cutoff = datetime.now() - timedelta(days=months * 30)
+            cutoff_date = cutoff.date()
+
         if source == "new":
             # Query new tables and map to old format
             try:
-                results_v2 = db.query(ResultV2).join(GameV2).all()
-                
+                q = db.query(ResultV2).join(GameV2)
+                if cutoff_date:
+                    q = q.filter(ResultV2.result_date >= cutoff_date)
+                results_v2 = q.all()
+
                 # Map to old format
                 mapped_results = []
                 for r in results_v2:
@@ -233,13 +243,19 @@ async def get_results(
         else:
             # Original old format query
             from sqlalchemy.orm import joinedload
-            results = db.query(Result).options(joinedload(Result.game)).all()
+            q = db.query(Result).options(joinedload(Result.game))
+            if cutoff_date:
+                q = q.filter(Result.result_date >= cutoff_date)
+            results = q.all()
             return results
     except Exception as e:
         print(f"Error in get_results (optimized): {str(e)}")
         # Fallback to original query
         try:
-            results = db.query(Result).join(Game).all()
+            q = db.query(Result)
+            if cutoff_date:
+                q = q.filter(Result.result_date >= cutoff_date)
+            results = q.join(Game).all()
             return results
         except Exception as fallback_error:
             print(f"Fallback error: {str(fallback_error)}")
