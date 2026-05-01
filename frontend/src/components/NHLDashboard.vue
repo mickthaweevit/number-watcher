@@ -526,7 +526,7 @@ const deleteProfile = async () => {
 }
 
 const loadProfile = async () => {
-  if (!selectedProfileId.value || !props.gameMap || !props.validResultsByGame) return
+  if (!selectedProfileId.value || !props.gameMap || props.gameMap.size === 0 || !props.validResultsByGame) return
   
   cancelProfileLoad()
   const abortController = new AbortController()
@@ -714,6 +714,13 @@ watch(selectedProfileId, (newProfileId) => {
     betAmount.value = 10
     selectedPatterns.value = []
     clearProfile()
+  }
+})
+
+// Retry profile load when gameMap becomes available (handles race condition)
+watch(() => props.gameMap?.size, (newSize) => {
+  if (newSize && newSize > 0 && selectedProfileId.value && selectedGames.value.length === 0) {
+    loadProfile()
   }
 })
 
