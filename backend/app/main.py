@@ -569,21 +569,23 @@ async def import_backup(
             
             db.flush()  # Flush to get game IDs
             
+            # Build lookup: backup game id -> product_id -> DB game
+            backup_id_to_product_id = {g["id"]: g["product_id"] for g in backup_data["games"]}
+            db_games_by_product_id = {g.product_id: g for g in db.query(GameV2).all()}
+            
+            # Pre-fetch existing results for dedup
+            existing_results = {}
+            for r in db.query(ResultV2).all():
+                existing_results[(r.game_id, str(r.result_date), r.yk_round)] = True
+            
             # Import V2 results
             for result_data in backup_data["results"]:
-                # Find the game by product_id
-                game = db.query(GameV2).filter(GameV2.product_id.in_(
-                    [g["product_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
-                )).first()
+                product_id = backup_id_to_product_id.get(result_data["game_id"])
+                game = db_games_by_product_id.get(product_id) if product_id else None
                 
                 if game:
-                    existing_result = db.query(ResultV2).filter(
-                        ResultV2.game_id == game.id,
-                        ResultV2.result_date == result_data["result_date"],
-                        ResultV2.yk_round == result_data.get("yk_round", 1)
-                    ).first()
-                    
-                    if not existing_result:
+                    yk_round = result_data.get("yk_round", 1)
+                    if (game.id, result_data["result_date"], yk_round) not in existing_results:
                         new_result = ResultV2(
                             game_id=game.id,
                             period_id=result_data.get("period_id", ""),
@@ -592,7 +594,7 @@ async def import_backup(
                             award3=result_data.get("award3"),
                             result_date=result_data["result_date"],
                             status=result_data["status"],
-                            yk_round=result_data.get("yk_round", 1)
+                            yk_round=yk_round
                         )
                         db.add(new_result)
                         results_created += 1
@@ -611,20 +613,22 @@ async def import_backup(
             
             db.flush()  # Flush to get game IDs
             
+            # Build lookup: backup game id -> base_game_id -> DB game
+            backup_id_to_base_id = {g["id"]: g["base_game_id"] for g in backup_data["games"]}
+            db_games_by_base_id = {g.base_game_id: g for g in db.query(Game).all()}
+            
+            # Pre-fetch existing results for dedup
+            existing_results = {}
+            for r in db.query(Result).all():
+                existing_results[(r.game_id, str(r.result_date))] = True
+            
             # Import V1 results
             for result_data in backup_data["results"]:
-                # Find the game by base_game_id
-                game = db.query(Game).filter(Game.base_game_id.in_(
-                    [g["base_game_id"] for g in backup_data["games"] if g["id"] == result_data["game_id"]]
-                )).first()
+                base_game_id = backup_id_to_base_id.get(result_data["game_id"])
+                game = db_games_by_base_id.get(base_game_id) if base_game_id else None
                 
                 if game:
-                    existing_result = db.query(Result).filter(
-                        Result.game_id == game.id,
-                        Result.result_date == result_data["result_date"]
-                    ).first()
-                    
-                    if not existing_result:
+                    if (game.id, result_data["result_date"]) not in existing_results:
                         new_result = Result(
                             game_id=game.id,
                             full_game_code=result_data["full_game_code"],
