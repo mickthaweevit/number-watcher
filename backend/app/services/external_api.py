@@ -102,9 +102,15 @@ class ExternalAPIService:
                 games_created = 0
                 results_updated = 0
                 
+                # Pre-fetch all existing games for O(1) lookups
+                existing_games = {g.base_game_id: g for g in db.query(Game).all()}
+                # Pre-fetch existing results keyed by (game_id, result_date)
+                existing_results = {}
+                for r in db.query(Result).all():
+                    existing_results[(r.game_id, str(r.result_date))] = r
+                
                 for game_data in processed_games:
-                    # Check if game exists, if not create it
-                    game = db.query(Game).filter(Game.base_game_id == game_data['base_game_id']).first()
+                    game = existing_games.get(game_data['base_game_id'])
                     if not game:
                         game = Game(
                             base_game_id=game_data['base_game_id'],
@@ -112,13 +118,10 @@ class ExternalAPIService:
                         )
                         db.add(game)
                         db.flush()
+                        existing_games[game_data['base_game_id']] = game
                         games_created += 1
                     
-                    # Check if result exists for this game and date
-                    existing_result = db.query(Result).filter(
-                        Result.game_id == game.id,
-                        Result.result_date == game_data['result_date']
-                    ).first()
+                    existing_result = existing_results.get((game.id, game_data['result_date']))
                     
                     if existing_result:
                         # Update existing result

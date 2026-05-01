@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, DateTime, ForeignKey, Index, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from ..database import Base
@@ -19,3 +19,8 @@ class ResultV2(Base):
     
     # Relationship
     game = relationship("GameV2", back_populates="results")
+
+    __table_args__ = (
+        UniqueConstraint('game_id', 'result_date', 'yk_round', name='unique_game_date_round_v2'),
+        Index('idx_results_v2_game_date', 'game_id', 'result_date'),
+    )

@@ -79,9 +79,15 @@ class ExternalAPIServiceV2:
             games_created = 0
             results_created = 0
             
+            # Pre-fetch all existing V2 games for O(1) lookups
+            existing_games = {g.product_id: g for g in db.query(GameV2).all()}
+            # Pre-fetch existing V2 results keyed by (game_id, result_date, yk_round)
+            existing_results = {}
+            for r in db.query(ResultV2).all():
+                existing_results[(r.game_id, str(r.result_date), r.yk_round)] = r
+            
             for game_data in processed_games:
-                # Check if game exists
-                game = db.query(GameV2).filter(GameV2.product_id == game_data['product_id']).first()
+                game = existing_games.get(game_data['product_id'])
                 if not game:
                     game = GameV2(
                         product_id=game_data['product_id'],
@@ -90,14 +96,10 @@ class ExternalAPIServiceV2:
                     )
                     db.add(game)
                     db.flush()
+                    existing_games[game_data['product_id']] = game
                     games_created += 1
                 
-                # Check if result exists
-                existing_result = db.query(ResultV2).filter(
-                    ResultV2.game_id == game.id,
-                    ResultV2.result_date == game_data['result_date'],
-                    ResultV2.yk_round == game_data['yk_round']
-                ).first()
+                existing_result = existing_results.get((game.id, game_data['result_date'], game_data['yk_round']))
                 
                 if not existing_result:
                     new_result = ResultV2(

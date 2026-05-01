@@ -155,16 +155,16 @@ async def get_database_info():
 @app.get("/games", response_model=List[GameSchema])
 async def get_games(
     source: str = Query("old", description="API source: old or new"),
+    limit: int = Query(200, ge=1, le=1000, description="Max results to return"),
+    offset: int = Query(0, ge=0, description="Number of results to skip"),
     db: Session = Depends(get_db)
 ):
-    """Get games with source selection"""
+    """Get games with source selection and pagination"""
     try:
         if source == "new":
-            # Query new tables and map to old format
             try:
-                games_v2 = db.query(GameV2).filter(GameV2.is_active == True).all()
+                games_v2 = db.query(GameV2).filter(GameV2.is_active == True).limit(limit).offset(offset).all()
                 
-                # Map to old format
                 mapped_games = []
                 for g in games_v2:
                     game_obj = Game(
@@ -179,11 +179,9 @@ async def get_games(
                 return mapped_games
             except Exception as e:
                 print(f"Error querying new games: {str(e)}")
-                # Return empty list if tables don't exist or are empty
                 return []
         else:
-            # Original old format query
-            games = db.query(Game).filter(Game.is_active == True).all()
+            games = db.query(Game).filter(Game.is_active == True).limit(limit).offset(offset).all()
             return games
     except Exception as e:
         print(f"Error in get_games: {str(e)}")
@@ -193,31 +191,31 @@ async def get_games(
 async def get_results(
     source: str = Query("old", description="API source: old or new"),
     months: int = Query(4, description="Number of months to include; set 0 for all"),
+    limit: int = Query(5000, ge=1, le=50000, description="Max results to return"),
+    offset: int = Query(0, ge=0, description="Number of results to skip"),
     db: Session = Depends(get_db)
 ):
-    """Get results with source selection and optional months filter (default 4 months). Set months=0 to return all results."""
+    """Get results with source selection, months filter, and pagination."""
     try:
-        # Compute cutoff date if months filter is enabled (approximate months as 30 days each)
         cutoff_date = None
         if months and months > 0:
             cutoff = datetime.now() - timedelta(days=months * 30)
             cutoff_date = cutoff.date()
 
         if source == "new":
-            # Query new tables and map to old format
             try:
-                q = db.query(ResultV2).join(GameV2)
+                from sqlalchemy.orm import joinedload
+                q = db.query(ResultV2).options(joinedload(ResultV2.game))
                 if cutoff_date:
                     q = q.filter(ResultV2.result_date >= cutoff_date)
-                results_v2 = q.all()
+                results_v2 = q.order_by(ResultV2.result_date.desc()).limit(limit).offset(offset).all()
 
-                # Map to old format
                 mapped_results = []
                 for r in results_v2:
                     result_obj = Result(
                         id=r.id,
                         game_id=r.game_id,
-                        full_game_code=f"V2-{r.period_id}",  # Generate a code
+                        full_game_code=f"V2-{r.period_id}",
                         result_date=r.result_date,
                         result_3up=r.award1,
                         result_2down=r.award2,
@@ -238,28 +236,17 @@ async def get_results(
                 return mapped_results
             except Exception as e:
                 print(f"Error querying new tables: {str(e)}")
-                # Return empty list if tables don't exist or are empty
                 return []
         else:
-            # Original old format query
             from sqlalchemy.orm import joinedload
             q = db.query(Result).options(joinedload(Result.game))
             if cutoff_date:
                 q = q.filter(Result.result_date >= cutoff_date)
-            results = q.all()
+            results = q.order_by(Result.result_date.desc()).limit(limit).offset(offset).all()
             return results
     except Exception as e:
-        print(f"Error in get_results (optimized): {str(e)}")
-        # Fallback to original query
-        try:
-            q = db.query(Result)
-            if cutoff_date:
-                q = q.filter(Result.result_date >= cutoff_date)
-            results = q.join(Game).all()
-            return results
-        except Exception as fallback_error:
-            print(f"Fallback error: {str(fallback_error)}")
-            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        print(f"Error in get_results: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
 @app.post("/import-sample-data")
 async def import_sample_data(db: Session = Depends(get_db)):
@@ -293,23 +280,26 @@ async def import_sample_data(db: Session = Depends(get_db)):
         games_created = 0
         results_updated = 0
         
+        # Pre-fetch all existing games for O(1) lookups
+        existing_games = {g.base_game_id: g for g in db.query(Game).all()}
+        # Pre-fetch existing results keyed by (game_id, result_date)
+        existing_results = {}
+        for r in db.query(Result).all():
+            existing_results[(r.game_id, str(r.result_date))] = r
+        
         for game_data in processed_games:
-            # Check if game exists, if not create it
-            game = db.query(Game).filter(Game.base_game_id == game_data['base_game_id']).first()
+            game = existing_games.get(game_data['base_game_id'])
             if not game:
                 game = Game(
                     base_game_id=game_data['base_game_id'],
                     game_name=game_data['game_name']
                 )
                 db.add(game)
-                db.flush()  # Flush to get the ID without committing
+                db.flush()
+                existing_games[game_data['base_game_id']] = game
                 games_created += 1
             
-            # Check if result exists for this game and date
-            existing_result = db.query(Result).filter(
-                Result.game_id == game.id,
-                Result.result_date == game_data['result_date']
-            ).first()
+            existing_result = existing_results.get((game.id, game_data['result_date']))
             
             if existing_result:
                 # Update existing result
@@ -962,11 +952,17 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
         
         print(f"Processing {len(processed_games)} games from v2 format")
         
+        # Pre-fetch all existing V2 games for O(1) lookups
+        existing_games = {g.product_id: g for g in db.query(GameV2).all()}
+        # Pre-fetch existing V2 results keyed by (game_id, result_date, yk_round)
+        existing_results = {}
+        for r in db.query(ResultV2).all():
+            existing_results[(r.game_id, str(r.result_date), r.yk_round)] = r
+        
         for game_data in processed_games:
             print(f"Processing game: {game_data['product_name_th']} (ID: {game_data['product_id']})")
             
-            # Check if game exists, if not create it
-            game = db.query(GameV2).filter(GameV2.product_id == game_data['product_id']).first()
+            game = existing_games.get(game_data['product_id'])
             if not game:
                 print(f"Creating new game: {game_data['product_name_th']}")
                 game = GameV2(
@@ -976,16 +972,12 @@ async def import_sample_data_v2(db: Session = Depends(get_db)):
                 )
                 db.add(game)
                 db.flush()
+                existing_games[game_data['product_id']] = game
                 games_created += 1
             else:
                 print(f"Game already exists: {game_data['product_name_th']}")
             
-            # Check if result exists for this game, date and round
-            existing_result = db.query(ResultV2).filter(
-                ResultV2.game_id == game.id,
-                ResultV2.result_date == game_data['result_date'],
-                ResultV2.yk_round == game_data['yk_round']
-            ).first()
+            existing_result = existing_results.get((game.id, game_data['result_date'], game_data['yk_round']))
             
             if not existing_result:
                 print(f"Creating new result for game {game.id}, date {game_data['result_date']}")
