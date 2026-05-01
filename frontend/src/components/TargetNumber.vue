@@ -705,15 +705,8 @@ watch(selectedProfileId, (newProfileId) => {
   }
 })
 
-// Retry profile load when gameMap becomes available (handles race condition)
-watch(() => props.gameMap?.size, (newSize) => {
-  if (newSize && newSize > 0 && selectedProfileId.value && selectedGames.value.length === 0) {
-    loadProfile()
-  }
-})
-
 const loadProfile = async () => {
-  if (!selectedProfileId.value || !props.gameMap || props.gameMap.size === 0) return
+  if (!selectedProfileId.value || !props.gameMap) return
   
   const profile = profiles.value.find(p => p.id === selectedProfileId.value)
   if (!profile) return

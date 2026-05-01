@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { gameApi } from '../services/api'
 import type { Game, Result } from '../types'
 import NHLDashboard from '../components/NHLDashboard.vue'
@@ -71,9 +71,9 @@ const allResults = ref<Result[]>([])
 const loading = ref(false)
 const gameOperationLoading = ref(false)
 
-// Reactive maps for performance — shallowRef so Vue tracks reassignment
-const gameMap = shallowRef<Map<number, Game>>(new Map())
-const validResultsByGame = shallowRef<Map<number, Result[]>>(new Map())
+// Shared map instances — passed by reference to children
+const gameMap = new Map<number, Game>()
+const validResultsByGame = new Map<number, Result[]>()
 
 // Methods
 const fetchData = async () => {
@@ -86,19 +86,19 @@ const fetchData = async () => {
     allGames.value = games
     allResults.value = results
     
-    // Pre-compute maps once for O(1) lookups
-    gameMap.value = new Map(games.map(g => [g.id, g]))
-    const tempMap = new Map<number, Result[]>()
+    // Mutate in place so children keep the same reference
+    gameMap.clear()
+    games.forEach(g => gameMap.set(g.id, g))
     
+    validResultsByGame.clear()
     results.forEach(r => {
       if (r.result_3up && r.status === 'completed') {
-        if (!tempMap.has(r.game_id)) {
-          tempMap.set(r.game_id, [])
+        if (!validResultsByGame.has(r.game_id)) {
+          validResultsByGame.set(r.game_id, [])
         }
-        tempMap.get(r.game_id)!.push(r)
+        validResultsByGame.get(r.game_id)!.push(r)
       }
     })
-    validResultsByGame.value = tempMap
   } catch (error) {
     console.error('Failed to fetch data:', error)
   } finally {
