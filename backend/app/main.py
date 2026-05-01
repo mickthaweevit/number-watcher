@@ -248,6 +248,90 @@ async def get_results(
         print(f"Error in get_results: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
+@app.get("/results/fast")
+async def get_results_fast(
+    source: str = Query("old", description="API source: old or new"),
+    months: int = Query(4, description="Number of months to include; set 0 for all"),
+    db: Session = Depends(get_db)
+):
+    """Fast results endpoint — returns compact format without nested game objects.
+    Games are referenced by game_id only; use /games to get game details."""
+    from sqlalchemy import text
+    from fastapi.responses import ORJSONResponse
+    
+    cutoff_date = None
+    if months and months > 0:
+        cutoff = datetime.now() - timedelta(days=months * 30)
+        cutoff_date = cutoff.date()
+    
+    try:
+        if source == "new":
+            sql = """
+                SELECT r.id, r.game_id, r.period_id, r.award1, r.award2, r.award3,
+                       r.result_date::text, r.status, r.yk_round,
+                       g.product_name_th as game_name, g.product_id
+                FROM results_v2 r
+                JOIN games_v2 g ON g.id = r.game_id
+                WHERE (:cutoff IS NULL OR r.result_date >= :cutoff)
+                ORDER BY r.result_date DESC
+            """
+            rows = db.execute(text(sql), {"cutoff": cutoff_date}).fetchall()
+            
+            results = []
+            for r in rows:
+                results.append({
+                    "id": r[0],
+                    "game_id": r[1],
+                    "full_game_code": f"V2-{r[2]}",
+                    "result_date": r[6],
+                    "result_3up": r[3],
+                    "result_2down": r[4],
+                    "result_4up": r[5],
+                    "status": r[7],
+                    "game": {
+                        "id": r[1],
+                        "game_name": r[9],
+                        "base_game_id": str(r[10]),
+                        "is_active": True
+                    }
+                })
+        else:
+            sql = """
+                SELECT r.id, r.game_id, r.full_game_code, r.result_date::text,
+                       r.result_3up, r.result_2down, r.result_4up, r.status,
+                       g.game_name, g.base_game_id
+                FROM results r
+                JOIN games g ON g.id = r.game_id
+                WHERE (:cutoff IS NULL OR r.result_date >= :cutoff)
+                ORDER BY r.result_date DESC
+            """
+            rows = db.execute(text(sql), {"cutoff": cutoff_date}).fetchall()
+            
+            results = []
+            for r in rows:
+                results.append({
+                    "id": r[0],
+                    "game_id": r[1],
+                    "full_game_code": r[2],
+                    "result_date": r[3],
+                    "result_3up": r[4],
+                    "result_2down": r[5],
+                    "result_4up": r[6],
+                    "status": r[7],
+                    "game": {
+                        "id": r[1],
+                        "game_name": r[8],
+                        "base_game_id": r[9],
+                        "is_active": True
+                    }
+                })
+        
+        return results
+        
+    except Exception as e:
+        print(f"Error in get_results_fast: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
 @app.post("/import-sample-data")
 async def import_sample_data(db: Session = Depends(get_db)):
     """Import data from responseData.json for testing"""

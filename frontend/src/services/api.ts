@@ -96,7 +96,7 @@ export const gameApi = {
 
   getAllResults: async (signal?: AbortSignal): Promise<Result[]> => {
     const source = getCurrentSource()
-    const response = await api.get(`/results?source=${source}`, { signal });
+    const response = await api.get(`/results/fast?source=${source}`, { signal });
     return response.data;
   },
 

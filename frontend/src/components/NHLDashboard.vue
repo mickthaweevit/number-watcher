@@ -441,6 +441,32 @@ const monthlyPatternStats = computed(() => {
 })
 
 // Game management event handlers
+
+// Pre-computed analysis cache — built once, cloned for each use
+const precomputedAnalysis = new Map<number, GameAnalysis>()
+
+const getOrComputeAnalysis = (gameId: number): GameAnalysis | null => {
+  if (!props.gameMap || !props.validResultsByGame) return null
+  
+  if (!precomputedAnalysis.has(gameId)) {
+    const game = props.gameMap.get(gameId)
+    if (!game) return null
+    const gameResults = props.validResultsByGame.get(gameId) || []
+    precomputedAnalysis.set(gameId, analyzeGameOptimized(game, gameResults))
+  }
+  
+  const cached = precomputedAnalysis.get(gameId)!
+  // Deep clone patterns so each instance has independent bet amounts
+  return {
+    ...cached,
+    patterns: {
+      first_two: { ...cached.patterns.first_two, monthlyBreakdown: { ...cached.patterns.first_two.monthlyBreakdown } },
+      first_third: { ...cached.patterns.first_third, monthlyBreakdown: { ...cached.patterns.first_third.monthlyBreakdown } },
+      last_two: { ...cached.patterns.last_two, monthlyBreakdown: { ...cached.patterns.last_two.monthlyBreakdown } },
+    }
+  }
+}
+
 const handleAddGame = (gameId: number) => {
   if (!props.gameMap || !props.validResultsByGame) return
   
@@ -450,10 +476,8 @@ const handleAddGame = (gameId: number) => {
   emit('gameOperationLoading', true)
   
   setTimeout(() => {
-    const gameResults = props.validResultsByGame!.get(gameId) || []
-    const analysis = analyzeGameOptimized(game, gameResults)
-    
-    selectedGames.value.push(analysis)
+    const analysis = getOrComputeAnalysis(gameId)
+    if (analysis) selectedGames.value.push(analysis)
     emit('gameOperationLoading', false)
   }, 0)
 }
@@ -465,12 +489,8 @@ const handleAddMultipleGames = (gameIds: number[]) => {
   
   setTimeout(() => {
     gameIds.forEach(gameId => {
-      const game = props.gameMap!.get(gameId)
-      if (game) {
-        const gameResults = props.validResultsByGame!.get(gameId) || []
-        const analysis = analyzeGameOptimized(game, gameResults)
-        selectedGames.value.push(analysis)
-      }
+      const analysis = getOrComputeAnalysis(gameId)
+      if (analysis) selectedGames.value.push(analysis)
     })
     emit('gameOperationLoading', false)
   }, 0)
@@ -542,10 +562,8 @@ const loadProfile = async () => {
     
     selectedGames.value = profile.selected_game_ids
       .map(gameId => {
-        const game = props.gameMap!.get(gameId)
-        if (!game) return null
-        
-        const analysis = analyzeGameOptimized(game, props.validResultsByGame!.get(gameId) || [])
+        const analysis = getOrComputeAnalysis(gameId)
+        if (!analysis) return null
         
         const savedBets = (profile as any).game_pattern_bets?.[gameId]
         if (savedBets) {
@@ -729,17 +747,21 @@ const recalculateAllGames = () => {
   
   emit('gameOperationLoading', true)
   
+  // Clear precomputed cache so fresh analysis is used
+  precomputedAnalysis.clear()
+  
   setTimeout(() => {
     selectedGames.value.forEach(gameAnalysis => {
       if (gameAnalysis.calculate) {
-        const gameResults = props.validResultsByGame!.get(gameAnalysis.game.id) || []
-        const newAnalysis = analyzeGameOptimized(gameAnalysis.game, gameResults)
-        // Preserve bet amounts
-        newAnalysis.patterns.first_two.betAmount = gameAnalysis.patterns.first_two.betAmount
-        newAnalysis.patterns.first_third.betAmount = gameAnalysis.patterns.first_third.betAmount
-        newAnalysis.patterns.last_two.betAmount = gameAnalysis.patterns.last_two.betAmount
-        recalculateGame(newAnalysis)
-        Object.assign(gameAnalysis, newAnalysis)
+        const fresh = getOrComputeAnalysis(gameAnalysis.game.id)
+        if (fresh) {
+          // Preserve bet amounts
+          fresh.patterns.first_two.betAmount = gameAnalysis.patterns.first_two.betAmount
+          fresh.patterns.first_third.betAmount = gameAnalysis.patterns.first_third.betAmount
+          fresh.patterns.last_two.betAmount = gameAnalysis.patterns.last_two.betAmount
+          recalculateGame(fresh)
+          Object.assign(gameAnalysis, fresh)
+        }
       }
     })
     emit('gameOperationLoading', false)
